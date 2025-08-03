@@ -1,0 +1,17 @@
+* text=auto
+
+# LF
+.gitattributes text eol=lf
+.gitignore text eol=lf
+*.md text eol=lf
+*.mdc text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+LICENSE text eol=lf
+
+# CRLF
+.csharpierrc text eol=crlf
+*.cs text eol=crlf
+*.csproj text eol=crlf
+*.resx text eol=crlf
+*.sln text eol=crlf
