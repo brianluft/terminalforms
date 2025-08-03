@@ -18,7 +18,22 @@ source "build/config.sh"
 build_tvision4c() {
     status "header" "tvision4c"
 
-    #TODO
+    # Create directories
+    mkdir -p "build/native-artifacts/tvision4c/build"
+    mkdir -p "build/native-artifacts/tvision4c/bin"
+
+    # Configure cmake
+    cd "src/tvision4c"
+    "$CMAKE" \
+        -B "../../build/native-artifacts/tvision4c/build" \
+        -S . \
+        -DCMAKE_PREFIX_PATH="$ROOT_DIR/build/prefix" \
+        -DCMAKE_INSTALL_PREFIX="$ROOT_DIR/build/prefix" \
+        -G "Visual Studio 17 2022" \
+        -A "$WINDOWS_MSVC_ARCH"
+
+    # Build
+    "$CMAKE" --build "../../build/native-artifacts/tvision4c/build" --config Release
 
     cd "$ROOT_DIR"
 }
