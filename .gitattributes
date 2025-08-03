@@ -6,6 +6,7 @@
 *.md text eol=lf
 *.mdc text eol=lf
 *.sh text eol=lf
+*.txt text eol=lf
 *.yml text eol=lf
 LICENSE text eol=lf
 
