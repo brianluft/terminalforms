@@ -34,10 +34,10 @@ CMAKE="" # Set by install_cmake()
 # Clean existing build directory.
 status "action" "Cleaning build directory..."
 rm -rf build
-mkdir -p build
+mkdir -p build build/dotnet-artifacts build/native-artifacts
 
 # Create directories.
-DOWNLOADS_DIR="$PWD/build/downloads"
+DOWNLOADS_DIR="$PWD/downloads"
 mkdir -p "$DOWNLOADS_DIR"
 
 SOURCES_DIR="$PWD/build/sources"
@@ -46,15 +46,16 @@ mkdir -p "$SOURCES_DIR"
 PREFIX_DIR="$PWD/build/prefix"
 mkdir -p "$PREFIX_DIR"
 
+
 # Set OS, ARCH, LINUX_LIBC, WINDOWS_MSVC_ARCH.
 # Write a script that sets these variables so we don't have to re-detect every time.
 source "scripts/helpers/detect_system.sh"
-DETECTED_SYSTEM_FILE="$ROOT_DIR/build/detected_system.sh"
-echo "OS=\"$OS\"" > "$DETECTED_SYSTEM_FILE"
-echo "ARCH=\"$ARCH\"" >> "$DETECTED_SYSTEM_FILE"
-echo "LINUX_LIBC=\"$LINUX_LIBC\"" >> "$DETECTED_SYSTEM_FILE"
-echo "WINDOWS_MSVC_ARCH=\"$WINDOWS_MSVC_ARCH\"" >> "$DETECTED_SYSTEM_FILE"
-echo "echo \"Detected system (cached): $OS $ARCH $LINUX_LIBC\"" >> "$DETECTED_SYSTEM_FILE"
+CONFIG_FILE="$ROOT_DIR/build/config.sh"
+echo "OS=\"$OS\"" > "$CONFIG_FILE"
+echo "ARCH=\"$ARCH\"" >> "$CONFIG_FILE"
+echo "LINUX_LIBC=\"$LINUX_LIBC\"" >> "$CONFIG_FILE"
+echo "WINDOWS_MSVC_ARCH=\"$WINDOWS_MSVC_ARCH\"" >> "$CONFIG_FILE"
+echo "echo \"System (cached): $OS $ARCH $LINUX_LIBC\"" >> "$CONFIG_FILE"
 
 status "info" "Detected system: $OS $ARCH $LINUX_LIBC"
 
@@ -75,7 +76,7 @@ download() {
     fi
 
     if [ ! -f "$path" ]; then
-        status "action" "Downloading: $url"
+        status "action" "Starting download.\n\tURL: $url\n\tSave to: $path"
         curl --fail --location -o "$path" "$url"
     fi
 
@@ -216,6 +217,8 @@ install_cmake() {
     else
         CMAKE="$PREFIX_DIR/bin/cmake"
     fi
+    echo "CMAKE=\"$CMAKE\"" >> "$CONFIG_FILE"
+    echo "echo \"cmake (cached): $CMAKE\"" >> "$CONFIG_FILE"
 
     if [ ! -f "$CMAKE" ]; then
         status "error" "cmake could not be found at $CMAKE"

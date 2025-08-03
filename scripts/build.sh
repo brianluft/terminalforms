@@ -11,8 +11,8 @@ status() {
     "$ROOT_DIR/scripts/helpers/echo_status.sh" "$@"
 }
 
-# Set OS, ARCH, LINUX_LIBC, WINDOWS_MSVC_ARCH.
-source "build/detected_system.sh"
+# Set OS, ARCH, LINUX_LIBC, WINDOWS_MSVC_ARCH, CMAKE.
+source "build/config.sh"
 
 # Builds tvision4c
 build_tvision4c() {
