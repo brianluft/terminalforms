@@ -9,17 +9,17 @@ jobs:
       matrix:
         include:
           - name: mac-x64
-            os: macos-latest
+            os: macos-15
             mac_arch: x64
           - name: mac-arm64
-            os: macos-latest
+            os: macos-15
             mac_arch: arm64
           - name: win-x64
-            os: windows-latest
+            os: windows-2022
           - name: win-arm64
             os: windows-11-arm
           - name: linux-x64
-            os: ubuntu-latest
+            os: ubuntu-24.04
           - name: linux-arm64
             os: ubuntu-24.04-arm
 
@@ -28,6 +28,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
 
     - name: Mac setup
       if: startsWith(matrix.os, 'macos')
@@ -42,4 +47,6 @@ jobs:
       run: bash scripts/init.sh
 
     - name: Build
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: 1
       run: bash scripts/build.sh
