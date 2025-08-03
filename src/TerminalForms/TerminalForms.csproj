@@ -21,11 +21,16 @@
     <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'win'">tvision4c.dll</NativeLibraryName>
     <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'linux'">libtvision4c.so</NativeLibraryName>
     <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'osx'">libtvision4c.dylib</NativeLibraryName>
+
+    <!-- Platform-specific path to the native library build output -->
+    <NativeLibraryPath Condition="'$(NativeLibraryOS)' == 'win'">..\..\build\native-artifacts\tvision4c\bin\$(Configuration)</NativeLibraryPath>
+    <NativeLibraryPath Condition="'$(NativeLibraryOS)' == 'linux'">..\..\build\native-artifacts\tvision4c\bin</NativeLibraryPath>
+    <NativeLibraryPath Condition="'$(NativeLibraryOS)' == 'osx'">..\..\build\native-artifacts\tvision4c\bin</NativeLibraryPath>
   </PropertyGroup>
 
   <!-- Include native library for both project references and NuGet package -->
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)..\..\build\native-artifacts\tvision4c\bin\Release\$(NativeLibraryName)">
+    <Content Include="$(MSBuildThisFileDirectory)$(NativeLibraryPath)\$(NativeLibraryName)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <PackagePath>runtimes\$(RuntimeIdentifier)\native\$(NativeLibraryName)</PackagePath>
       <Pack>true</Pack>

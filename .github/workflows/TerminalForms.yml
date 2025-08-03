@@ -49,4 +49,5 @@ jobs:
     - name: Build
       env:
         DOTNET_CLI_TELEMETRY_OPTOUT: 1
+        CONFIGURATION: Release
       run: bash scripts/build.sh
