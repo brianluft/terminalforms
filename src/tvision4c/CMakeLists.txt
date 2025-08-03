@@ -8,8 +8,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Create the DLL
 add_library(tvision4c SHARED tvision4c.cpp)
 
-# Link to tvision library
-target_link_libraries(tvision4c "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/tvision.lib")
+# Link to tvision library (platform-specific)
+if(WIN32)
+    target_link_libraries(tvision4c "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/tvision.lib")
+elseif(APPLE)
+    target_link_libraries(tvision4c "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision.a" ncurses)
+else()
+    target_link_libraries(tvision4c "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision.a" ncursesw)
+endif()
 
 # Set output directories
 set_target_properties(tvision4c PROPERTIES
