@@ -6,13 +6,31 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <!-- The native "tvision4c.dll" is built separately (using cmake) and must be copied to the output directory. -->
-  <Target Name="CopyNativeDependencies" AfterTargets="Build">
-    <ItemGroup>
-      <NativeDll Include="$(MSBuildThisFileDirectory)..\..\build\native-artifacts\tvision4c\bin\Release\tvision4c.dll" />
-    </ItemGroup>
-    <Copy SourceFiles="@(NativeDll)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
-    <Message Text="Copied native DLL: @(NativeDll) to $(OutputPath)" Importance="high" />
-  </Target>
+  <!-- Compute runtime identifier for native library packaging -->
+  <PropertyGroup>
+    <NativeLibraryOS Condition="$([MSBuild]::IsOSPlatform('Windows'))">win</NativeLibraryOS>
+    <NativeLibraryOS Condition="$([MSBuild]::IsOSPlatform('Linux'))">linux</NativeLibraryOS>
+    <NativeLibraryOS Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx</NativeLibraryOS>
+    
+    <NativeLibraryArch Condition="'$(PlatformTarget)' == 'ARM64'">arm64</NativeLibraryArch>
+    <NativeLibraryArch Condition="'$(NativeLibraryArch)' == ''">x64</NativeLibraryArch>
+    
+    <RuntimeIdentifier>$(NativeLibraryOS)-$(NativeLibraryArch)</RuntimeIdentifier>
+    
+    <!-- Platform-specific native library names -->
+    <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'win'">tvision4c.dll</NativeLibraryName>
+    <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'linux'">libtvision4c.so</NativeLibraryName>
+    <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'osx'">libtvision4c.dylib</NativeLibraryName>
+  </PropertyGroup>
+
+  <!-- Include native library for both project references and NuGet package -->
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)..\..\build\native-artifacts\tvision4c\bin\Release\$(NativeLibraryName)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes\$(RuntimeIdentifier)\native\$(NativeLibraryName)</PackagePath>
+      <Pack>true</Pack>
+      <Visible>false</Visible>
+    </Content>
+  </ItemGroup>
 
 </Project>

@@ -52,7 +52,7 @@ build_terminalforms() {
     status "header" "TerminalForms"
 
     cd "$ROOT_DIR/src"
-    dotnet build TerminalForms.sln --verbosity=quiet
+    dotnet build TerminalForms.sln
 
     cd "$ROOT_DIR"
 }
