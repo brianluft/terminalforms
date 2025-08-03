@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <!-- The native "tvision4c.dll" is built separately (using cmake) and must be copied to the output directory. -->
+  <Target Name="CopyNativeDependencies" AfterTargets="Build">
+    <ItemGroup>
+      <NativeDll Include="$(MSBuildThisFileDirectory)..\..\build\native-artifacts\tvision4c\bin\Release\tvision4c.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(NativeDll)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
+    <Message Text="Copied native DLL: @(NativeDll) to $(OutputPath)" Importance="high" />
+  </Target>
+
 </Project>
