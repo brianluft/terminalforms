@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Change to the repository root.
-cd "$( dirname "${BASH_SOURCE[0]}" )"
-cd ..
-
 # Set OS (mac, linux, windows), ARCH (arm64, x64), and OS_ARCH ($OS-$ARCH).
 # On Linux, set LINUX_LIBC (glibc, musl)
 ARCH=""
@@ -69,5 +65,3 @@ if [ "$OS" == "windows" ]; then
         WINDOWS_MSVC_ARCH="x64"
     fi
 fi
-
-scripts/status.sh "info" "Detected system: $OS $ARCH $LINUX_LIBC"

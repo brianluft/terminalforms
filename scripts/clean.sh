@@ -5,7 +5,4 @@ set -euo pipefail
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 cd ..
 
-rm -rf \
-    build/prefix \
-    build/sources \
-    ;
+rm -rf build/dotnet-artifacts

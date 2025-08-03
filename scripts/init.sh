@@ -10,9 +10,9 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 cd ..
 ROOT_DIR="$PWD"
 
-# Shortcut for running status.sh
+# Shortcut for running echo_status.sh
 status() {
-    "$ROOT_DIR/scripts/status.sh" "$@"
+    "$ROOT_DIR/scripts/helpers/echo_status.sh" "$@"
 }
 
 # Constants
@@ -26,27 +26,37 @@ CMAKE_LINUX_X64_HASH="585ae9e013107bc8e7c7c9ce872cbdcbdff569e675b07ef57aacfb88c8
 CMAKE_WINDOWS_ARM64_HASH="86ccd6485bbd4bb41a1a858db397be5bca5e0de96858bf8dbba7a64407bd6c00"
 CMAKE_WINDOWS_X64_HASH="b59a31dfbfa376a4aaea9ff560ff2b29f78ee5f9fb15447fc71ae7bf9fea9379"
 
-# Set OS, ARCH, LINUX_LIBC, WINDOWS_MSVC_ARCH.
-status "action" "Detecting system..."
-source scripts/detect_system.sh
-
 # Global variables
 DOWNLOAD_FILE="" # Set by download()
 INSTALL_DIR="" # Set by extract_tar_gz() or extract_zip()
 CMAKE="" # Set by install_cmake()
 
+# Clean existing build directory.
+status "action" "Cleaning build directory..."
+rm -rf build
+mkdir -p build
+
 # Create directories.
-status "action" "Cleaning build directories..."
 DOWNLOADS_DIR="$PWD/build/downloads"
 mkdir -p "$DOWNLOADS_DIR"
 
 SOURCES_DIR="$PWD/build/sources"
-rm -rf "$SOURCES_DIR"
 mkdir -p "$SOURCES_DIR"
 
 PREFIX_DIR="$PWD/build/prefix"
-rm -rf "$PREFIX_DIR"
 mkdir -p "$PREFIX_DIR"
+
+# Set OS, ARCH, LINUX_LIBC, WINDOWS_MSVC_ARCH.
+# Write a script that sets these variables so we don't have to re-detect every time.
+source "scripts/helpers/detect_system.sh"
+DETECTED_SYSTEM_FILE="$ROOT_DIR/build/detected_system.sh"
+echo "OS=\"$OS\"" > "$DETECTED_SYSTEM_FILE"
+echo "ARCH=\"$ARCH\"" >> "$DETECTED_SYSTEM_FILE"
+echo "LINUX_LIBC=\"$LINUX_LIBC\"" >> "$DETECTED_SYSTEM_FILE"
+echo "WINDOWS_MSVC_ARCH=\"$WINDOWS_MSVC_ARCH\"" >> "$DETECTED_SYSTEM_FILE"
+echo "echo \"Detected system (cached): $OS $ARCH $LINUX_LIBC\"" >> "$DETECTED_SYSTEM_FILE"
+
+status "info" "Detected system: $OS $ARCH $LINUX_LIBC"
 
 # Checks to see if a given URL has been downloaded to the given filename. If not, it downloads it.
 # Sets DOWNLOAD_FILE to the absolute path to the downloaded file.
