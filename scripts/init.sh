@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
+
 # Downloads and installs dependencies for the project.
+
 # Set NO_MIRROR to use the original URLs instead of the Cloudflare R2 mirror.
 # Set NO_HASH to skip hash verification.
 # When updating to new versions of deps, set both NO_MIRROR=1 NO_HASH=1 to download fresh.
+
+# Set MAC_ARCH to set the target architecture of the macOS build (x64 or arm64). This is required for macOS builds.
+# Other platforms always build for the host architecture.
+
 set -euo pipefail
 
 # Change to the repository root.
@@ -55,7 +61,17 @@ echo "OS=\"$OS\"" > "$CONFIG_FILE"
 echo "ARCH=\"$ARCH\"" >> "$CONFIG_FILE"
 echo "LINUX_LIBC=\"$LINUX_LIBC\"" >> "$CONFIG_FILE"
 echo "WINDOWS_MSVC_ARCH=\"$WINDOWS_MSVC_ARCH\"" >> "$CONFIG_FILE"
-echo "echo \"System (cached): $OS $ARCH $LINUX_LIBC\"" >> "$CONFIG_FILE"
+if [ "$OS" == "mac" ]; then
+    if [ "$MAC_ARCH" == "x64" ]; then
+        echo "CMAKE_FLAGS+=\" -DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0\"" >> "$CONFIG_FILE"
+    elif [ "$MAC_ARCH" == "arm64" ]; then
+        echo "CMAKE_FLAGS+=\" -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0\"" >> "$CONFIG_FILE"
+    else
+        status "error" "Invalid MAC_ARCH: $MAC_ARCH"
+        exit 1
+    fi
+fi
+source "$CONFIG_FILE"
 
 status "info" "Detected system: $OS $ARCH $LINUX_LIBC"
 
@@ -203,6 +219,14 @@ install_cmake() {
         exit 1
     fi
 
+    # On Mac, this is an app bundle that we have to dig the CLI tool out of.
+    if [ "$OS" == "mac" ]; then
+        mv -f "$INSTALL_DIR/CMake.app/Contents/bin" "$INSTALL_DIR/"
+        mv -f "$INSTALL_DIR/CMake.app/Contents/man" "$INSTALL_DIR/"
+        mv -f "$INSTALL_DIR/CMake.app/Contents/share" "$INSTALL_DIR/"
+        rm -rf "$INSTALL_DIR/CMake.app"
+    fi
+
     # Move everything to the prefix directory, which is blank at this point because we install cmake first.
     status "action" "Moving to prefix directory: $PREFIX_DIR"
     mv -f "$INSTALL_DIR"/* "$PREFIX_DIR"
@@ -218,10 +242,10 @@ install_cmake() {
         CMAKE="$PREFIX_DIR/bin/cmake"
     fi
     echo "CMAKE=\"$CMAKE\"" >> "$CONFIG_FILE"
-    echo "echo \"cmake (cached): $CMAKE\"" >> "$CONFIG_FILE"
 
     if [ ! -f "$CMAKE" ]; then
         status "error" "cmake could not be found at $CMAKE"
+        find "$PREFIX_DIR" -type f -name "cmake"
         exit 1
     fi
 

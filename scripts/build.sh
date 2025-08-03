@@ -24,13 +24,22 @@ build_tvision4c() {
 
     # Configure cmake
     cd "src/tvision4c"
-    "$CMAKE" \
-        -B "../../build/native-artifacts/tvision4c/build" \
-        -S . \
-        -DCMAKE_PREFIX_PATH="$ROOT_DIR/build/prefix" \
-        -DCMAKE_INSTALL_PREFIX="$ROOT_DIR/build/prefix" \
-        -G "Visual Studio 17 2022" \
-        -A "$WINDOWS_MSVC_ARCH"
+    if [ "$OS" == "windows" ]; then
+        "$CMAKE" \
+            -G "Visual Studio 17 2022" \
+            -A "$WINDOWS_MSVC_ARCH" \
+            -B "../../build/native-artifacts/tvision4c/build" \
+            -S . \
+            -DCMAKE_PREFIX_PATH="$ROOT_DIR/build/prefix" \
+            -DCMAKE_INSTALL_PREFIX="$ROOT_DIR/build/prefix"
+    else
+        "$CMAKE" \
+            -G "Unix Makefiles" \
+            -B "../../build/native-artifacts/tvision4c/build" \
+            -S . \
+            -DCMAKE_PREFIX_PATH="$ROOT_DIR/build/prefix" \
+            -DCMAKE_INSTALL_PREFIX="$ROOT_DIR/build/prefix"
+    fi
 
     # Build
     "$CMAKE" --build "../../build/native-artifacts/tvision4c/build" --config Release

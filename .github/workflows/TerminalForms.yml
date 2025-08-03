@@ -1,0 +1,45 @@
+name: TerminalForms
+
+on:
+  push:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - name: mac-x64
+            os: macos-latest
+            mac_arch: x64
+          - name: mac-arm64
+            os: macos-latest
+            mac_arch: arm64
+          - name: win-x64
+            os: windows-latest
+          - name: win-arm64
+            os: windows-11-arm
+          - name: linux-x64
+            os: ubuntu-latest
+          - name: linux-arm64
+            os: ubuntu-24.04-arm
+
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.name }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Mac setup
+      if: startsWith(matrix.os, 'macos')
+      run: |
+        echo "MAC_ARCH=${{ matrix.mac_arch }}" >> $GITHUB_ENV
+        brew install bash coreutils
+        echo "/opt/homebrew/bin/bash" >> $GITHUB_PATH
+        echo "bash: $(which bash)"
+        echo "sha256sum: $(which sha256sum)"
+
+    - name: Initialize
+      run: bash scripts/init.sh
+
+    - name: Build
+      run: bash scripts/build.sh
