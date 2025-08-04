@@ -1,23 +1,30 @@
-- [x] Stub out tvision4c project
-    - This will be a cmake project that builds a DLL.
-    - It will link in `build/prefix/lib/tvision.lib` which will be provided. This is relative to the root of the repository. From the tvision4c directory it's `../../build/prefix/lib/tvision.lib`.
-    - Stub out a basic "extern C" function in a `tvision4c.cpp` that simply returns 123 so we can test the build process and later P/Invoke into this DLL.
-    - Update `scripts/build.sh` to build the cmake files (makefile or msvc) and then use cmake to build the DLL. See `scripts/init.sh` for an example on using cmake. `$CMAKE` is set in `build.sh`. Put the cmake-generated project/make files into `build/native-artifacts/tvision4c/build/`. Put the output into `build/native-artifacts/tvision4c/bin/`.
-    - Test `scripts/build.sh` and see that the tvision4c DLL is generated in `build/native-artifacts/tvision4c/bin/`.
-    - *🤖 Created tvision4c.cpp with a basic extern "C" test_function() that returns 123, set up CMakeLists.txt to build a shared library linking to tvision.lib, and updated build.sh to use cmake with Visual Studio generator. The DLL successfully builds to build/native-artifacts/tvision4c/bin/Release/tvision4c.dll.*
+We are doing vertical slices of the bindings: one specific C++ class at a time.
 
-- [x] Create GitHub Actions workflow `.github\workflows\TerminalForms.yml`
-    - Strategy matrix:
-        - mac-x64: macos-latest
-        - mac-arm64: macos-latest
-        - win-x64: windows-latest
-        - win-arm64: windows-11-arm
-        - linux-x64: ubuntu-latest
-        - linux-arm64: ubuntu-24.04-arm
-    - On Mac, set the MAC_ARCH env var to either "arm64" or "x64" since it's the same runner for both. For all others, it's implied by the runner.
-    - Run this:
-        ```
-        scripts/init.sh
-        scripts/build.sh
-        ```
-    - *🤖 Created complete GitHub Actions workflow with strategy matrix covering all specified platforms (mac x64/arm64, windows x64/arm64, linux x64/arm64). Set MAC_ARCH environment variable conditionally for macOS runners and configured all jobs to run scripts/init.sh and scripts/build.sh as required.*
+# Example 1
+- `src\TerminalForms\KeyDownEvent.cs`
+- `src\TerminalForms\NativeMethods.KeyDownEvent.cs`
+- `src\tvision4c\KeyDownEvent.h`
+- `src\tvision4c\KeyDownEvent.cpp`
+- `build\prefix\include\tvision\system.h` (lines 178-216)
+
+# Example 2
+- `src\TerminalForms\Rect.cs`
+- `src\TerminalForms\NativeMethods.Rect.cs`
+- `src\tvision4c\Rect.h`
+- `src\tvision4c\Rect.cpp`
+- `build\prefix\include\tvision\objects.h` (lines 96-200)
+
+# General procedure to write bindings for underlying class "Foo"
+- Find the .h and .cpp files for the C++ wrapper class in `src\tvision4c\Foo.[h|cpp]`
+- Find the underlying tvision C++ class in `build\prefix\include\tvision\*.h`, grep for it.
+- Read the first example above to understand the pattern.
+- Write the C# code: the corresponding class in `src\TerminalForms\Foo.cs` and, if it's not already present, the `[LibraryImport]` declarations in `src\TerminalForms\NativeMethods.Foo.cs`. You can modify existing `LibraryImport` declarations to make it easier; in particular, changing IntPtr to `byte*` or `Span<byte>`. In C#, `unsafe` is actually better.
+- If any part seems unclear, read example 2 to see if it clears it up. If you're still not sure, put a big comment on that part so I can address it. Mention it in your summary in TASKS.md.
+
+# Bindings tasks
+Remember to do only one at a time (in order) then commit and stop.
+- [x] Event
+  - *🤖 Created `src/TerminalForms/Event.cs` following the established pattern with disposable wrapper, properties for What, Mouse (IntPtr), KeyDown, Message (IntPtr), and methods GetMouseEvent/GetKeyEvent. Used IntPtr for Mouse and Message properties since those classes don't exist yet - they will need to be replaced with proper types when MouseEventType and MessageEvent are implemented.*
+- [ ] KeyDownEvent
+- [ ] MessageEvent
+- [ ] MouseEventType
