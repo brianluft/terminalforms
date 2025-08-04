@@ -8,12 +8,8 @@ public sealed class Point : IDisposable, IEquatable<Point>
 
     public Point()
     {
-        Ptr = NativeMethods.Tv_Point_new0();
-    }
-
-    public Point(int x, int y)
-    {
-        Ptr = NativeMethods.Tv_Point_new1(x, y);
+        TerminalFormsException.Check(NativeMethods.TV_Point_new(out var ptr));
+        Ptr = ptr;
     }
 
     public Point(IntPtr ptr)
@@ -36,7 +32,7 @@ public sealed class Point : IDisposable, IEquatable<Point>
     {
         if (!IsDisposed)
         {
-            NativeMethods.Tv_Point_delete(Ptr);
+            TerminalFormsException.Check(NativeMethods.TV_Point_delete(Ptr));
             IsDisposed = true;
         }
     }
@@ -45,28 +41,36 @@ public sealed class Point : IDisposable, IEquatable<Point>
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
         ObjectDisposedException.ThrowIf(adder.IsDisposed, adder);
-        NativeMethods.Tv_Point_operator_add_in_place(Ptr, adder.Ptr);
+        TerminalFormsException.Check(NativeMethods.TV_Point_operator_add_in_place(Ptr, adder.Ptr));
     }
 
     public void Subtract(Point subber)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
         ObjectDisposedException.ThrowIf(subber.IsDisposed, subber);
-        NativeMethods.Tv_Point_operator_subtract_in_place(Ptr, subber.Ptr);
+        TerminalFormsException.Check(
+            NativeMethods.TV_Point_operator_subtract_in_place(Ptr, subber.Ptr)
+        );
     }
 
     public static Point operator +(Point one, Point two)
     {
         ObjectDisposedException.ThrowIf(one.IsDisposed, one);
         ObjectDisposedException.ThrowIf(two.IsDisposed, two);
-        return new Point(NativeMethods.Tv_Point_operator_add(one.Ptr, two.Ptr));
+        TerminalFormsException.Check(
+            NativeMethods.TV_Point_operator_add(one.Ptr, two.Ptr, out var ptr)
+        );
+        return new Point(ptr);
     }
 
     public static Point operator -(Point one, Point two)
     {
         ObjectDisposedException.ThrowIf(one.IsDisposed, one);
         ObjectDisposedException.ThrowIf(two.IsDisposed, two);
-        return new Point(NativeMethods.Tv_Point_operator_subtract(one.Ptr, two.Ptr));
+        TerminalFormsException.Check(
+            NativeMethods.TV_Point_operator_subtract(one.Ptr, two.Ptr, out var ptr)
+        );
+        return new Point(ptr);
     }
 
     public override bool Equals(object? obj)
@@ -77,7 +81,8 @@ public sealed class Point : IDisposable, IEquatable<Point>
     public override int GetHashCode()
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
-        return NativeMethods.Tv_Point_hash(Ptr);
+        TerminalFormsException.Check(NativeMethods.TV_Point_hash(Ptr, out var hash));
+        return hash;
     }
 
     public bool Equals(Point? other)
@@ -86,7 +91,8 @@ public sealed class Point : IDisposable, IEquatable<Point>
         if (other is null)
             return false;
         ObjectDisposedException.ThrowIf(other.IsDisposed, other);
-        return NativeMethods.Tv_Point_operator_equals(Ptr, other.Ptr);
+        TerminalFormsException.Check(NativeMethods.TV_Point_equals(Ptr, other.Ptr, out var equals));
+        return equals;
     }
 
     public int X
@@ -94,12 +100,13 @@ public sealed class Point : IDisposable, IEquatable<Point>
         get
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            return NativeMethods.Tv_Point_get_x(Ptr);
+            TerminalFormsException.Check(NativeMethods.TV_Point_get_x(Ptr, out var x));
+            return x;
         }
         set
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            NativeMethods.Tv_Point_set_x(Ptr, value);
+            TerminalFormsException.Check(NativeMethods.TV_Point_set_x(Ptr, value));
         }
     }
 
@@ -108,12 +115,13 @@ public sealed class Point : IDisposable, IEquatable<Point>
         get
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            return NativeMethods.Tv_Point_get_y(Ptr);
+            TerminalFormsException.Check(NativeMethods.TV_Point_get_y(Ptr, out var y));
+            return y;
         }
         set
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            NativeMethods.Tv_Point_set_y(Ptr, value);
+            TerminalFormsException.Check(NativeMethods.TV_Point_set_y(Ptr, value));
         }
     }
 }

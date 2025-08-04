@@ -1,6 +1,32 @@
+using System.Text;
+
 namespace TerminalForms;
 
-public class TerminalFormsException(string message) : Exception(message) { }
+public class TerminalFormsException(Error error, string? message = null)
+    : Exception(message ?? error.GetDefaultMessage())
+{
+    public Error Error => error;
 
-public class TerminalFormsNativeInteropException(string message)
-    : TerminalFormsException(message) { }
+    public static void Check(Error error)
+    {
+        var hasMessage = error.HasFlag(Error.Error_HasMessage);
+        var code = error & ~Error.Error_HasMessage;
+
+        if (code == Error.Success)
+            return;
+
+        if (hasMessage)
+        {
+            var messageError = NativeMethods.TV_getLastErrorMessageLength(out var messageLength);
+            if (messageError == Error.Success)
+            {
+                var utf8Message = new byte[messageLength];
+                NativeMethods.TV_getLastErrorMessage(utf8Message, utf8Message.Length);
+                var message = Encoding.UTF8.GetString(utf8Message);
+                throw new TerminalFormsException(code, message);
+            }
+        }
+
+        throw new TerminalFormsException(code);
+    }
+}

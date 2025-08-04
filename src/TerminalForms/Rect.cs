@@ -8,17 +8,20 @@ public sealed class Rect : IDisposable, IEquatable<Rect>
 
     public Rect()
     {
-        Ptr = NativeMethods.Tv_Rect_new0();
+        TerminalFormsException.Check(NativeMethods.TV_Rect_new(out var ptr));
+        Ptr = ptr;
     }
 
     public Rect(int ax, int ay, int bx, int by)
     {
-        Ptr = NativeMethods.Tv_Rect_new1(ax, ay, bx, by);
+        TerminalFormsException.Check(NativeMethods.TV_Rect_new2(ax, ay, bx, by, out var ptr));
+        Ptr = ptr;
     }
 
     public Rect(Point p1, Point p2)
     {
-        Ptr = NativeMethods.Tv_Rect_new2(p1.Ptr, p2.Ptr);
+        TerminalFormsException.Check(NativeMethods.TV_Rect_new3(p1.Ptr, p2.Ptr, out var ptr));
+        Ptr = ptr;
     }
 
     public Rect(IntPtr ptr)
@@ -41,7 +44,7 @@ public sealed class Rect : IDisposable, IEquatable<Rect>
     {
         if (!IsDisposed)
         {
-            NativeMethods.Tv_Rect_delete(Ptr);
+            TerminalFormsException.Check(NativeMethods.TV_Rect_delete(Ptr));
             IsDisposed = true;
         }
     }
@@ -49,40 +52,42 @@ public sealed class Rect : IDisposable, IEquatable<Rect>
     public void Move(int aDX, int aDY)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
-        NativeMethods.Tv_Rect_move(Ptr, aDX, aDY);
+        TerminalFormsException.Check(NativeMethods.TV_Rect_move(Ptr, aDX, aDY));
     }
 
     public void Grow(int aDX, int aDY)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
-        NativeMethods.Tv_Rect_grow(Ptr, aDX, aDY);
+        TerminalFormsException.Check(NativeMethods.TV_Rect_grow(Ptr, aDX, aDY));
     }
 
     public void Intersect(Rect r)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
         ObjectDisposedException.ThrowIf(r.IsDisposed, r);
-        NativeMethods.Tv_Rect_intersect(Ptr, r.Ptr);
+        TerminalFormsException.Check(NativeMethods.TV_Rect_intersect(Ptr, r.Ptr));
     }
 
     public void Union(Rect r)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
         ObjectDisposedException.ThrowIf(r.IsDisposed, r);
-        NativeMethods.Tv_Rect_Union(Ptr, r.Ptr);
+        TerminalFormsException.Check(NativeMethods.TV_Rect_Union(Ptr, r.Ptr));
     }
 
     public bool Contains(Point p)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
         ObjectDisposedException.ThrowIf(p.IsDisposed, p);
-        return NativeMethods.Tv_Rect_contains(Ptr, p.Ptr);
+        TerminalFormsException.Check(NativeMethods.TV_Rect_contains(Ptr, p.Ptr, out var contains));
+        return contains;
     }
 
     public bool IsEmpty()
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
-        return NativeMethods.Tv_Rect_isEmpty(Ptr);
+        TerminalFormsException.Check(NativeMethods.TV_Rect_isEmpty(Ptr, out var isEmpty));
+        return isEmpty;
     }
 
     public override bool Equals(object? obj)
@@ -93,7 +98,8 @@ public sealed class Rect : IDisposable, IEquatable<Rect>
     public override int GetHashCode()
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
-        return NativeMethods.Tv_Rect_hash(Ptr);
+        TerminalFormsException.Check(NativeMethods.TV_Rect_hash(Ptr, out var hash));
+        return hash;
     }
 
     public bool Equals(Rect? other)
@@ -102,7 +108,8 @@ public sealed class Rect : IDisposable, IEquatable<Rect>
         if (other is null)
             return false;
         ObjectDisposedException.ThrowIf(other.IsDisposed, other);
-        return NativeMethods.Tv_Rect_operator_equals(Ptr, other.Ptr);
+        TerminalFormsException.Check(NativeMethods.TV_Rect_equals(Ptr, other.Ptr, out var equals));
+        return equals;
     }
 
     public Point A
@@ -110,13 +117,14 @@ public sealed class Rect : IDisposable, IEquatable<Rect>
         get
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            return new Point(NativeMethods.Tv_Rect_get_a(Ptr));
+            TerminalFormsException.Check(NativeMethods.TV_Rect_get_a(Ptr, out var a));
+            return new Point(a);
         }
         set
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
             ObjectDisposedException.ThrowIf(value.IsDisposed, value);
-            NativeMethods.Tv_Rect_set_a(Ptr, value.Ptr);
+            TerminalFormsException.Check(NativeMethods.TV_Rect_set_a(Ptr, value.Ptr));
         }
     }
 
@@ -125,13 +133,14 @@ public sealed class Rect : IDisposable, IEquatable<Rect>
         get
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            return new Point(NativeMethods.Tv_Rect_get_b(Ptr));
+            TerminalFormsException.Check(NativeMethods.TV_Rect_get_b(Ptr, out var b));
+            return new Point(b);
         }
         set
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
             ObjectDisposedException.ThrowIf(value.IsDisposed, value);
-            NativeMethods.Tv_Rect_set_b(Ptr, value.Ptr);
+            TerminalFormsException.Check(NativeMethods.TV_Rect_set_b(Ptr, value.Ptr));
         }
     }
 }

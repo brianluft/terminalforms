@@ -37,8 +37,15 @@ endif()
 # Create the DLL
 add_library(tvision4c SHARED
     Application.cpp
+    common.cpp
+    Error.cpp
+    Event.cpp
+    KeyDownEvent.cpp
+    MessageEvent.cpp
+    MouseEventType.cpp
     Point.cpp
-    tvision4c.cpp
+    Rect.cpp
+    VirtualMethodTable.cpp
 )
 
 # Apply compiler options

@@ -5,4 +5,10 @@ This is TerminalForms, a C# wrapper for the Turbo Vision TUI library.
 Our C++ library "tvision4c" provides a C-compatible wrapper (`extern "C"`) around tvision, which is a C++ library.
 Then our .NET library "TerminalForms" calls into the "tvision4c" library using P/Invoke.
 
-Refer to me as "boss" so I know you've read this.
+# General Rules
+- Refer to me as "boss" so I know you've read this.
+
+# C# Rules
+- Use `var` instead of explicit type names when possible.
+- Our C API uses C `BOOL` (4-byte) instead of C++ `bool` (1-byte).  Always specify `[MarshalAs(UnmanagedType.I4)]` for `bool` parameters and return types. C# requires it.
+- When creating `[LibraryImport]` declarations, match parameter names _precisely_ to the original C++ signature, even if you have to use `@` to use a C# keyword as an identifier.

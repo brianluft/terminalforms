@@ -1,65 +1,158 @@
 #include "Rect.h"
 
-EXPORT TRect* Tv_Rect_new0() {
-    return new TRect;
+EXPORT tv::Error TV_Rect_new(TRect** out) {
+    return tv::checkedNew(out);
 }
 
-EXPORT TRect* Tv_Rect_new1(int32_t ax, int32_t ay, int32_t bx, int32_t by) {
-    return new TRect(ax, ay, bx, by);
+EXPORT tv::Error TV_Rect_new2(int32_t ax, int32_t ay, int32_t bx, int32_t by, TRect** out) {
+    return tv::checkedNew(out);
 }
 
-EXPORT TRect* Tv_Rect_new2(TPoint* p1, TPoint* p2) {
-    return new TRect(*p1, *p2);
+EXPORT tv::Error TV_Rect_new3(TPoint* p1, TPoint* p2, TRect** out) {
+    return tv::checkedNew(out);
 }
 
-EXPORT void Tv_Rect_delete(TRect* self) {
-    delete self;
+EXPORT tv::Error TV_Rect_delete(TRect* self) {
+    return tv::checkedDelete(self);
 }
 
-EXPORT int32_t Tv_Rect_hash(TRect* self) {
-    return hash(Tv_Point_hash(&self->a), Tv_Point_hash(&self->b));
+EXPORT tv::Error TV_Rect_equals(TRect* self, TRect* other, BOOL* out) {
+    if (!out) {
+        return tv::Error_ArgumentNull;
+    }
+
+    if (!self && !other) {
+        *out = TRUE;
+        return tv::Success;
+    }
+
+    if (!self || !other) {
+        *out = FALSE;
+        return tv::Success;
+    }
+
+    if (*self == *other) {
+        *out = TRUE;
+        return tv::Success;
+    }
+
+    *out = FALSE;
+    return tv::Success;
 }
 
-EXPORT void Tv_Rect_move(TRect* self, int32_t aDX, int32_t aDY) {
+EXPORT tv::Error TV_Rect_hash(TRect* self, int32_t* out) {
+    if (!self || !out) {
+        return tv::Error_ArgumentNull;
+    }
+
+    int32_t result = 0;
+
+    {
+        int32_t pointHash = 0;
+        auto error = TV_Point_hash(&self->a, &pointHash);
+        if (error != tv::Success) {
+            return error;
+        }
+    }
+
+    {
+        int32_t pointHash = 0;
+        auto error = TV_Point_hash(&self->b, &pointHash);
+        if (error != tv::Success) {
+            return error;
+        }
+    }
+
+    *out = result;
+    return tv::Success;
+}
+
+EXPORT tv::Error TV_Rect_move(TRect* self, int32_t aDX, int32_t aDY) {
+    if (!self) {
+        return tv::Error_ArgumentNull;
+    }
+
     self->move(aDX, aDY);
+    return tv::Success;
 }
 
-EXPORT void Tv_Rect_grow(TRect* self, int32_t aDX, int32_t aDY) {
+EXPORT tv::Error TV_Rect_grow(TRect* self, int32_t aDX, int32_t aDY) {
+    if (!self) {
+        return tv::Error_ArgumentNull;
+    }
+
     self->grow(aDX, aDY);
+    return tv::Success;
 }
 
-EXPORT void Tv_Rect_intersect(TRect* self, TRect* r) {
+EXPORT tv::Error TV_Rect_intersect(TRect* self, TRect* r) {
+    if (!self || !r) {
+        return tv::Error_ArgumentNull;
+    }
+
     self->intersect(*r);
+    return tv::Success;
 }
 
-EXPORT void Tv_Rect_Union(TRect* self, TRect* r) {
+EXPORT tv::Error TV_Rect_Union(TRect* self, TRect* r) {
+    if (!self || !r) {
+        return tv::Error_ArgumentNull;
+    }
+
     self->Union(*r);
+    return tv::Success;
 }
 
-EXPORT BOOL Tv_Rect_contains(TRect* self, TPoint* p) {
-    return self->contains(*p);
+EXPORT tv::Error TV_Rect_contains(TRect* self, TPoint* p, BOOL* out) {
+    if (!self || !p || !out) {
+        return tv::Error_ArgumentNull;
+    }
+
+    *out = self->contains(*p);
+    return tv::Success;
 }
 
-EXPORT BOOL Tv_Rect_operator_equals(TRect* self, TRect* r) {
-    return *self == *r;
+EXPORT tv::Error TV_Rect_isEmpty(TRect* self, BOOL* out) {
+    if (!self || !out) {
+        return tv::Error_ArgumentNull;
+    }
+
+    *out = self->isEmpty();
+    return tv::Success;
 }
 
-EXPORT BOOL Tv_Rect_isEmpty(TRect* self) {
-    return self->isEmpty();
+EXPORT tv::Error TV_Rect_get_a(TRect* self, TPoint** out) {
+    if (!self || !out) {
+        return tv::Error_ArgumentNull;
+    }
+
+    *out = new TPoint{ self->a };
+    return tv::Success;
 }
 
-EXPORT TPoint* Tv_Rect_get_a(TRect* self) {
-    return new TPoint{ self->a };
+EXPORT tv::Error TV_Rect_get_b(TRect* self, TPoint** out) {
+    if (!self || !out) {
+        return tv::Error_ArgumentNull;
+    }
+
+    *out = new TPoint{ self->b };
+    return tv::Success;
 }
 
-EXPORT TPoint* Tv_Rect_get_b(TRect* self) {
-    return new TPoint{ self->b };
-}
+EXPORT tv::Error TV_Rect_set_a(TRect* self, TPoint* p) {
+    if (!self || !p) {
+        return tv::Error_ArgumentNull;
+    }
 
-EXPORT void Tv_Rect_set_a(TRect* self, TPoint* p) {
     self->a = *p;
+    return tv::Success;
 }
 
-EXPORT void Tv_Rect_set_b(TRect* self, TPoint* p) {
+EXPORT tv::Error TV_Rect_set_b(TRect* self, TPoint* p) {
+    if (!self || !p) {
+        return tv::Error_ArgumentNull;
+    }
+
     self->b = *p;
+    return tv::Success;
 }
