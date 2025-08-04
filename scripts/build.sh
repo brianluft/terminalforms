@@ -65,3 +65,5 @@ build_terminalforms() {
 
 build_tvision4c
 build_terminalforms
+
+status "success" "Build complete."
