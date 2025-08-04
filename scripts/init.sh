@@ -296,5 +296,15 @@ install_tvision() {
     cd "$ROOT_DIR"
 }
 
+# Restores dotnet tools.
+restore_dotnet_tools() {
+    status "header" "Restoring dotnet tools..."
+    cd "$ROOT_DIR/src"
+    dotnet tool restore
+    status "success" "Restored dotnet tools"
+    cd "$ROOT_DIR"
+}
+
 install_cmake # Must be first, as this creates the initial prefix directory.
 install_tvision
+restore_dotnet_tools

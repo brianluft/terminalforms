@@ -1,5 +1,5 @@
 <Project>
-    <PropertyGroup>
-        <ArtifactsPath>$(MSBuildThisFileDirectory)\..\build\dotnet-artifacts</ArtifactsPath>
-    </PropertyGroup>
+  <PropertyGroup>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)\..\build\dotnet-artifacts</ArtifactsPath>
+  </PropertyGroup>
 </Project>
