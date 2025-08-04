@@ -11,7 +11,7 @@ status() {
     "$ROOT_DIR/scripts/helpers/echo_status.sh" "$@"
 }
 
-# Set OS, ARCH, LINUX_LIBC, WINDOWS_MSVC_ARCH, CMAKE.
+# Set OS, ARCH, etc.
 source "build/config.sh"
 
 # Set CLANG_FORMAT to the path of the clang-format executable.

@@ -1,8 +1,6 @@
-extern "C" {
+#include "tvision4c.h"
 
 // Basic test function that returns 123
-int test_function() {
+int healthCheck() {
     return 123;
 }
-
-}  // extern "C"

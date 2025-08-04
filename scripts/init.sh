@@ -52,28 +52,42 @@ mkdir -p "$SOURCES_DIR"
 PREFIX_DIR="$PWD/build/prefix"
 mkdir -p "$PREFIX_DIR"
 
-
-# Set OS, ARCH, LINUX_LIBC, WINDOWS_MSVC_ARCH.
-# Write a script that sets these variables so we don't have to re-detect every time.
-source "scripts/helpers/detect_system.sh"
+# Set OS, ARCH, etc.
+# Write "config.h" that sets these variables so we don't have to re-detect every time.
+status "action" "Detecting system..."
 CONFIG_FILE="$ROOT_DIR/build/config.sh"
-echo "OS=\"$OS\"" > "$CONFIG_FILE"
-echo "ARCH=\"$ARCH\"" >> "$CONFIG_FILE"
-echo "LINUX_LIBC=\"$LINUX_LIBC\"" >> "$CONFIG_FILE"
-echo "WINDOWS_MSVC_ARCH=\"$WINDOWS_MSVC_ARCH\"" >> "$CONFIG_FILE"
-if [ "$OS" == "mac" ]; then
-    if [ "$MAC_ARCH" == "x64" ]; then
-        echo "CMAKE_FLAGS+=\" -DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0\"" >> "$CONFIG_FILE"
-    elif [ "$MAC_ARCH" == "arm64" ]; then
-        echo "CMAKE_FLAGS+=\" -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0\"" >> "$CONFIG_FILE"
+function write_config_file() {
+    source "scripts/helpers/detect_system.sh"
+    local CMAKE_FLAGS=""
+    if [ "$OS" == "windows" ]; then
+        local RID="win-$ARCH"
+    elif [ "$OS" == "mac" ]; then
+        local RID="osx-$ARCH"
+        if [ "$MAC_ARCH" == "x64" ]; then
+            local CMAKE_FLAGS="-DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0"
+        elif [ "$MAC_ARCH" == "arm64" ]; then
+            local CMAKE_FLAGS="-DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0"
+        else
+            status "error" "Invalid MAC_ARCH: $MAC_ARCH"
+            exit 1
+        fi
     else
-        status "error" "Invalid MAC_ARCH: $MAC_ARCH"
-        exit 1
+        local RID="linux-$ARCH"
     fi
-fi
-source "$CONFIG_FILE"
-
-status "info" "Detected system: $OS $ARCH $LINUX_LIBC"
+    
+    echo "
+OS=\"$OS\"
+ARCH=\"$ARCH\"
+LINUX_LIBC=\"$LINUX_LIBC\"
+WINDOWS_MSVC_ARCH=\"$WINDOWS_MSVC_ARCH\"
+RID=\"$RID\"
+CMAKE_FLAGS=\"$CMAKE_FLAGS\"
+" > "$CONFIG_FILE"
+    
+    source "$CONFIG_FILE"
+}
+write_config_file
+echo \"OS=\$OS | ARCH=\$ARCH | LINUX_LIBC=\$LINUX_LIBC | WINDOWS_MSVC_ARCH=\$WINDOWS_MSVC_ARCH | RID=\$RID\"
 
 # Checks to see if a given URL has been downloaded to the given filename. If not, it downloads it.
 # Sets DOWNLOAD_FILE to the absolute path to the downloaded file.

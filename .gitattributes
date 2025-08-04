@@ -4,6 +4,8 @@
 .clang-format text eol=lf
 .gitattributes text eol=lf
 .gitignore text eol=lf
+*.cpp text eol=lf
+*.h text eol=lf
 *.md text eol=lf
 *.mdc text eol=lf
 *.sh text eol=lf

@@ -16,7 +16,7 @@ status() {
     "$ROOT_DIR/scripts/helpers/echo_status.sh" "$@"
 }
 
-# Set OS, ARCH, LINUX_LIBC, WINDOWS_MSVC_ARCH, CMAKE.
+# Set OS, ARCH, etc.
 source "build/config.sh"
 
 # Builds tvision4c
@@ -57,7 +57,8 @@ build_terminalforms() {
     status "header" "TerminalForms"
 
     cd "$ROOT_DIR/src"
-    dotnet build TerminalForms.sln
+    dotnet build TerminalForms/TerminalForms.csproj --runtime "$RID"
+    dotnet build TerminalForms.Demo/TerminalForms.Demo.csproj --runtime "$RID"
 
     cd "$ROOT_DIR"
 }
