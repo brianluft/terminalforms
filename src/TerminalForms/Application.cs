@@ -2,12 +2,7 @@ namespace TerminalForms;
 
 public class Application
 {
-    public Application()
-    {
-        TestNativeInterop();
-    }
-
-    private static void TestNativeInterop()
+    static Application()
     {
         // Test the P/Invoke connection.
         int result;
