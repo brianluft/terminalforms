@@ -11,6 +11,11 @@
 
 set -euo pipefail
 
+# If $CONFIGURATION is not set, set it to "Debug".
+if [ -z "${CONFIGURATION:-}" ]; then
+    CONFIGURATION="Debug"
+fi
+
 # Change to the repository root.
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 cd ..
@@ -74,7 +79,7 @@ function write_config_file() {
     else
         local RID="linux-$ARCH"
     fi
-    
+
     echo "
 OS=\"$OS\"
 ARCH=\"$ARCH\"
@@ -82,12 +87,13 @@ LINUX_LIBC=\"$LINUX_LIBC\"
 WINDOWS_MSVC_ARCH=\"$WINDOWS_MSVC_ARCH\"
 RID=\"$RID\"
 CMAKE_FLAGS=\"$CMAKE_FLAGS\"
+CONFIGURATION=\"$CONFIGURATION\"
+echo \"OS=\$OS | ARCH=\$ARCH | LINUX_LIBC=\$LINUX_LIBC | WINDOWS_MSVC_ARCH=\$WINDOWS_MSVC_ARCH | RID=\$RID | CONFIGURATION=\$CONFIGURATION\"
 " > "$CONFIG_FILE"
     
     source "$CONFIG_FILE"
 }
 write_config_file
-echo \"OS=\$OS | ARCH=\$ARCH | LINUX_LIBC=\$LINUX_LIBC | WINDOWS_MSVC_ARCH=\$WINDOWS_MSVC_ARCH | RID=\$RID\"
 
 # Checks to see if a given URL has been downloaded to the given filename. If not, it downloads it.
 # Sets DOWNLOAD_FILE to the absolute path to the downloaded file.
@@ -301,10 +307,10 @@ install_tvision() {
     fi
 
     status "action" "Building tvision..."
-    "$CMAKE" --build . --config Release
+    "$CMAKE" --build . --config "$CONFIGURATION"
 
     status "action" "Installing tvision..."
-    "$CMAKE" --install . --config Release
+    "$CMAKE" --install . --config "$CONFIGURATION"
 
     status "success" "Installed tvision"
     cd "$ROOT_DIR"

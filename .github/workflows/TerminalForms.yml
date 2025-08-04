@@ -44,9 +44,11 @@ jobs:
         echo "sha256sum: $(which sha256sum)"
 
     - name: Initialize
-      run: bash scripts/init.sh
+      shell: bash
+      run: CONFIGURATION=Release bash scripts/init.sh
 
     - name: Build
+      shell: bash
       env:
         DOTNET_CLI_TELEMETRY_OPTOUT: 1
         DOTNET_NOLOGO: 1

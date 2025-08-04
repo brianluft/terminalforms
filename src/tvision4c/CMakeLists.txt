@@ -35,7 +35,11 @@ else()
 endif()
 
 # Create the DLL
-add_library(tvision4c SHARED tvision4c.cpp)
+add_library(tvision4c SHARED
+    Application.cpp
+    Point.cpp
+    tvision4c.cpp
+)
 
 # Apply compiler options
 target_compile_options(tvision4c PRIVATE ${COMMON_COMPILE_OPTIONS})
@@ -43,13 +47,19 @@ target_compile_options(tvision4c PRIVATE ${COMMON_COMPILE_OPTIONS})
 # Add include directories for tvision headers
 target_include_directories(tvision4c PRIVATE "${CMAKE_SOURCE_DIR}/../../build/prefix/include")
 
-# Link to tvision library (platform-specific)
-if(WIN32)
-    target_link_libraries(tvision4c "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/tvision.lib")
-elseif(APPLE)
-    target_link_libraries(tvision4c "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision.a" ncurses)
+# Link to tvision library (platform-specific). It's either "tvision" or "tvision-debug".
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(TVISION_SUFFIX "-debug")
 else()
-    target_link_libraries(tvision4c "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision.a" ncursesw)
+    set(TVISION_SUFFIX "")
+endif()
+
+if(WIN32)
+    target_link_libraries(tvision4c "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/tvision${TVISION_SUFFIX}.lib")
+elseif(APPLE)
+    target_link_libraries(tvision4c "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision${TVISION_SUFFIX}.a" ncurses)
+else()
+    target_link_libraries(tvision4c "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision${TVISION_SUFFIX}.a" ncursesw)
 endif()
 
 # Set output directories

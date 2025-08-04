@@ -1,9 +1,25 @@
 #include "tvision4c.h"
+#include <array>
 
-#define Uses_TApplication
-#include <tvision/tv.h>
+namespace tv {
 
-// Basic test function that returns 123
-int healthCheck() {
+void VirtualMethodTable::set(VirtualMethod virtualMethod, void* functionPointer) {
+    methods_[static_cast<size_t>(virtualMethod)] = functionPointer;
+}
+
+void* VirtualMethodTable::get(VirtualMethod virtualMethod) const {
+    return methods_[static_cast<size_t>(virtualMethod)];
+}
+
+VirtualMethodTable virtualMethods;
+
+}  // namespace tv
+
+EXPORT int32_t TvHealthCheck() {
+    // The C# side will verify this value.
     return 123;
+}
+
+EXPORT void TvOverrideMethod(tv::Type type, tv::VirtualMethod virtualMethod, void* functionPointer) {
+    tv::virtualMethods.set(virtualMethod, functionPointer);
 }

@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# If $CONFIGURATION is not set, set it to "Debug".
-if [ -z "${CONFIGURATION:-}" ]; then
-    CONFIGURATION="Debug"
-fi
-
 # Change to the repository root.
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 cd ..
@@ -36,14 +31,16 @@ build_tvision4c() {
             -B "../../build/native-artifacts/tvision4c/build" \
             -S . \
             -DCMAKE_PREFIX_PATH="$ROOT_DIR/build/prefix" \
-            -DCMAKE_INSTALL_PREFIX="$ROOT_DIR/build/prefix"
+            -DCMAKE_INSTALL_PREFIX="$ROOT_DIR/build/prefix" \
+            -DCMAKE_BUILD_TYPE="$CONFIGURATION"
     else
         "$CMAKE" \
             -G "Unix Makefiles" \
             -B "../../build/native-artifacts/tvision4c/build" \
             -S . \
             -DCMAKE_PREFIX_PATH="$ROOT_DIR/build/prefix" \
-            -DCMAKE_INSTALL_PREFIX="$ROOT_DIR/build/prefix"
+            -DCMAKE_INSTALL_PREFIX="$ROOT_DIR/build/prefix" \
+            -DCMAKE_BUILD_TYPE="$CONFIGURATION"
     fi
 
     # Build
