@@ -312,7 +312,7 @@ install_tvision() {
 
 # Restores dotnet tools.
 restore_dotnet_tools() {
-    status "header" "Restoring dotnet tools..."
+    status "header" "dotnet tool restore"
     cd "$ROOT_DIR/src"
     dotnet tool restore
     status "success" "Restored dotnet tools"
