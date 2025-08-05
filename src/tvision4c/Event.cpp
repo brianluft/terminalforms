@@ -2,6 +2,9 @@
 #include "Error.h"
 #include <cstring>
 
+#define Uses_TEventQueue
+#include <tvision/tv.h>
+
 EXPORT tv::Error TV_Event_new(TEvent** out) {
     return tv::checkedNew(out);
 }
@@ -124,7 +127,7 @@ EXPORT tv::Error TV_Event_getMouseEvent(TEvent* self) {
         return tv::Error_ArgumentNull;
     }
 
-    self->getMouseEvent();
+    TEventQueue::getMouseEvent(*self);
     return tv::Success;
 }
 
