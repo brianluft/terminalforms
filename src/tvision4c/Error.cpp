@@ -1,4 +1,6 @@
 #include "Error.h"
+#include <cstring>
+#include <limits>
 
 namespace tv {
 
@@ -25,7 +27,7 @@ EXPORT tv::Error TV_getLastErrorMessage(char* buffer, int32_t bufferSize) {
 
     auto length = tv::lastErrorMessage.length();
 
-    if (bufferSize < length) {
+    if (bufferSize < 0 || static_cast<size_t>(bufferSize) < length) {
         return tv::Error_BufferTooSmall;
     }
 

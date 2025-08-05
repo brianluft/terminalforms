@@ -1,5 +1,6 @@
 #include "Event.h"
 #include "Error.h"
+#include <cstring>
 
 EXPORT tv::Error TV_Event_new(TEvent** out) {
     return tv::checkedNew(out);
