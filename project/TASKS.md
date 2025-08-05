@@ -29,5 +29,6 @@ Remember to do only one at a time (in order) then commit and stop.
   - *🤖 KeyDownEvent was already fully implemented with complete C# wrapper class including disposable pattern, IEquatable implementation, properties for KeyCode/CharCode/ScanCode/ControlKeyState/Text, and all necessary native method declarations with proper marshaling. The implementation follows established patterns and builds successfully.*
 - [x] MessageEvent
   - *🤖 Created `src/TerminalForms/MessageEvent.cs` following the established pattern with disposable wrapper, IEquatable implementation, properties for Command (ushort) and InfoPtr (IntPtr), and all necessary native method calls. The NativeMethods.MessageEvent.cs file was already present with correct P/Invoke declarations. Implementation follows the same pattern as KeyDownEvent.*
-- [ ] MouseEventType
+- [x] MouseEventType
+  - *🤖 Created `src/TerminalForms/MouseEventType.cs` following the established pattern with disposable wrapper, IEquatable implementation, properties for Where (Point), EventFlags (ushort), ControlKeyState (ushort), Buttons (byte), and Wheel (byte). The NativeMethods.MouseEventType.cs file was already present with correct P/Invoke declarations. Implementation follows the same pattern as KeyDownEvent and MessageEvent with proper error checking and disposal handling.*
 - [ ] Go back to `src/TerminalForms/Event.cs` and update it now that we've implemented `KeyDownEvent`/`MessageEvent`/`MouseEventType`.
