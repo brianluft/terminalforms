@@ -1,0 +1,8 @@
+ipstream -> pstream -> TStreamable -> ipstream
+pstream -> TStreamable -> opstream -> pstream
+TStreamable -> opstream -> TStreamable
+TAttrPair -> TColorAttr -> TAttrPair
+TDrawBuffer -> TSystemError -> TDrawBuffer
+TView -> TDrawBuffer -> TView
+TView -> TGroup -> TView
+TMenu -> TMenuItem -> TMenu

@@ -1,0 +1,156 @@
+- [x] CharScanType: (no dependencies)
+- [x] MessageEvent: (no dependencies)
+- [ ] TColorBIOS: (no dependencies)
+- [ ] TColorRGB: (no dependencies)
+- [ ] TColorXTerm: (no dependencies)
+- [ ] TFindDialogRec: (no dependencies)
+- [ ] TMemoData: (no dependencies)
+- [ ] TPMRegs: (no dependencies)
+- [ ] TReplaceDialogRec: (no dependencies)
+- [ ] TResourceItem: (no dependencies)
+- [ ] TSearchRec: (no dependencies)
+- [ ] TTextMetrics: (no dependencies)
+- [ ] write_args: (no dependencies)
+- [ ] Int11trap: (no dependencies)
+- [ ] MsgBoxText: (no dependencies)
+- [ ] TColorIndex: (no dependencies)
+- [ ] TColorItem: (no dependencies)
+- [ ] TCommandSet: (no dependencies)
+- [ ] TCrossRef: (no dependencies)
+- [ ] TDeskInit: (no dependencies)
+- [ ] THelpIndex: (no dependencies)
+- [ ] THWMouse: (no dependencies)
+- [ ] TObject: (no dependencies)
+- [ ] TParagraph: (no dependencies)
+- [x] TPoint: (no dependencies)
+- [ ] TPWObj: (no dependencies)
+- [ ] TSpan: (no dependencies)
+- [ ] TStreamableClass: (no dependencies)
+- [ ] TStrIndexRec: (no dependencies)
+- [ ] TSubsystemsInit: (no dependencies)
+- [ ] TTimerQueue: (no dependencies)
+- [ ] TVMemMgr: (no dependencies)
+- [ ] TColorDesired: TColorBIOS, TColorRGB, TColorXTerm
+- [ ] TColorGroup: TColorItem
+- [ ] TMouse: THWMouse
+- [ ] TNSCollection: TObject
+- [x] MouseEventType: TPoint
+- [x] TRect: TPoint
+- [ ] TStringView: TSpan
+- [ ] fLink: TStreamableClass
+- [ ] TBufListEntry: TVMemMgr
+- [ ] TNSSortedCollection: TNSCollection
+- [ ] TPReadObjects: TNSCollection
+- [ ] TCellChar: TStringView
+- [ ] TClipboard: TStringView
+- [ ] TDirEntry: TStringView
+- [ ] THelpTopic: TCrossRef, TParagraph, TPoint, TStringView
+- [ ] TNode: TStringView
+- [ ] TSItem: TStringView
+- [ ] TPWrittenObjects: TNSSortedCollection
+- [ ] TStreamableTypes: TNSSortedCollection, TStreamableClass
+- [ ] THelpFile: THelpIndex, THelpTopic
+- [x] KeyDownEvent: CharScanType, TKey, TStringView
+- [ ] TAttrPair: TColorAttr
+- [ ] TColorAttr: TAttrPair, TColorDesired
+- [x] TEvent: KeyDownEvent, MessageEvent, MouseEventType
+- [ ] TListBoxRec: TCollection
+- [ ] TScreenCell: TCellChar, TColorAttr
+- [ ] fpbase: pstream
+- [ ] fpstream: fpbase, iopstream
+- [ ] ifpstream: fpbase, ipstream
+- [ ] iopstream: ipstream, opstream
+- [ ] ipstream: pstream, TPReadObjects, TStreamable, TStreamableClass
+- [ ] ofpstream: fpbase, opstream
+- [ ] opstream: pstream, TPWrittenObjects, TStreamable, TStringView
+- [ ] otstream: TTerminal
+- [ ] pstream: TStreamable, TStreamableClass, TStreamableTypes
+- [ ] TApplication: TEvent, TProgram, TRect, TSubsystemsInit
+- [ ] TBackground: TPalette, TRect, TView
+- [ ] TButton: TAttrPair, TDrawBuffer, TEvent, TPalette, TRect, TStringView, TView
+- [ ] TChDirDialog: ipstream, opstream, TButton, TDialog, TDirListBox, TEvent, TInputLine, TPoint, TWindowInit
+- [ ] TCheckBoxes: TCluster, TRect, TSItem
+- [ ] TCluster: TEvent, TPalette, TPoint, TRect, TSItem, TStringCollection, TView
+- [ ] TCollection: ipstream, opstream, TNSCollection, TStreamable
+- [ ] TColorDialog: TColorDisplay, TColorGroup, TColorGroupList, TColorSelector, TDialog, TEvent, TLabel, TMonoSelector, TPalette
+- [ ] TColorDisplay: TColorAttr, TEvent, TRect, TStringView, TView
+- [ ] TColorGroupList: TColorGroup, TColorItem, TEvent, TListViewer, TRect, TScrollBar
+- [ ] TColorItemList: TColorItem, TEvent, TListViewer, TRect, TScrollBar
+- [ ] TColorSelector: TEvent, TRect, TView
+- [ ] TDeskTop: TBackground, TDeskInit, TEvent, TGroup, TRect
+- [ ] TDialog: TEvent, TPalette, TRect, TStringView, TWindow
+- [ ] TDirCollection: ipstream, opstream, TCollection, TDirEntry
+- [ ] TDirListBox: TDirCollection, TEvent, TListBox, TRect, TScrollBar, TStringView
+- [ ] TDisplay: TView
+- [ ] TDrawBuffer: TAttrPair, TColorAttr, TScreenCell, TSpan, TStringView, TSystemError, TView
+- [ ] TDrawSurface: TPoint, TScreenCell
+- [ ] TEditor: TAttrPair, TColorAttr, TEvent, TIndicator, TMenuItem, TPalette, TPoint, TRect, TScreenCell, TScrollBar, TSpan, TStringView, TView
+- [ ] TEditWindow: TEvent, TFileEditor, TPoint, TRect, TStringView, TWindow
+- [ ] TEventQueue: MouseEventType, TEvent, TStringView, TView
+- [ ] TFileCollection: ipstream, opstream, TSearchRec, TSortedCollection
+- [ ] TFileDialog: ipstream, opstream, TDialog, TEvent, TFileInputLine, TFileList, TPoint, TStringView, TWindowInit
+- [ ] TFileEditor: TEditor, TEvent, TIndicator, TRect, TScrollBar, TStringView
+- [ ] TFileInfoPane: TEvent, TPalette, TRect, TSearchRec, TView
+- [ ] TFileInputLine: ipstream, opstream, TEvent, TInputLine, TRect
+- [ ] TFileList: TEvent, TFileCollection, TRect, TScrollBar, TSortedListBox, TStringView
+- [ ] TFilterValidator: ipstream, opstream, TStringView, TValidator
+- [ ] TFrame: ipstream, opstream, TColorAttr, TDrawBuffer, TEvent, TPalette, TRect, TView
+- [ ] TGroup: ipstream, opstream, TEvent, TRect, TScreenCell, TView
+- [ ] THardwareInfo: MouseEventType, TEvent, TScreenCell, TStringView
+- [ ] THelpViewer: TEvent, THelpFile, THelpTopic, TPalette, TPoint, TRect, TScrollBar, TScroller
+- [ ] THelpWindow: THelpFile, TPalette, TWindow
+- [ ] THistInit: TListViewer, TRect, TWindow
+- [ ] THistory: TEvent, THistoryWindow, TInputLine, TPalette, TRect, TView
+- [ ] THistoryViewer: TEvent, TListViewer, TPalette, TRect, TScrollBar
+- [ ] THistoryWindow: TEvent, THistInit, TListViewer, TPalette, TRect, TWindow
+- [ ] TIndicator: TPalette, TPoint, TRect, TView
+- [ ] TInputLine: TEvent, TPalette, TRect, TValidator, TView
+- [ ] TKey: ipstream, opstream
+- [ ] TLabel: TEvent, TPalette, TRect, TStaticText, TStringView, TView
+- [ ] TListBox: TCollection, TListViewer, TRect, TScrollBar
+- [ ] TListViewer: ipstream, opstream, TEvent, TPalette, TRect, TScrollBar, TView
+- [ ] TLookupValidator: TValidator
+- [ ] TMemo: TEditor, TEvent, TIndicator, TPalette, TRect, TScrollBar
+- [ ] TMenu: TMenuItem
+- [ ] TMenuBar: TMenu, TMenuItem, TMenuView, TRect, TSubMenu
+- [ ] TMenuBox: TDrawBuffer, TMenu, TMenuItem, TMenuView, TRect
+- [ ] TMenuItem: TKey, TMenu, TStringView
+- [ ] TMenuPopup: TEvent, TMenu, TMenuBox, TMenuView, TRect
+- [ ] TMenuView: TEvent, TKey, TMenu, TMenuItem, TPalette, TRect, TView
+- [ ] TMonoSelector: TCluster, TEvent, TRect
+- [ ] TMultiCheckBoxes: TCluster, TRect, TSItem
+- [ ] TOutline: ipstream, opstream, TNode, TOutlineViewer, TRect, TScrollBar
+- [ ] TOutlineViewer: TEvent, TNode, TPalette, TRect, TScrollBar, TScroller
+- [ ] TPalette: TColorAttr
+- [ ] TParamText: TRect, TStaticText
+- [ ] TProgInit: TDeskTop, TMenuBar, TRect, TStatusLine
+- [ ] TProgram: TDeskTop, TDialog, TEvent, TGroup, TMenuBar, TPalette, TProgInit, TStatusLine, TTimerQueue, TView, TWindow
+- [ ] TPXPictureValidator: ipstream, opstream, TStringView, TValidator
+- [ ] TRadioButtons: TCluster, TRect, TSItem
+- [ ] TRangeValidator: ipstream, opstream, TFilterValidator
+- [ ] TResourceCollection: ipstream, opstream, TStringCollection
+- [ ] TResourceFile: fpstream, TObject, TResourceCollection, TStreamable
+- [ ] TScreen: TDisplay, TScreenCell
+- [ ] TScrollBar: ipstream, opstream, TEvent, TPalette, TRect, TView
+- [ ] TScroller: ipstream, opstream, TEvent, TPalette, TPoint, TRect, TScrollBar, TView
+- [ ] TSortedCollection: ipstream, opstream, TCollection, TNSSortedCollection
+- [ ] TSortedListBox: ipstream, TEvent, TListBox, TRect, TScrollBar, TSortedCollection
+- [ ] TStaticText: TPalette, TRect, TStringView, TView
+- [ ] TStatusDef: TStatusItem
+- [ ] TStatusItem: TKey, TStringView
+- [ ] TStatusLine: TEvent, TPalette, TPoint, TRect, TStatusDef, TStatusItem, TView
+- [ ] TStreamable: ipstream, opstream
+- [ ] TStringCollection: ipstream, opstream, TSortedCollection
+- [ ] TStringList: ipstream, opstream, TObject, TStreamable, TStrIndexRec
+- [ ] TStringLookupValidator: ipstream, opstream, TLookupValidator, TStringCollection
+- [ ] TStrListMaker: ipstream, opstream, TObject, TStreamable, TStrIndexRec, TStringList
+- [ ] TSubMenu: TKey, TMenuItem, TStringView
+- [ ] TSurfaceView: TDrawSurface, TPalette, TPoint, TRect, TView
+- [ ] TSystemError: TDrawBuffer
+- [ ] TTerminal: TRect, TScrollBar, TTextDevice
+- [ ] TText: TColorAttr, TScreenCell, TSpan, TStringView, TTextMetrics
+- [ ] TTextDevice: TRect, TScrollBar, TScroller
+- [ ] TValidator: ipstream, opstream, TObject, TStreamable
+- [ ] TView: ipstream, opstream, TAttrPair, TColorAttr, TCommandSet, TDrawBuffer, TEvent, TGroup, TObject, TPalette, TPoint, TRect, TScreenCell, TSpan, TStreamable
+- [ ] TWindow: ipstream, opstream, TEvent, TFrame, TGroup, TPalette, TPoint, TRect, TScrollBar, TStringView, TWindowInit
+- [ ] TWindowInit: TFrame, TRect
