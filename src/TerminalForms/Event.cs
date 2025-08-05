@@ -78,18 +78,18 @@ public sealed class Event : IDisposable, IEquatable<Event>
         }
     }
 
-    public IntPtr Mouse
+    public MouseEventType Mouse
     {
         get
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
             TerminalFormsException.Check(NativeMethods.TV_Event_get_mouse(Ptr, out var mousePtr));
-            return mousePtr;
+            return new MouseEventType(mousePtr);
         }
         set
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TerminalFormsException.Check(NativeMethods.TV_Event_set_mouse(Ptr, value));
+            TerminalFormsException.Check(NativeMethods.TV_Event_set_mouse(Ptr, value.Ptr));
         }
     }
 
@@ -110,7 +110,7 @@ public sealed class Event : IDisposable, IEquatable<Event>
         }
     }
 
-    public IntPtr Message
+    public MessageEvent Message
     {
         get
         {
@@ -118,12 +118,12 @@ public sealed class Event : IDisposable, IEquatable<Event>
             TerminalFormsException.Check(
                 NativeMethods.TV_Event_get_message(Ptr, out var messagePtr)
             );
-            return messagePtr;
+            return new MessageEvent(messagePtr);
         }
         set
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TerminalFormsException.Check(NativeMethods.TV_Event_set_message(Ptr, value));
+            TerminalFormsException.Check(NativeMethods.TV_Event_set_message(Ptr, value.Ptr));
         }
     }
 
