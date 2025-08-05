@@ -303,6 +303,7 @@ install_tvision() {
             -DCMAKE_PREFIX_PATH="$PREFIX_DIR" \
             -DCMAKE_INSTALL_PREFIX="$PREFIX_DIR" \
             -DTV_BUILD_EXAMPLES=OFF \
+            -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             ..
     fi
 
