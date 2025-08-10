@@ -14,13 +14,12 @@ You will be given the name of a type to bind, below it will be `Foo`. We will fi
         - Your output:
             - `src\tvision4c\KeyDownEvent.h`
             - `src\tvision4c\KeyDownEvent.cpp`
-            - `src\TerminalForms\NativeMethods.KeyDownEvent.cs`
             - `src\TerminalForms\KeyDownEvent.cs`
     - For types that DO contain virtual functions: STOP and inform me. I have not yet written these instructions.
 4. Create `src\tvision4c\Foo.h`
 5. Create `src\tvision4c\Foo.cpp`
 6. Run `scripts/build.sh` to check for mistakes in your .h/.cpp.
-7. Create `src\TerminalForms\Bar\NativeMethods.Foo.cs` with namespace `TerminalForms.Bar` -- remember that `Foo` was declared in `bar.h`. Here are the namespace suffixes for all the public tvision headers. Note that multiple .h files may be in the same C# namespace.
+7. Create `src\TerminalForms\Bar\Foo.cs` with namespace `TerminalForms.Bar` -- remember that `Foo` was declared in `bar.h`. Here are the namespace suffixes for all the public tvision headers. Note that multiple .h files may be in the same C# namespace.
     app.h -> Application
     buffers.h -> Buffers
     colors.h -> Colors
@@ -50,7 +49,5 @@ You will be given the name of a type to bind, below it will be `Foo`. We will fi
     util.h -> Utilities
     validate.h -> Validators
     views.h -> Views
-8. Run `scripts/build.sh` to check for mistakes in your NativeMethods .cs.
-9. Create `src\TerminalForms\Bar\Foo.cs` with namespace `TerminalForms.Bar`
-10. Run `scripts/build.sh` to check for mistakes in your top-level .cs.
+10. Run `scripts/build.sh` to check for mistakes in your .cs.
 11. Update `doc\tvision\type_order.md` to check off `Foo`.
