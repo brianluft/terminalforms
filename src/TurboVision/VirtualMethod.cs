@@ -1,4 +1,4 @@
-namespace TerminalForms;
+namespace TurboVision;
 
 // Matches `src\tvision4c\VirtualMethod.h`
 public enum VirtualMethod : int

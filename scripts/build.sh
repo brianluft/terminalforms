@@ -14,7 +14,6 @@ status() {
 # Set OS, ARCH, etc.
 source "build/config.sh"
 
-# Builds tvision4c
 build_tvision4c() {
     status "header" "tvision4c"
 
@@ -49,18 +48,22 @@ build_tvision4c() {
     cd "$ROOT_DIR"
 }
 
-# Builds TerminalForms
-build_terminalforms() {
-    status "header" "TerminalForms"
-
+build_turbovision() {
+    status "header" "TurboVision"
     cd "$ROOT_DIR/src"
-    dotnet build TerminalForms/TerminalForms.csproj --runtime "$RID"
-    dotnet build TerminalForms.Demo/TerminalForms.Demo.csproj --runtime "$RID"
+    dotnet build TurboVision/TurboVision.csproj --runtime "$RID"
+    cd "$ROOT_DIR"
+}
 
+build_turbovision_demo() {
+    status "header" "TurboVision.Demo"
+    cd "$ROOT_DIR/src"
+    dotnet build TurboVision.Demo/TurboVision.Demo.csproj --runtime "$RID"
     cd "$ROOT_DIR"
 }
 
 build_tvision4c
-build_terminalforms
+build_turbovision
+build_turbovision_demo
 
 status "success" "Build complete."

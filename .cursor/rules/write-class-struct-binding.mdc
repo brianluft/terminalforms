@@ -1,0 +1,56 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+You will be given the name of a type to bind, below it will be `Foo`. We will first write the C binding. Then we will use the C binding to write the C# binding. We have a strict convention to follow in order to write consistent and predictable bindings.
+
+1. Grep for `Foo`. Read the .h file declaring `Foo` in `build/prefix/include/tvision/`. You'll need the name of the declaring .h file later--we wll use it as part of our C# namespace. Remember it. For `Foo` let's say it is in `bar.h`.
+2. Make a decision: does this type contain virtual functions, yes or no? This will determine which implementation pattern we follow.
+3. Read the fully worked pattern provided below.
+    - For types that DO NOT contain virtual functions:
+        - Your input:
+            - `build\prefix\include\tvision\system.h` (lines 178-216)
+        - Your output:
+            - `src\tvision4c\KeyDownEvent.h`
+            - `src\tvision4c\KeyDownEvent.cpp`
+            - `src\TerminalForms\NativeMethods.KeyDownEvent.cs`
+            - `src\TerminalForms\KeyDownEvent.cs`
+    - For types that DO contain virtual functions: STOP and inform me. I have not yet written these instructions.
+4. Create `src\tvision4c\Foo.h`
+5. Create `src\tvision4c\Foo.cpp`
+6. Run `scripts/build.sh` to check for mistakes in your .h/.cpp.
+7. Create `src\TerminalForms\Bar\NativeMethods.Foo.cs` with namespace `TerminalForms.Bar` -- remember that `Foo` was declared in `bar.h`. Here are the namespace suffixes for all the public tvision headers. Note that multiple .h files may be in the same C# namespace.
+    app.h -> Application
+    buffers.h -> Buffers
+    colors.h -> Colors
+    colorsel.h -> Dialogs
+    config.h -> Configuration
+    dialogs.h -> Dialogs
+    drawbuf.h -> DrawBuffer
+    editors.h -> Editors
+    hardware.h -> Hardware
+    help.h -> Help
+    helpbase.h -> HelpBase
+    menus.h -> Menus
+    msgbox.h -> Dialogs
+    objects.h -> Objects
+    outline.h -> Outlines
+    resource.h -> Resources
+    scrncell.h -> ScreenCells
+    stddlg.h -> Dialogs
+    surface.h -> Surfaces
+    system.h -> System
+    textview.h -> TextView
+    tkeys.h -> Keys
+    tobjstrm.h -> ObjectStreams
+    ttext.h -> Text
+    ttypes.h -> Types
+    tvobjs.h -> Objects
+    util.h -> Utilities
+    validate.h -> Validators
+    views.h -> Views
+8. Run `scripts/build.sh` to check for mistakes in your NativeMethods .cs.
+9. Create `src\TerminalForms\Bar\Foo.cs` with namespace `TerminalForms.Bar`
+10. Run `scripts/build.sh` to check for mistakes in your top-level .cs.
+11. Update `doc\tvision\type_order.md` to check off `Foo`.

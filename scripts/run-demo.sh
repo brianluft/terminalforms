@@ -8,4 +8,4 @@ cd ..
 # Set OS, ARCH, etc.
 source "build/config.sh"
 
-"build/dotnet-artifacts/bin/TerminalForms.Demo/debug_$RID/TerminalForms.Demo.exe"
+"build/dotnet-artifacts/bin/TurboVision.Demo/debug_$RID/TurboVision.Demo.exe"

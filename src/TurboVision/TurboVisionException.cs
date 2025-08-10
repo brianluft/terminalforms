@@ -1,8 +1,8 @@
 using System.Text;
 
-namespace TerminalForms;
+namespace TurboVision;
 
-public class TerminalFormsException(Error error, string? message = null)
+public class TurboVisionException(Error error, string? message = null)
     : Exception(message ?? error.GetDefaultMessage())
 {
     public Error Error => error;
@@ -23,10 +23,10 @@ public class TerminalFormsException(Error error, string? message = null)
                 var utf8Message = new byte[messageLength];
                 NativeMethods.TV_getLastErrorMessage(utf8Message, utf8Message.Length);
                 var message = Encoding.UTF8.GetString(utf8Message);
-                throw new TerminalFormsException(code, message);
+                throw new TurboVisionException(code, message);
             }
         }
 
-        throw new TerminalFormsException(code);
+        throw new TurboVisionException(code);
     }
 }

@@ -1,8 +1,10 @@
 using System.Text;
 
-namespace TerminalForms;
+namespace TurboVision;
 
-public static class Global
+internal static class Global
 {
+    public const string DLL_NAME = "tvision4c";
+
     public static UTF8Encoding UTF8Encoding { get; } = new UTF8Encoding(false);
 }

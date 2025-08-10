@@ -1,4 +1,4 @@
-namespace TerminalForms;
+namespace TurboVision;
 
 // Matches `src\tvision4c\Error.h`
 public enum Error
@@ -22,7 +22,7 @@ public static class ErrorExtensions
             Error.Success => "The operation completed successfully.",
             Error.Error_Unknown => "An unknown error occurred.",
             Error.Error_NativeInteropFailure =>
-                "There was a problem connecting to the TerminalForms native library (tvision4c).",
+                "There was a problem connecting to the TurboVision native library (tvision4c).",
             Error.Error_OutOfMemory => "There is not enough memory to complete the operation.",
             Error.Error_ArgumentNull => "The function argument must not be null.",
             Error.Error_ArgumentOutOfRange => "The function argument is out of range.",

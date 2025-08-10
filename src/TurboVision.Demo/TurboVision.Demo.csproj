@@ -6,6 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../TerminalForms/TerminalForms.csproj" />
+    <ProjectReference Include="../TurboVision/TurboVision.csproj" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-- [ ] CharScanType
+- [x] CharScanType (inlined in KeyDownEvent)
 - [ ] MessageEvent
 - [ ] TColorBIOS
 - [ ] TColorRGB

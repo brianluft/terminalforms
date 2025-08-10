@@ -12,6 +12,6 @@ Then our .NET library "TerminalForms" calls into the "tvision4c" library using P
 - Use `var` instead of explicit type names when possible.
 - Our C API uses C `BOOL` (4-byte) instead of C++ `bool` (1-byte).  Always specify `[MarshalAs(UnmanagedType.I4)]` for `bool` parameters and return types. C# requires it.
 - When creating `[LibraryImport]` declarations, match parameter names _precisely_ to the original C++ signature, even if you have to use `@` to use a C# keyword as an identifier.
-- The native functions all return `enum Error`. Wrap your native calls in `TerminalFormsException.Check(Error)` which will throw an exception if the error code is not successful.
+- The native functions all return `enum Error`. Wrap your native calls in `TurboVisionException.Check(Error)` which will throw an exception if the error code is not successful.
 - Prefer modern `unsafe`/`Span` interop techniques over old fashioned `Marshal`/`IntPtr` techniques.
 - When converting a C# string to UTF-8, use `Global.UTFEncoding` which is configured _not_ to emit a BOM.
