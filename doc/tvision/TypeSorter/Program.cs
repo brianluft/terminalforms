@@ -36,6 +36,14 @@ class Program
         // Get all type names
         var allTypes = typesData.structNames.Concat(typesData.classNames).ToHashSet();
 
+        // Remove streaming types we don't care about
+        var streamingTypes = new HashSet<string> { 
+            "ipstream", "pstream", "TStreamable", "opstream", 
+            "fpbase", "fpstream", "ifpstream", "iopstream", "ofpstream", "otstream",
+            "StreamableInit"
+        };
+        allTypes.ExceptWith(streamingTypes);
+
         // Build adjacency list (what each type depends on)
         var dependencies = new Dictionary<string, HashSet<string>>();
         
@@ -45,10 +53,12 @@ class Program
             dependencies[type] = new HashSet<string>();
         }
 
-        // Process dependencies
+        // Process dependencies (excluding self-dependencies and streaming types)
         foreach (var dep in typesData.dependencies)
         {
-            if (allTypes.Contains(dep.source) && allTypes.Contains(dep.target))
+            if (allTypes.Contains(dep.source) && allTypes.Contains(dep.target) && 
+                dep.source != dep.target && 
+                !streamingTypes.Contains(dep.source) && !streamingTypes.Contains(dep.target))
             {
                 dependencies[dep.source].Add(dep.target);
             }
@@ -83,7 +93,7 @@ class Program
     {
         var result = new List<string>();
         var inDegree = new Dictionary<string, int>();
-        var queue = new Queue<string>();
+        var stack = new Stack<string>();
 
         // Calculate in-degrees (how many dependencies each type has)
         foreach (var type in allTypes)
@@ -91,24 +101,25 @@ class Program
             inDegree[type] = dependencies[type].Count;
         }
 
-        // Find all types with no dependencies (in-degree 0)
-        foreach (var type in allTypes)
+        // Find all types with no dependencies (in-degree 0) and add to stack
+        foreach (var type in allTypes.OrderBy(x => x)) // Sort for deterministic results
         {
             if (inDegree[type] == 0)
             {
-                queue.Enqueue(type);
+                stack.Push(type);
             }
         }
 
-        // Process types with no dependencies first
+        // Process types in depth-first topological order
         var processed = new HashSet<string>();
-        while (queue.Count > 0)
+        while (stack.Count > 0)
         {
-            var current = queue.Dequeue();
+            var current = stack.Pop();
             result.Add(current);
             processed.Add(current);
 
-            // For each type that depends on the current type, reduce its in-degree
+            // Find types that were just unblocked by processing current type
+            var newlyAvailable = new List<string>();
             foreach (var otherType in allTypes)
             {
                 if (dependencies[otherType].Contains(current))
@@ -116,25 +127,21 @@ class Program
                     inDegree[otherType]--;
                     if (inDegree[otherType] == 0 && !processed.Contains(otherType))
                     {
-                        queue.Enqueue(otherType);
+                        newlyAvailable.Add(otherType);
                     }
                 }
             }
+
+            // Add newly available types to stack (in reverse order for consistent processing)
+            foreach (var type in newlyAvailable.OrderByDescending(x => x))
+            {
+                stack.Push(type);
+            }
         }
 
-        // Any remaining types are part of cycles
-        var cyclicTypes = allTypes.Where(t => !processed.Contains(t)).ToList();
-        if (cyclicTypes.Any())
-        {
-            Console.WriteLine($"Found {cyclicTypes.Count} types in cycles:");
-            foreach (var type in cyclicTypes.OrderBy(x => x))
-            {
-                Console.WriteLine($"  {type}");
-            }
-            
-            // Add cyclic types at the end, sorted alphabetically for consistency
-            result.AddRange(cyclicTypes.OrderBy(x => x));
-        }
+        // Add any remaining unprocessed types (those with unresolved dependencies/cycles)
+        var remainingTypes = allTypes.Where(t => !processed.Contains(t)).OrderBy(x => x).ToList();
+        result.AddRange(remainingTypes);
 
         return result;
     }
