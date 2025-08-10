@@ -2,41 +2,35 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.Objects;
 
-public partial class Point : IDisposable, IEquatable<Point>
+public partial class Point : NativeObject<Point>
 {
-    public bool IsDisposed { get; private set; }
-
-    public IntPtr Ptr { get; }
-
     public Point()
+        : base(New(), owned: true) { }
+
+    private static IntPtr New()
     {
         TurboVisionException.Check(NativeMethods.TV_Point_new(out var ptr));
-        Ptr = ptr;
+        return ptr;
     }
 
-    public Point(IntPtr ptr)
+    internal Point(IntPtr ptr, bool owned)
+        : base(ptr, owned) { }
+
+    protected override void DeleteCore()
     {
-        Ptr = ptr;
+        TurboVisionException.Check(NativeMethods.TV_Point_delete(Ptr));
     }
 
-    ~Point()
+    protected override bool EqualsCore(Point other)
     {
-        Dispose(false);
+        TurboVisionException.Check(NativeMethods.TV_Point_equals(Ptr, other.Ptr, out var equals));
+        return equals;
     }
 
-    public void Dispose()
+    protected override int GetHashCodeCore()
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (!IsDisposed)
-        {
-            TurboVisionException.Check(NativeMethods.TV_Point_delete(Ptr));
-            IsDisposed = true;
-        }
+        TurboVisionException.Check(NativeMethods.TV_Point_hash(Ptr, out var hash));
+        return hash;
     }
 
     public void Add(Point adder)
@@ -62,7 +56,7 @@ public partial class Point : IDisposable, IEquatable<Point>
         TurboVisionException.Check(
             NativeMethods.TV_Point_operator_add(one.Ptr, two.Ptr, out var ptr)
         );
-        return new Point(ptr);
+        return new Point(ptr, owned: true);
     }
 
     public static Point operator -(Point one, Point two)
@@ -72,29 +66,7 @@ public partial class Point : IDisposable, IEquatable<Point>
         TurboVisionException.Check(
             NativeMethods.TV_Point_operator_subtract(one.Ptr, two.Ptr, out var ptr)
         );
-        return new Point(ptr);
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return Equals(other: obj as Point);
-    }
-
-    public override int GetHashCode()
-    {
-        ObjectDisposedException.ThrowIf(IsDisposed, this);
-        TurboVisionException.Check(NativeMethods.TV_Point_hash(Ptr, out var hash));
-        return hash;
-    }
-
-    public bool Equals(Point? other)
-    {
-        ObjectDisposedException.ThrowIf(IsDisposed, this);
-        if (other is null)
-            return false;
-        ObjectDisposedException.ThrowIf(other.IsDisposed, other);
-        TurboVisionException.Check(NativeMethods.TV_Point_equals(Ptr, other.Ptr, out var equals));
-        return equals;
+        return new Point(ptr, owned: true);
     }
 
     public int X

@@ -2,67 +2,37 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.System;
 
-public partial class MessageEvent : IDisposable, IEquatable<MessageEvent>
+public partial class MessageEvent : NativeObject<MessageEvent>
 {
-    public bool IsDisposed { get; private set; }
-
-    public IntPtr Ptr { get; }
-
     public MessageEvent()
+        : base(New(), owned: true) { }
+
+    private static IntPtr New()
     {
         TurboVisionException.Check(NativeMethods.TV_MessageEvent_new(out var ptr));
-        Ptr = ptr;
+        return ptr;
     }
 
-    public MessageEvent(IntPtr ptr)
+    internal MessageEvent(IntPtr ptr, bool owned)
+        : base(ptr, owned) { }
+
+    protected override void DeleteCore()
     {
-        Ptr = ptr;
+        TurboVisionException.Check(NativeMethods.TV_MessageEvent_delete(Ptr));
     }
 
-    ~MessageEvent()
+    protected override bool EqualsCore(MessageEvent other)
     {
-        Dispose(false);
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (!IsDisposed)
-        {
-            TurboVisionException.Check(NativeMethods.TV_MessageEvent_delete(Ptr));
-            IsDisposed = true;
-        }
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return Equals(other: obj as MessageEvent);
-    }
-
-    public override int GetHashCode()
-    {
-        ObjectDisposedException.ThrowIf(IsDisposed, this);
-
-        TurboVisionException.Check(NativeMethods.TV_MessageEvent_hash(Ptr, out var hash));
-        return hash;
-    }
-
-    public bool Equals(MessageEvent? other)
-    {
-        ObjectDisposedException.ThrowIf(IsDisposed, this);
-        if (other is null)
-            return false;
-        ObjectDisposedException.ThrowIf(other.IsDisposed, other);
-
         TurboVisionException.Check(
             NativeMethods.TV_MessageEvent_equals(Ptr, other.Ptr, out var equals)
         );
         return equals;
+    }
+
+    protected override int GetHashCodeCore()
+    {
+        TurboVisionException.Check(NativeMethods.TV_MessageEvent_hash(Ptr, out var hash));
+        return hash;
     }
 
     public ushort Command

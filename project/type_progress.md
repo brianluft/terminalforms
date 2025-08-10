@@ -2,8 +2,9 @@
 - [x] MouseEventType (TPoint)
 - [x] TRect (TPoint)
 - [x] write_args
-- [ ] TVMemMgr
-- [ ] TBufListEntry (TVMemMgr)
+- [x] CharScanType
+- [x] KeyDownEvent (CharScanType, TKey, TStringView)
+- [x] TEvent (KeyDownEvent, MessageEvent, MouseEventType)
 - [ ] TTimerQueue
 - [ ] TTextMetrics
 - [ ] TSubsystemsInit
@@ -68,9 +69,6 @@
 - [ ] MsgBoxText
 - [ ] MessageEvent
 - [ ] Int11trap
-- [ ] CharScanType
-- [ ] KeyDownEvent (CharScanType, TKey, TStringView)
-- [ ] TEvent (KeyDownEvent, MessageEvent, MouseEventType)
 - [ ] TApplication (TEvent, TProgram, TRect, TSubsystemsInit)
 - [ ] TAttrPair (TColorAttr)
 - [ ] TBackground (TPalette, TRect, TView)

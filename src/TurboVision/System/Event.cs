@@ -2,65 +2,35 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.System;
 
-public partial class Event : IDisposable, IEquatable<Event>
+public partial class Event : NativeObject<Event>
 {
-    public bool IsDisposed { get; private set; }
-
-    public IntPtr Ptr { get; }
-
     public Event()
+        : base(New(), owned: true) { }
+
+    private static IntPtr New()
     {
         TurboVisionException.Check(NativeMethods.TV_Event_new(out var ptr));
-        Ptr = ptr;
+        return ptr;
     }
 
-    public Event(IntPtr ptr)
+    internal Event(IntPtr ptr, bool owned)
+        : base(ptr, owned) { }
+
+    protected override void DeleteCore()
     {
-        Ptr = ptr;
+        TurboVisionException.Check(NativeMethods.TV_Event_delete(Ptr));
     }
 
-    ~Event()
+    protected override bool EqualsCore(Event other)
     {
-        Dispose(false);
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (!IsDisposed)
-        {
-            TurboVisionException.Check(NativeMethods.TV_Event_delete(Ptr));
-            IsDisposed = true;
-        }
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return Equals(other: obj as Event);
-    }
-
-    public override int GetHashCode()
-    {
-        ObjectDisposedException.ThrowIf(IsDisposed, this);
-
-        TurboVisionException.Check(NativeMethods.TV_Event_hash(Ptr, out var hash));
-        return hash;
-    }
-
-    public bool Equals(Event? other)
-    {
-        ObjectDisposedException.ThrowIf(IsDisposed, this);
-        if (other is null)
-            return false;
-        ObjectDisposedException.ThrowIf(other.IsDisposed, other);
-
         TurboVisionException.Check(NativeMethods.TV_Event_equals(Ptr, other.Ptr, out var equals));
         return equals;
+    }
+
+    protected override int GetHashCodeCore()
+    {
+        TurboVisionException.Check(NativeMethods.TV_Event_hash(Ptr, out var hash));
+        return hash;
     }
 
     public ushort What
@@ -84,7 +54,7 @@ public partial class Event : IDisposable, IEquatable<Event>
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
             TurboVisionException.Check(NativeMethods.TV_Event_get_mouse(Ptr, out var mousePtr));
-            return new MouseEventType(mousePtr);
+            return new MouseEventType(mousePtr, owned: true);
         }
         set
         {
@@ -99,7 +69,7 @@ public partial class Event : IDisposable, IEquatable<Event>
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
             TurboVisionException.Check(NativeMethods.TV_Event_get_keyDown(Ptr, out var keyDownPtr));
-            return new KeyDownEvent(keyDownPtr);
+            return new KeyDownEvent(keyDownPtr, owned: true);
         }
         set
         {
@@ -114,7 +84,7 @@ public partial class Event : IDisposable, IEquatable<Event>
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
             TurboVisionException.Check(NativeMethods.TV_Event_get_message(Ptr, out var messagePtr));
-            return new MessageEvent(messagePtr);
+            return new MessageEvent(messagePtr, owned: true);
         }
         set
         {

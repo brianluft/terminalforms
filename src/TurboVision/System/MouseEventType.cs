@@ -3,70 +3,37 @@ using TurboVision.Objects;
 
 namespace TurboVision.System;
 
-public partial class MouseEventType : IDisposable, IEquatable<MouseEventType>
+public partial class MouseEventType : NativeObject<MouseEventType>
 {
-    public bool IsDisposed { get; private set; }
-
-    public IntPtr Ptr { get; }
-
     public MouseEventType()
+        : base(New(), owned: true) { }
+
+    private static IntPtr New()
     {
         TurboVisionException.Check(NativeMethods.TV_MouseEventType_new(out var ptr));
-        Ptr = ptr;
+        return ptr;
     }
 
-    public MouseEventType(IntPtr ptr)
+    internal MouseEventType(IntPtr ptr, bool owned)
+        : base(ptr, owned) { }
+
+    protected override void DeleteCore()
     {
-        Ptr = ptr;
+        TurboVisionException.Check(NativeMethods.TV_MouseEventType_delete(Ptr));
     }
 
-    ~MouseEventType()
+    protected override bool EqualsCore(MouseEventType other)
     {
-        Dispose(false);
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (!IsDisposed)
-        {
-            TurboVisionException.Check(NativeMethods.TV_MouseEventType_delete(Ptr));
-            IsDisposed = true;
-        }
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return Equals(other: obj as MouseEventType);
-    }
-
-    public override int GetHashCode()
-    {
-        ObjectDisposedException.ThrowIf(IsDisposed, this);
-
-        TurboVisionException.Check(NativeMethods.TV_MouseEventType_hash(Ptr, out var hash));
-        return hash;
-    }
-
-    public bool Equals(MouseEventType? other)
-    {
-        ObjectDisposedException.ThrowIf(IsDisposed, this);
-        if (other is null)
-            return false;
-        if (ReferenceEquals(this, other))
-            return true;
-        if (other.IsDisposed)
-            return false;
-
         TurboVisionException.Check(
             NativeMethods.TV_MouseEventType_equals(Ptr, other.Ptr, out var result)
         );
         return result;
+    }
+
+    protected override int GetHashCodeCore()
+    {
+        TurboVisionException.Check(NativeMethods.TV_MouseEventType_hash(Ptr, out var hash));
+        return hash;
     }
 
     public Point Where
@@ -77,7 +44,7 @@ public partial class MouseEventType : IDisposable, IEquatable<MouseEventType>
             TurboVisionException.Check(
                 NativeMethods.TV_MouseEventType_get_where(Ptr, out var where)
             );
-            return new Point(where);
+            return new Point(where, owned: true);
         }
         set
         {

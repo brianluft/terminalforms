@@ -2,63 +2,37 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.Views;
 
-public partial class WriteArgs : IDisposable, IEquatable<WriteArgs>
+public partial class WriteArgs : NativeObject<WriteArgs>
 {
-    public bool IsDisposed { get; private set; }
-
-    public IntPtr Ptr { get; }
-
     public WriteArgs()
+        : base(New(), owned: true) { }
+
+    private static IntPtr New()
     {
         TurboVisionException.Check(NativeMethods.TV_WriteArgs_new(out var ptr));
-        Ptr = ptr;
+        return ptr;
     }
 
-    public WriteArgs(IntPtr ptr)
+    internal WriteArgs(IntPtr ptr, bool owned)
+        : base(ptr, owned) { }
+
+    protected override void DeleteCore()
     {
-        Ptr = ptr;
+        TurboVisionException.Check(NativeMethods.TV_WriteArgs_delete(Ptr));
     }
 
-    ~WriteArgs()
+    protected override bool EqualsCore(WriteArgs other)
     {
-        Dispose(false);
+        TurboVisionException.Check(
+            NativeMethods.TV_WriteArgs_equals(Ptr, other.Ptr, out var equals)
+        );
+        return equals;
     }
 
-    public void Dispose()
+    protected override int GetHashCodeCore()
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (!IsDisposed)
-        {
-            TurboVisionException.Check(NativeMethods.TV_WriteArgs_delete(Ptr));
-            IsDisposed = true;
-        }
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return Equals(other: obj as WriteArgs);
-    }
-
-    public override int GetHashCode()
-    {
-        ObjectDisposedException.ThrowIf(IsDisposed, this);
         TurboVisionException.Check(NativeMethods.TV_WriteArgs_hash(Ptr, out var hash));
         return hash;
-    }
-
-    public bool Equals(WriteArgs? other)
-    {
-        ObjectDisposedException.ThrowIf(IsDisposed, this);
-        if (other is null)
-            return false;
-        ObjectDisposedException.ThrowIf(other.IsDisposed, other);
-        TurboVisionException.Check(NativeMethods.TV_WriteArgs_equals(Ptr, other.Ptr, out var equals));
-        return equals;
     }
 
     public IntPtr Self

@@ -3,67 +3,37 @@ using System.Text;
 
 namespace TurboVision.System;
 
-public partial class KeyDownEvent : IDisposable, IEquatable<KeyDownEvent>
+public partial class KeyDownEvent : NativeObject<KeyDownEvent>
 {
-    public bool IsDisposed { get; private set; }
-
-    public IntPtr Ptr { get; }
-
     public KeyDownEvent()
+        : base(New(), owned: true) { }
+
+    private static IntPtr New()
     {
         TurboVisionException.Check(NativeMethods.TV_KeyDownEvent_new(out var ptr));
-        Ptr = ptr;
+        return ptr;
     }
 
-    public KeyDownEvent(IntPtr ptr)
+    internal KeyDownEvent(IntPtr ptr, bool owned)
+        : base(ptr, owned) { }
+
+    protected override void DeleteCore()
     {
-        Ptr = ptr;
+        TurboVisionException.Check(NativeMethods.TV_KeyDownEvent_delete(Ptr));
     }
 
-    ~KeyDownEvent()
+    protected override bool EqualsCore(KeyDownEvent other)
     {
-        Dispose(false);
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (!IsDisposed)
-        {
-            TurboVisionException.Check(NativeMethods.TV_KeyDownEvent_delete(Ptr));
-            IsDisposed = true;
-        }
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return Equals(other: obj as KeyDownEvent);
-    }
-
-    public override int GetHashCode()
-    {
-        ObjectDisposedException.ThrowIf(IsDisposed, this);
-
-        TurboVisionException.Check(NativeMethods.TV_KeyDownEvent_hash(Ptr, out var hash));
-        return hash;
-    }
-
-    public bool Equals(KeyDownEvent? other)
-    {
-        ObjectDisposedException.ThrowIf(IsDisposed, this);
-        if (other is null)
-            return false;
-        ObjectDisposedException.ThrowIf(other.IsDisposed, other);
-
         TurboVisionException.Check(
             NativeMethods.TV_KeyDownEvent_equals(Ptr, other.Ptr, out var equals)
         );
         return equals;
+    }
+
+    protected override int GetHashCodeCore()
+    {
+        TurboVisionException.Check(NativeMethods.TV_KeyDownEvent_hash(Ptr, out var hash));
+        return hash;
     }
 
     public ushort KeyCode

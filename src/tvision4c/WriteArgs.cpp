@@ -23,9 +23,7 @@ EXPORT tv::Error TV_WriteArgs_equals(write_args* self, write_args* other, BOOL* 
         return tv::Success;
     }
 
-    if (self->self == other->self && 
-        self->target == other->target && 
-        self->buf == other->buf && 
+    if (self->self == other->self && self->target == other->target && self->buf == other->buf &&
         self->offset == other->offset) {
         *out = TRUE;
         return tv::Success;
