@@ -1,7 +1,7 @@
 - [x] TPoint
 - [x] MouseEventType (TPoint)
 - [x] TRect (TPoint)
-- [ ] write_args
+- [x] write_args
 - [ ] TVMemMgr
 - [ ] TBufListEntry (TVMemMgr)
 - [ ] TTimerQueue
