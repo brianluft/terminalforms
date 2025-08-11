@@ -5,14 +5,14 @@
 - [x] CharScanType
 - [x] KeyDownEvent (CharScanType, TKey, TStringView)
 - [x] TEvent (KeyDownEvent, MessageEvent, MouseEventType)
+- [x] TSpan -- translated as .NET Span<T>
+- [x] TStringView (TSpan) -- translated as .NET String, we will just copy back and forth
 - [ ] TTimerQueue
 - [ ] TTextMetrics
 - [ ] TSubsystemsInit
 - [ ] TStrIndexRec
 - [ ] TStreamableClass
 - [ ] fLink (TStreamableClass)
-- [ ] TSpan
-- [ ] TStringView (TSpan)
 - [ ] TCellChar (TStringView)
 - [ ] TClipboard (TStringView)
 - [ ] TDirEntry (TStringView)

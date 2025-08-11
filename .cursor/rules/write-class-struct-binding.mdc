@@ -13,9 +13,9 @@ You will be given the name of a type to bind, below it will be `Foo`. We will fi
         - Your input:
             - `build\prefix\include\tvision\system.h` (lines 178-216)
         - Your output:
-            - `src\tvision4c\KeyDownEvent.h`
-            - `src\tvision4c\KeyDownEvent.cpp`
-            - `src\TurboVision\System\KeyDownEvent.cs`
+            - `src\tvision4c\MouseEventType.h`
+            - `src\tvision4c\MouseEventType.cpp`
+            - `src\TurboVision\System\MouseEventType.cs`
     - For types that DO contain virtual functions: STOP and inform me. I have not yet written these instructions.
 4. Create `src\tvision4c\Foo.h`
 5. Create `src\tvision4c\Foo.cpp`

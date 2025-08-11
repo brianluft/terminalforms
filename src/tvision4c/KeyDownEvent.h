@@ -6,6 +6,9 @@
 #define Uses_TEvent
 #include <tvision/tv.h>
 
+EXPORT tv::Error TV_KeyDownEvent_placementSize(int32_t* outSize, int32_t* outAlignment);
+EXPORT tv::Error TV_KeyDownEvent_placementNew(KeyDownEvent* self);
+EXPORT tv::Error TV_KeyDownEvent_placementDelete(KeyDownEvent* self);
 EXPORT tv::Error TV_KeyDownEvent_new(KeyDownEvent** out);
 EXPORT tv::Error TV_KeyDownEvent_delete(KeyDownEvent* self);
 EXPORT tv::Error TV_KeyDownEvent_equals(KeyDownEvent* self, KeyDownEvent* other, BOOL* out);

@@ -4,7 +4,7 @@
 
 namespace tv {
 
-// Matches `src\TerminalForms\VirtualMethod.cs`
+// Matches `src\TurboVision\VirtualMethod.cs`
 enum VirtualMethod : int32_t {
     // Application
     VirtualMethod_Application_destructor = 0,

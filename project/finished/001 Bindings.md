@@ -1,15 +1,15 @@
 We are doing vertical slices of the bindings: one specific C++ class at a time.
 
 # Example 1
-- `src\TerminalForms\KeyDownEvent.cs`
-- `src\TerminalForms\NativeMethods.KeyDownEvent.cs`
+- `src\TurboVision\KeyDownEvent.cs`
+- `src\TurboVision\NativeMethods.KeyDownEvent.cs`
 - `src\tvision4c\KeyDownEvent.h`
 - `src\tvision4c\KeyDownEvent.cpp`
 - `build\prefix\include\tvision\system.h` (lines 178-216)
 
 # Example 2
-- `src\TerminalForms\Rect.cs`
-- `src\TerminalForms\NativeMethods.Rect.cs`
+- `src\TurboVision\Rect.cs`
+- `src\TurboVision\NativeMethods.Rect.cs`
 - `src\tvision4c\Rect.h`
 - `src\tvision4c\Rect.cpp`
 - `build\prefix\include\tvision\objects.h` (lines 96-200)
@@ -18,7 +18,7 @@ We are doing vertical slices of the bindings: one specific C++ class at a time.
 - Find the .h and .cpp files for the C++ wrapper class in `src\tvision4c\Foo.[h|cpp]`
 - Find the underlying tvision C++ class in `build\prefix\include\tvision\*.h`, grep for it.
 - Read the first example above to understand the pattern.
-- Write the C# code: the corresponding class in `src\TerminalForms\Foo.cs` and, if it's not already present, the `[LibraryImport]` declarations in `src\TerminalForms\NativeMethods.Foo.cs`. You can modify existing `LibraryImport` declarations to make it easier; in particular, changing IntPtr to `byte*` or `Span<byte>`. In C#, `unsafe` is actually better.
+- Write the C# code: the corresponding class in `src\TurboVision\Foo.cs` and, if it's not already present, the `[LibraryImport]` declarations in `src\TurboVision\NativeMethods.Foo.cs`. You can modify existing `LibraryImport` declarations to make it easier; in particular, changing IntPtr to `byte*` or `Span<byte>`. In C#, `unsafe` is actually better.
 - If any part seems unclear, read example 2 to see if it clears it up. If you're still not sure, put a big comment on that part so I can address it. Mention it in your summary in TASKS.md.
 
 # Bindings tasks

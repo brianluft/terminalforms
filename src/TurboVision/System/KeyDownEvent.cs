@@ -3,19 +3,30 @@ using System.Text;
 
 namespace TurboVision.System;
 
-public partial class KeyDownEvent : NativeObject<KeyDownEvent>
+public partial class KeyDownEvent(IntPtr ptr, bool owned, bool placement) : NativeObject<KeyDownEvent>(ptr, owned, placement)
 {
-    public KeyDownEvent()
-        : base(New(), owned: true) { }
-
-    private static IntPtr New()
+    private sealed class Factory : NativeObjectFactory<Factory>
     {
-        TurboVisionException.Check(NativeMethods.TV_KeyDownEvent_new(out var ptr));
-        return ptr;
+        public Factory()
+            : base(
+                NativeMethods.TV_KeyDownEvent_placementSize,
+                NativeMethods.TV_KeyDownEvent_placementNew,
+                NativeMethods.TV_KeyDownEvent_new
+            )
+        {
+        }
     }
 
-    internal KeyDownEvent(IntPtr ptr, bool owned)
-        : base(ptr, owned) { }
+    public static int PlacementSize => Factory.Instance.PlacementSize;
+
+    public KeyDownEvent(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+
+    public KeyDownEvent() : this(Factory.Instance.New(), owned: true, placement: false) { }
+
+    protected override void PlacementDeleteCore(IntPtr ptr)
+    {
+        TurboVisionException.Check(NativeMethods.TV_KeyDownEvent_placementDelete(ptr));
+    }
 
     protected override void DeleteCore()
     {
@@ -133,6 +144,15 @@ public partial class KeyDownEvent : NativeObject<KeyDownEvent>
 
     internal static partial class NativeMethods
     {
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_KeyDownEvent_placementSize(out int outSize, out int outAlignment);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_KeyDownEvent_placementNew(IntPtr self);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_KeyDownEvent_placementDelete(IntPtr self);
+
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_KeyDownEvent_new(out IntPtr @out);
 

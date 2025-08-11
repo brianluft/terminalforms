@@ -2,19 +2,30 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.System;
 
-public partial class Event : NativeObject<Event>
+public partial class Event(IntPtr ptr, bool owned, bool placement) : NativeObject<Event>(ptr, owned, placement)
 {
-    public Event()
-        : base(New(), owned: true) { }
-
-    private static IntPtr New()
+    private sealed class Factory : NativeObjectFactory<Factory>
     {
-        TurboVisionException.Check(NativeMethods.TV_Event_new(out var ptr));
-        return ptr;
+        public Factory()
+            : base(
+                NativeMethods.TV_Event_placementSize,
+                NativeMethods.TV_Event_placementNew,
+                NativeMethods.TV_Event_new
+            )
+        {
+        }
     }
 
-    internal Event(IntPtr ptr, bool owned)
-        : base(ptr, owned) { }
+    public static int PlacementSize => Factory.Instance.PlacementSize;
+
+    public Event(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+
+    public Event() : this(Factory.Instance.New(), owned: true, placement: false) { }
+
+    protected override void PlacementDeleteCore(IntPtr ptr)
+    {
+        TurboVisionException.Check(NativeMethods.TV_Event_placementDelete(ptr));
+    }
 
     protected override void DeleteCore()
     {
@@ -48,49 +59,46 @@ public partial class Event : NativeObject<Event>
         }
     }
 
-    public MouseEventType Mouse
+    public void GetMouse(MouseEventType dst)
     {
-        get
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_Event_get_mouse(Ptr, out var mousePtr));
-            return new MouseEventType(mousePtr, owned: true);
-        }
-        set
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_Event_set_mouse(Ptr, value.Ptr));
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(dst.IsDisposed, dst);
+        TurboVisionException.Check(NativeMethods.TV_Event_get_mouse(Ptr, dst.Ptr));
     }
 
-    public KeyDownEvent KeyDown
+    public void SetMouse(MouseEventType src)
     {
-        get
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_Event_get_keyDown(Ptr, out var keyDownPtr));
-            return new KeyDownEvent(keyDownPtr, owned: true);
-        }
-        set
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_Event_set_keyDown(Ptr, value.Ptr));
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(src.IsDisposed, src);
+        TurboVisionException.Check(NativeMethods.TV_Event_set_mouse(Ptr, src.Ptr));
     }
 
-    public MessageEvent Message
+    public void GetKeyDown(KeyDownEvent dst)
     {
-        get
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_Event_get_message(Ptr, out var messagePtr));
-            return new MessageEvent(messagePtr, owned: true);
-        }
-        set
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_Event_set_message(Ptr, value.Ptr));
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(dst.IsDisposed, dst);
+        TurboVisionException.Check(NativeMethods.TV_Event_get_keyDown(Ptr, dst.Ptr));
+    }
+
+    public void SetKeyDown(KeyDownEvent src)
+    {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(src.IsDisposed, src);
+        TurboVisionException.Check(NativeMethods.TV_Event_set_keyDown(Ptr, src.Ptr));
+    }
+
+    public void GetMessage(MessageEvent dst)
+    {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(dst.IsDisposed, dst);
+        TurboVisionException.Check(NativeMethods.TV_Event_get_message(Ptr, dst.Ptr));
+    }
+
+    public void SetMessage(MessageEvent src)
+    {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(src.IsDisposed, src);
+        TurboVisionException.Check(NativeMethods.TV_Event_set_message(Ptr, src.Ptr));
     }
 
     public void GetMouseEvent()
@@ -107,6 +115,15 @@ public partial class Event : NativeObject<Event>
 
     internal static partial class NativeMethods
     {
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_Event_placementSize(out int outSize, out int outAlignment);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_Event_placementNew(IntPtr self);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_Event_placementDelete(IntPtr self);
+
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_Event_new(out IntPtr @out);
 
@@ -130,22 +147,22 @@ public partial class Event : NativeObject<Event>
         public static partial Error TV_Event_set_what(IntPtr self, ushort value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_get_mouse(IntPtr self, out IntPtr @out);
+        public static partial Error TV_Event_get_mouse(IntPtr self, IntPtr dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_set_mouse(IntPtr self, IntPtr value);
+        public static partial Error TV_Event_set_mouse(IntPtr self, IntPtr src);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_get_keyDown(IntPtr self, out IntPtr @out);
+        public static partial Error TV_Event_get_keyDown(IntPtr self, IntPtr dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_set_keyDown(IntPtr self, IntPtr value);
+        public static partial Error TV_Event_set_keyDown(IntPtr self, IntPtr src);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_get_message(IntPtr self, out IntPtr @out);
+        public static partial Error TV_Event_get_message(IntPtr self, IntPtr dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_set_message(IntPtr self, IntPtr value);
+        public static partial Error TV_Event_set_message(IntPtr self, IntPtr src);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_Event_getMouseEvent(IntPtr self);

@@ -2,19 +2,30 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.System;
 
-public partial class MessageEvent : NativeObject<MessageEvent>
+public partial class MessageEvent(IntPtr ptr, bool owned, bool placement) : NativeObject<MessageEvent>(ptr, owned, placement)
 {
-    public MessageEvent()
-        : base(New(), owned: true) { }
-
-    private static IntPtr New()
+    private sealed class Factory : NativeObjectFactory<Factory>
     {
-        TurboVisionException.Check(NativeMethods.TV_MessageEvent_new(out var ptr));
-        return ptr;
+        public Factory()
+            : base(
+                NativeMethods.TV_MessageEvent_placementSize,
+                NativeMethods.TV_MessageEvent_placementNew,
+                NativeMethods.TV_MessageEvent_new
+            )
+        {
+        }
     }
 
-    internal MessageEvent(IntPtr ptr, bool owned)
-        : base(ptr, owned) { }
+    public static int PlacementSize => Factory.Instance.PlacementSize;
+
+    public MessageEvent(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+
+    public MessageEvent() : this(Factory.Instance.New(), owned: true, placement: false) { }
+
+    protected override void PlacementDeleteCore(IntPtr ptr)
+    {
+        TurboVisionException.Check(NativeMethods.TV_MessageEvent_placementDelete(ptr));
+    }
 
     protected override void DeleteCore()
     {
@@ -71,6 +82,15 @@ public partial class MessageEvent : NativeObject<MessageEvent>
 
     internal static partial class NativeMethods
     {
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_MessageEvent_placementSize(out int outSize, out int outAlignment);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_MessageEvent_placementNew(IntPtr self);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_MessageEvent_placementDelete(IntPtr self);
+
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_MessageEvent_new(out IntPtr @out);
 

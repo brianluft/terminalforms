@@ -1,5 +1,17 @@
 #include "MessageEvent.h"
 
+EXPORT tv::Error TV_MessageEvent_placementSize(int32_t* outSize, int32_t* outAlignment) {
+    return tv::checkedSize<MessageEvent>(outSize, outAlignment);
+}
+
+EXPORT tv::Error TV_MessageEvent_placementNew(MessageEvent* self) {
+    return tv::checkedPlacementNew(self);
+}
+
+EXPORT tv::Error TV_MessageEvent_placementDelete(MessageEvent* self) {
+    return tv::checkedPlacementDelete(self);
+}
+
 EXPORT tv::Error TV_MessageEvent_new(MessageEvent** out) {
     return tv::checkedNew(out);
 }

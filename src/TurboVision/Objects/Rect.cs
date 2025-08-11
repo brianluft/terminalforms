@@ -2,36 +2,29 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.Objects;
 
-public partial class Rect : NativeObject<Rect>
+public partial class Rect(IntPtr ptr, bool owned, bool placement) : NativeObject<Rect>(ptr, owned, placement)
 {
-    public Rect()
-        : base(New(), owned: true) { }
-
-    private static IntPtr New()
+    private sealed class Factory : NativeObjectFactory<Factory>
     {
-        TurboVisionException.Check(NativeMethods.TV_Rect_new(out var ptr));
-        return ptr;
+        public Factory()
+            : base(
+                NativeMethods.TV_Rect_placementSize,
+                NativeMethods.TV_Rect_placementNew,
+                NativeMethods.TV_Rect_new
+            )
+        {
+        }
     }
 
-    internal Rect(IntPtr ptr, bool owned)
-        : base(ptr, owned) { }
+    public static int PlacementSize => Factory.Instance.PlacementSize;
 
-    public Rect(int ax, int ay, int bx, int by)
-        : base(New(ax, ay, bx, by), owned: true) { }
+    public Rect(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
-    private static IntPtr New(int ax, int ay, int bx, int by)
+    public Rect() : this(Factory.Instance.New(), owned: true, placement: false) { }
+
+    protected override void PlacementDeleteCore(IntPtr ptr)
     {
-        TurboVisionException.Check(NativeMethods.TV_Rect_new2(ax, ay, bx, by, out var ptr));
-        return ptr;
-    }
-
-    public Rect(Point p1, Point p2)
-        : base(New(p1, p2), owned: true) { }
-
-    private static IntPtr New(Point p1, Point p2)
-    {
-        TurboVisionException.Check(NativeMethods.TV_Rect_new3(p1.Ptr, p2.Ptr, out var ptr));
-        return ptr;
+        TurboVisionException.Check(NativeMethods.TV_Rect_placementDelete(ptr));
     }
 
     protected override void DeleteCore()
@@ -92,48 +85,47 @@ public partial class Rect : NativeObject<Rect>
         return isEmpty;
     }
 
-    public Point A
+    public void GetA(Point dst)
     {
-        get
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_Rect_get_a(Ptr, out var a));
-            return new Point(a, owned: true);
-        }
-        set
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            ObjectDisposedException.ThrowIf(value.IsDisposed, value);
-            TurboVisionException.Check(NativeMethods.TV_Rect_set_a(Ptr, value.Ptr));
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(dst.IsDisposed, dst);
+        TurboVisionException.Check(NativeMethods.TV_Rect_get_a(Ptr, dst.Ptr));
     }
 
-    public Point B
+    public void SetA(Point src)
     {
-        get
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_Rect_get_b(Ptr, out var b));
-            return new Point(b, owned: true);
-        }
-        set
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            ObjectDisposedException.ThrowIf(value.IsDisposed, value);
-            TurboVisionException.Check(NativeMethods.TV_Rect_set_b(Ptr, value.Ptr));
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(src.IsDisposed, src);
+        TurboVisionException.Check(NativeMethods.TV_Rect_set_a(Ptr, src.Ptr));
+    }
+
+    public void GetB(Point dst)
+    {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(dst.IsDisposed, dst);
+        TurboVisionException.Check(NativeMethods.TV_Rect_get_b(Ptr, dst.Ptr));
+    }
+
+    public void SetB(Point src)
+    {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(src.IsDisposed, src);
+        TurboVisionException.Check(NativeMethods.TV_Rect_set_b(Ptr, src.Ptr));
     }
 
     internal static partial class NativeMethods
     {
         [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_Rect_placementSize(out int outSize, out int outAlignment);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_Rect_placementNew(IntPtr self);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_Rect_placementDelete(IntPtr self);
+
+        [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_Rect_new(out IntPtr @out);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_new2(int ax, int ay, int bx, int by, out IntPtr @out);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_new3(IntPtr p1, IntPtr p2, out IntPtr @out);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_Rect_delete(IntPtr self);
@@ -174,15 +166,15 @@ public partial class Rect : NativeObject<Rect>
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_get_a(IntPtr self, out IntPtr @out);
+        public static partial Error TV_Rect_get_a(IntPtr self, IntPtr dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_get_b(IntPtr self, out IntPtr @out);
+        public static partial Error TV_Rect_set_a(IntPtr self, IntPtr src);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_set_a(IntPtr self, IntPtr p);
+        public static partial Error TV_Rect_get_b(IntPtr self, IntPtr dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_set_b(IntPtr self, IntPtr p);
+        public static partial Error TV_Rect_set_b(IntPtr self, IntPtr src);
     }
 }

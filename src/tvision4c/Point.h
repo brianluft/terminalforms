@@ -6,6 +6,9 @@
 #define Uses_TPoint
 #include <tvision/tv.h>
 
+EXPORT tv::Error TV_Point_placementSize(int32_t* outSize, int32_t* outAlignment);
+EXPORT tv::Error TV_Point_placementNew(TPoint* self);
+EXPORT tv::Error TV_Point_placementDelete(TPoint* self);
 EXPORT tv::Error TV_Point_new(TPoint** out);
 EXPORT tv::Error TV_Point_delete(TPoint* self);
 EXPORT tv::Error TV_Point_equals(TPoint* self, TPoint* other, BOOL* out);

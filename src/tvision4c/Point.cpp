@@ -1,5 +1,17 @@
 #include "Point.h"
 
+EXPORT tv::Error TV_Point_placementSize(int32_t* outSize, int32_t* outAlignment) {
+    return tv::checkedSize<TPoint>(outSize, outAlignment);
+}
+
+EXPORT tv::Error TV_Point_placementNew(TPoint* self) {
+    return tv::checkedPlacementNew(self);
+}
+
+EXPORT tv::Error TV_Point_placementDelete(TPoint* self) {
+    return tv::checkedPlacementDelete(self);
+}
+
 EXPORT tv::Error TV_Point_new(TPoint** out) {
     return tv::checkedNew(out);
 }

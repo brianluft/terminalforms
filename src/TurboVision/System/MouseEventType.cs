@@ -3,19 +3,30 @@ using TurboVision.Objects;
 
 namespace TurboVision.System;
 
-public partial class MouseEventType : NativeObject<MouseEventType>
+public partial class MouseEventType(IntPtr ptr, bool owned, bool placement) : NativeObject<MouseEventType>(ptr, owned, placement)
 {
-    public MouseEventType()
-        : base(New(), owned: true) { }
-
-    private static IntPtr New()
+    private sealed class Factory : NativeObjectFactory<Factory>
     {
-        TurboVisionException.Check(NativeMethods.TV_MouseEventType_new(out var ptr));
-        return ptr;
+        public Factory()
+            : base(
+                NativeMethods.TV_MouseEventType_placementSize,
+                NativeMethods.TV_MouseEventType_placementNew,
+                NativeMethods.TV_MouseEventType_new
+            )
+        {
+        }
     }
 
-    internal MouseEventType(IntPtr ptr, bool owned)
-        : base(ptr, owned) { }
+    public static int PlacementSize => Factory.Instance.PlacementSize;
+
+    public MouseEventType(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+
+    public MouseEventType() : this(Factory.Instance.New(), owned: true, placement: false) { }
+
+    protected override void PlacementDeleteCore(IntPtr ptr)
+    {
+        TurboVisionException.Check(NativeMethods.TV_MouseEventType_placementDelete(ptr));
+    }
 
     protected override void DeleteCore()
     {
@@ -36,23 +47,18 @@ public partial class MouseEventType : NativeObject<MouseEventType>
         return hash;
     }
 
-    public Point Where
+    public void GetWhere(Point dst)
     {
-        get
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(
-                NativeMethods.TV_MouseEventType_get_where(Ptr, out var where)
-            );
-            return new Point(where, owned: true);
-        }
-        set
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            ArgumentNullException.ThrowIfNull(value);
-            ObjectDisposedException.ThrowIf(value.IsDisposed, value);
-            TurboVisionException.Check(NativeMethods.TV_MouseEventType_set_where(Ptr, value.Ptr));
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(dst.IsDisposed, dst);
+        TurboVisionException.Check(NativeMethods.TV_MouseEventType_get_where(Ptr, dst.Ptr));
+    }
+
+    public void SetWhere(Point src)
+    {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(src.IsDisposed, src);
+        TurboVisionException.Check(NativeMethods.TV_MouseEventType_set_where(Ptr, src.Ptr));
     }
 
     public ushort EventFlags
@@ -128,6 +134,15 @@ public partial class MouseEventType : NativeObject<MouseEventType>
     internal static partial class NativeMethods
     {
         [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_MouseEventType_placementSize(out int outSize, out int outAlignment);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_MouseEventType_placementNew(IntPtr self);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_MouseEventType_placementDelete(IntPtr self);
+
+        [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_MouseEventType_new(out IntPtr @out);
 
         [LibraryImport(Global.DLL_NAME)]
@@ -144,10 +159,10 @@ public partial class MouseEventType : NativeObject<MouseEventType>
         public static partial Error TV_MouseEventType_hash(IntPtr self, out int @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_get_where(IntPtr self, out IntPtr @out);
+        public static partial Error TV_MouseEventType_get_where(IntPtr self, IntPtr dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_set_where(IntPtr self, IntPtr value);
+        public static partial Error TV_MouseEventType_set_where(IntPtr self, IntPtr src);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_MouseEventType_get_eventFlags(IntPtr self, out ushort @out);

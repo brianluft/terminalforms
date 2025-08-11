@@ -6,6 +6,9 @@
 #define Uses_TEvent
 #include <tvision/tv.h>
 
+EXPORT tv::Error TV_MessageEvent_placementSize(int32_t* outSize, int32_t* outAlignment);
+EXPORT tv::Error TV_MessageEvent_placementNew(MessageEvent* self);
+EXPORT tv::Error TV_MessageEvent_placementDelete(MessageEvent* self);
 EXPORT tv::Error TV_MessageEvent_new(MessageEvent** out);
 EXPORT tv::Error TV_MessageEvent_delete(MessageEvent* self);
 EXPORT tv::Error TV_MessageEvent_equals(MessageEvent* self, MessageEvent* other, BOOL* out);

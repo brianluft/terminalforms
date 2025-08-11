@@ -6,12 +6,13 @@
 
 namespace tv {
 
-// Matches `src\TerminalForms\Error.cs`
+// Matches `src\TurboVision\Error.cs`
 enum Error {
     Success = 0,
     Error_Unknown,
     Error_NativeInteropFailure,
     Error_OutOfMemory,
+    Error_UnalignedObjectPlacement,
     Error_ArgumentNull,
     Error_ArgumentOutOfRange,
     Error_BufferTooSmall,
@@ -41,6 +42,43 @@ Error checkedNew(T** out) {
     }
 }
 
+// This templated function gets the size and alignment of a type `T`.
+// It catches any exception and converts to `Error`.
+template <typename T>
+Error checkedSize(int32_t* outSize, int32_t* outAlignment) {
+    if (!outSize || !outAlignment) {
+        return tv::Error_ArgumentNull;
+    }
+
+    *outSize = sizeof(T);
+    *outAlignment = alignof(T);
+    return tv::Success;
+}
+
+// This templated function instantiates an object of type `T` at a given address.
+// It catches any exception and converts to `Error`.
+template <typename T>
+Error checkedPlacementNew(T* self) {
+    if (!self) {
+        return tv::Error_ArgumentNull;
+    }
+
+    // Check alignment of the pointer.
+    if (reinterpret_cast<uintptr_t>(self) % alignof(T) != 0) {
+        return tv::Error_UnalignedObjectPlacement;
+    }
+
+    try {
+        new (self) T();
+        return tv::Success;
+    } catch (const std::bad_alloc&) {
+        return tv::Error_OutOfMemory;
+    } catch (const std::exception& e) {
+        lastErrorMessage = e.what();
+        return static_cast<tv::Error>(Error_Unknown | Error_HasMessage);
+    }
+}
+
 // This templated function deletes an object of type `T`.
 // It catches any exception and converts to `Error`.
 template <typename T>
@@ -51,6 +89,25 @@ Error checkedDelete(T* self) {
 
     try {
         delete self;
+        return tv::Success;
+    } catch (const std::bad_alloc&) {
+        return tv::Error_OutOfMemory;
+    } catch (const std::exception& e) {
+        lastErrorMessage = e.what();
+        return static_cast<tv::Error>(Error_Unknown | Error_HasMessage);
+    }
+}
+
+// This templated function deletes an object of type `T` at a given address.
+// It catches any exception and converts to `Error`.
+template <typename T>
+Error checkedPlacementDelete(T* self) {
+    if (!self) {
+        return tv::Success;  // Not an error.
+    }
+
+    try {
+        self->~T();
         return tv::Success;
     } catch (const std::bad_alloc&) {
         return tv::Error_OutOfMemory;

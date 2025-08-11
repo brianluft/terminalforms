@@ -5,6 +5,18 @@
 #define Uses_TEventQueue
 #include <tvision/tv.h>
 
+EXPORT tv::Error TV_Event_placementSize(int32_t* outSize, int32_t* outAlignment) {
+    return tv::checkedSize<TEvent>(outSize, outAlignment);
+}
+
+EXPORT tv::Error TV_Event_placementNew(TEvent* self) {
+    return tv::checkedPlacementNew(self);
+}
+
+EXPORT tv::Error TV_Event_placementDelete(TEvent* self) {
+    return tv::checkedPlacementDelete(self);
+}
+
 EXPORT tv::Error TV_Event_new(TEvent** out) {
     return tv::checkedNew(out);
 }
@@ -68,57 +80,57 @@ EXPORT tv::Error TV_Event_set_what(TEvent* self, uint16_t value) {
     return tv::Success;
 }
 
-EXPORT tv::Error TV_Event_get_mouse(TEvent* self, MouseEventType** out) {
-    if (!self || !out) {
+EXPORT tv::Error TV_Event_get_mouse(TEvent* self, MouseEventType* dst) {
+    if (!self || !dst) {
         return tv::Error_ArgumentNull;
     }
 
-    *out = new MouseEventType{ self->mouse };
+    *dst = self->mouse;
     return tv::Success;
 }
 
-EXPORT tv::Error TV_Event_set_mouse(TEvent* self, MouseEventType* value) {
-    if (!self || !value) {
+EXPORT tv::Error TV_Event_set_mouse(TEvent* self, MouseEventType* src) {
+    if (!self || !src) {
         return tv::Error_ArgumentNull;
     }
 
-    self->mouse = *value;
+    self->mouse = *src;
     return tv::Success;
 }
 
-EXPORT tv::Error TV_Event_get_keyDown(TEvent* self, KeyDownEvent** out) {
-    if (!self || !out) {
+EXPORT tv::Error TV_Event_get_keyDown(TEvent* self, KeyDownEvent* dst) {
+    if (!self || !dst) {
         return tv::Error_ArgumentNull;
     }
 
-    *out = new KeyDownEvent{ self->keyDown };
+    *dst = self->keyDown;
     return tv::Success;
 }
 
-EXPORT tv::Error TV_Event_set_keyDown(TEvent* self, KeyDownEvent* value) {
-    if (!self || !value) {
+EXPORT tv::Error TV_Event_set_keyDown(TEvent* self, KeyDownEvent* src) {
+    if (!self || !src) {
         return tv::Error_ArgumentNull;
     }
 
-    self->keyDown = *value;
+    self->keyDown = *src;
     return tv::Success;
 }
 
-EXPORT tv::Error TV_Event_get_message(TEvent* self, MessageEvent** out) {
-    if (!self || !out) {
+EXPORT tv::Error TV_Event_get_message(TEvent* self, MessageEvent* dst) {
+    if (!self || !dst) {
         return tv::Error_ArgumentNull;
     }
 
-    *out = new MessageEvent{ self->message };
+    *dst = self->message;
     return tv::Success;
 }
 
-EXPORT tv::Error TV_Event_set_message(TEvent* self, MessageEvent* value) {
-    if (!self || !value) {
+EXPORT tv::Error TV_Event_set_message(TEvent* self, MessageEvent* src) {
+    if (!self || !src) {
         return tv::Error_ArgumentNull;
     }
 
-    self->message = *value;
+    self->message = *src;
     return tv::Success;
 }
 

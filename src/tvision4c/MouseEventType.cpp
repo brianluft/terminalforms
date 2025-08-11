@@ -1,6 +1,18 @@
 #include "MouseEventType.h"
 #include "Point.h"
 
+EXPORT tv::Error TV_MouseEventType_placementSize(int32_t* outSize, int32_t* outAlignment) {
+    return tv::checkedSize<MouseEventType>(outSize, outAlignment);
+}
+
+EXPORT tv::Error TV_MouseEventType_placementNew(MouseEventType* self) {
+    return tv::checkedPlacementNew(self);
+}
+
+EXPORT tv::Error TV_MouseEventType_placementDelete(MouseEventType* self) {
+    return tv::checkedPlacementDelete(self);
+}
+
 EXPORT tv::Error TV_MouseEventType_new(MouseEventType** out) {
     return tv::checkedNew(out);
 }
@@ -59,21 +71,21 @@ EXPORT tv::Error TV_MouseEventType_hash(MouseEventType* self, int32_t* out) {
     return tv::Success;
 }
 
-EXPORT tv::Error TV_MouseEventType_get_where(MouseEventType* self, TPoint** out) {
-    if (!self || !out) {
+EXPORT tv::Error TV_MouseEventType_get_where(MouseEventType* self, TPoint* dst) {
+    if (!self || !dst) {
         return tv::Error_ArgumentNull;
     }
 
-    *out = new TPoint{ self->where };
+    *dst = self->where;
     return tv::Success;
 }
 
-EXPORT tv::Error TV_MouseEventType_set_where(MouseEventType* self, TPoint* value) {
-    if (!self || !value) {
+EXPORT tv::Error TV_MouseEventType_set_where(MouseEventType* self, TPoint* src) {
+    if (!self || !src) {
         return tv::Error_ArgumentNull;
     }
 
-    self->where = *value;
+    self->where = *src;
     return tv::Success;
 }
 

@@ -7,6 +7,7 @@ public enum Error
     Error_Unknown,
     Error_NativeInteropFailure,
     Error_OutOfMemory,
+    Error_UnalignedObjectPlacement,
     Error_ArgumentNull,
     Error_ArgumentOutOfRange,
     Error_BufferTooSmall,
@@ -24,6 +25,7 @@ public static class ErrorExtensions
             Error.Error_NativeInteropFailure =>
                 "There was a problem connecting to the TurboVision native library (tvision4c).",
             Error.Error_OutOfMemory => "There is not enough memory to complete the operation.",
+            Error.Error_UnalignedObjectPlacement => "The pointer is not aligned correctly for this object.",
             Error.Error_ArgumentNull => "The function argument must not be null.",
             Error.Error_ArgumentOutOfRange => "The function argument is out of range.",
             Error.Error_BufferTooSmall => "The text is too long to fit in the destination.",

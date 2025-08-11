@@ -1,14 +1,18 @@
 #include "Rect.h"
 
+EXPORT tv::Error TV_Rect_placementSize(int32_t* outSize, int32_t* outAlignment) {
+    return tv::checkedSize<TRect>(outSize, outAlignment);
+}
+
+EXPORT tv::Error TV_Rect_placementNew(TRect* self) {
+    return tv::checkedPlacementNew(self);
+}
+
+EXPORT tv::Error TV_Rect_placementDelete(TRect* self) {
+    return tv::checkedPlacementDelete(self);
+}
+
 EXPORT tv::Error TV_Rect_new(TRect** out) {
-    return tv::checkedNew(out);
-}
-
-EXPORT tv::Error TV_Rect_new2(int32_t ax, int32_t ay, int32_t bx, int32_t by, TRect** out) {
-    return tv::checkedNew(out);
-}
-
-EXPORT tv::Error TV_Rect_new3(TPoint* p1, TPoint* p2, TRect** out) {
     return tv::checkedNew(out);
 }
 
@@ -121,21 +125,12 @@ EXPORT tv::Error TV_Rect_isEmpty(TRect* self, BOOL* out) {
     return tv::Success;
 }
 
-EXPORT tv::Error TV_Rect_get_a(TRect* self, TPoint** out) {
-    if (!self || !out) {
+EXPORT tv::Error TV_Rect_get_a(TRect* self, TPoint* p) {
+    if (!self || !p) {
         return tv::Error_ArgumentNull;
     }
 
-    *out = new TPoint{ self->a };
-    return tv::Success;
-}
-
-EXPORT tv::Error TV_Rect_get_b(TRect* self, TPoint** out) {
-    if (!self || !out) {
-        return tv::Error_ArgumentNull;
-    }
-
-    *out = new TPoint{ self->b };
+    *p = self->a;
     return tv::Success;
 }
 
@@ -145,6 +140,15 @@ EXPORT tv::Error TV_Rect_set_a(TRect* self, TPoint* p) {
     }
 
     self->a = *p;
+    return tv::Success;
+}
+
+EXPORT tv::Error TV_Rect_get_b(TRect* self, TPoint* p) {
+    if (!self || !p) {
+        return tv::Error_ArgumentNull;
+    }
+
+    *p = self->b;
     return tv::Success;
 }
 

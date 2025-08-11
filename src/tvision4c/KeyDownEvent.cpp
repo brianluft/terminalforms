@@ -3,6 +3,18 @@
 #include "Point.h"
 #include <cstring>
 
+EXPORT tv::Error TV_KeyDownEvent_placementSize(int32_t* outSize, int32_t* outAlignment) {
+    return tv::checkedSize<KeyDownEvent>(outSize, outAlignment);
+}
+
+EXPORT tv::Error TV_KeyDownEvent_placementNew(KeyDownEvent* self) {
+    return tv::checkedPlacementNew(self);
+}
+
+EXPORT tv::Error TV_KeyDownEvent_placementDelete(KeyDownEvent* self) {
+    return tv::checkedPlacementDelete(self);
+}
+
 EXPORT tv::Error TV_KeyDownEvent_new(KeyDownEvent** out) {
     return tv::checkedNew(out);
 }

@@ -2,19 +2,30 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.Objects;
 
-public partial class Point : NativeObject<Point>
+public partial class Point(IntPtr ptr, bool owned, bool placement) : NativeObject<Point>(ptr, owned, placement)
 {
-    public Point()
-        : base(New(), owned: true) { }
-
-    private static IntPtr New()
+    private sealed class Factory : NativeObjectFactory<Factory>
     {
-        TurboVisionException.Check(NativeMethods.TV_Point_new(out var ptr));
-        return ptr;
+        public Factory()
+            : base(
+                NativeMethods.TV_Point_placementSize,
+                NativeMethods.TV_Point_placementNew,
+                NativeMethods.TV_Point_new
+            )
+        {
+        }
     }
 
-    internal Point(IntPtr ptr, bool owned)
-        : base(ptr, owned) { }
+    public static int PlacementSize => Factory.Instance.PlacementSize;
+
+    public Point(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+
+    public Point() : this(Factory.Instance.New(), owned: true, placement: false) { }
+
+    protected override void PlacementDeleteCore(IntPtr ptr)
+    {
+        TurboVisionException.Check(NativeMethods.TV_Point_placementDelete(ptr));
+    }
 
     protected override void DeleteCore()
     {
@@ -56,7 +67,7 @@ public partial class Point : NativeObject<Point>
         TurboVisionException.Check(
             NativeMethods.TV_Point_operator_add(one.Ptr, two.Ptr, out var ptr)
         );
-        return new Point(ptr, owned: true);
+        return new Point(ptr, owned: true, placement: false);
     }
 
     public static Point operator -(Point one, Point two)
@@ -66,7 +77,7 @@ public partial class Point : NativeObject<Point>
         TurboVisionException.Check(
             NativeMethods.TV_Point_operator_subtract(one.Ptr, two.Ptr, out var ptr)
         );
-        return new Point(ptr, owned: true);
+        return new Point(ptr, owned: true, placement: false);
     }
 
     public int X
@@ -101,6 +112,15 @@ public partial class Point : NativeObject<Point>
 
     internal static partial class NativeMethods
     {
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_Point_placementSize(out int outSize, out int outAlignment);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_Point_placementNew(IntPtr self);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_Point_placementDelete(IntPtr self);
+
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_Point_new(out IntPtr @out);
 

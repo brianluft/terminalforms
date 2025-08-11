@@ -2,19 +2,30 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.Views;
 
-public partial class WriteArgs : NativeObject<WriteArgs>
+public partial class WriteArgs(IntPtr ptr, bool owned, bool placement) : NativeObject<WriteArgs>(ptr, owned, placement)
 {
-    public WriteArgs()
-        : base(New(), owned: true) { }
-
-    private static IntPtr New()
+    private sealed class Factory : NativeObjectFactory<Factory>
     {
-        TurboVisionException.Check(NativeMethods.TV_WriteArgs_new(out var ptr));
-        return ptr;
+        public Factory()
+            : base(
+                NativeMethods.TV_WriteArgs_placementSize,
+                NativeMethods.TV_WriteArgs_placementNew,
+                NativeMethods.TV_WriteArgs_new
+            )
+        {
+        }
     }
 
-    internal WriteArgs(IntPtr ptr, bool owned)
-        : base(ptr, owned) { }
+    public static int PlacementSize => Factory.Instance.PlacementSize;
+
+    public WriteArgs(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+
+    public WriteArgs() : this(Factory.Instance.New(), owned: true, placement: false) { }
+
+    protected override void PlacementDeleteCore(IntPtr ptr)
+    {
+        TurboVisionException.Check(NativeMethods.TV_WriteArgs_placementDelete(ptr));
+    }
 
     protected override void DeleteCore()
     {
@@ -97,6 +108,15 @@ public partial class WriteArgs : NativeObject<WriteArgs>
 
     internal static partial class NativeMethods
     {
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_WriteArgs_placementSize(out int outSize, out int outAlignment);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_WriteArgs_placementNew(IntPtr self);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_WriteArgs_placementDelete(IntPtr self);
+
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_WriteArgs_new(out IntPtr @out);
 

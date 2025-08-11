@@ -6,6 +6,9 @@
 #define Uses_TView
 #include <tvision/tv.h>
 
+EXPORT tv::Error TV_WriteArgs_placementSize(int32_t* outSize, int32_t* outAlignment);
+EXPORT tv::Error TV_WriteArgs_placementNew(write_args* self);
+EXPORT tv::Error TV_WriteArgs_placementDelete(write_args* self);
 EXPORT tv::Error TV_WriteArgs_new(write_args** out);
 EXPORT tv::Error TV_WriteArgs_delete(write_args* self);
 EXPORT tv::Error TV_WriteArgs_equals(write_args* self, write_args* other, BOOL* out);
