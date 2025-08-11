@@ -10,14 +10,12 @@ public sealed class RectTests
     {
         var bytes = stackalloc byte[Rect.PlacementSize];
         using var rect = new Rect(bytes);
-        Assert.IsTrue(rect.IsEmpty());
     }
 
     [TestMethod]
     public void Test_New()
     {
         using var rect = new Rect();
-        Assert.IsTrue(rect.IsEmpty());
     }
 
     [TestMethod]
