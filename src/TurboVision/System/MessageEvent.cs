@@ -2,7 +2,8 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.System;
 
-public partial class MessageEvent(IntPtr ptr, bool owned, bool placement) : NativeObject<MessageEvent>(ptr, owned, placement)
+public unsafe partial class MessageEvent(void* ptr, bool owned, bool placement)
+    : NativeObject<MessageEvent>(ptr, owned, placement)
 {
     private sealed class Factory : NativeObjectFactory<Factory>
     {
@@ -11,18 +12,18 @@ public partial class MessageEvent(IntPtr ptr, bool owned, bool placement) : Nati
                 NativeMethods.TV_MessageEvent_placementSize,
                 NativeMethods.TV_MessageEvent_placementNew,
                 NativeMethods.TV_MessageEvent_new
-            )
-        {
-        }
+            ) { }
     }
 
     public static int PlacementSize => Factory.Instance.PlacementSize;
 
-    public MessageEvent(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+    public MessageEvent(byte* placement)
+        : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
-    public MessageEvent() : this(Factory.Instance.New(), owned: true, placement: false) { }
+    public MessageEvent()
+        : this(Factory.Instance.New(), owned: true, placement: false) { }
 
-    protected override void PlacementDeleteCore(IntPtr ptr)
+    protected override void PlacementDeleteCore(void* ptr)
     {
         TurboVisionException.Check(NativeMethods.TV_MessageEvent_placementDelete(ptr));
     }
@@ -63,7 +64,7 @@ public partial class MessageEvent(IntPtr ptr, bool owned, bool placement) : Nati
         }
     }
 
-    public IntPtr InfoPtr
+    public void* InfoPtr
     {
         get
         {
@@ -83,40 +84,43 @@ public partial class MessageEvent(IntPtr ptr, bool owned, bool placement) : Nati
     internal static partial class NativeMethods
     {
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MessageEvent_placementSize(out int outSize, out int outAlignment);
+        public static partial Error TV_MessageEvent_placementSize(
+            out int outSize,
+            out int outAlignment
+        );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MessageEvent_placementNew(IntPtr self);
+        public static partial Error TV_MessageEvent_placementNew(byte* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MessageEvent_placementDelete(IntPtr self);
+        public static partial Error TV_MessageEvent_placementDelete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MessageEvent_new(out IntPtr @out);
+        public static partial Error TV_MessageEvent_new(out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MessageEvent_delete(IntPtr self);
+        public static partial Error TV_MessageEvent_delete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_MessageEvent_equals(
-            IntPtr self,
-            IntPtr other,
+            void* self,
+            void* other,
             [MarshalAs(UnmanagedType.I4)] out bool @out
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MessageEvent_hash(IntPtr self, out int @out);
+        public static partial Error TV_MessageEvent_hash(void* self, out int @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MessageEvent_get_command(IntPtr self, out ushort @out);
+        public static partial Error TV_MessageEvent_get_command(void* self, out ushort @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MessageEvent_set_command(IntPtr self, ushort value);
+        public static partial Error TV_MessageEvent_set_command(void* self, ushort value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MessageEvent_get_infoPtr(IntPtr self, out IntPtr @out);
+        public static partial Error TV_MessageEvent_get_infoPtr(void* self, out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MessageEvent_set_infoPtr(IntPtr self, IntPtr value);
+        public static partial Error TV_MessageEvent_set_infoPtr(void* self, void* value);
     }
 }

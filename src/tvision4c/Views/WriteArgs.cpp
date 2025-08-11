@@ -1,19 +1,19 @@
 #include "WriteArgs.h"
 
 EXPORT tv::Error TV_WriteArgs_placementSize(int32_t* outSize, int32_t* outAlignment) {
-    return tv::checkedSize<WriteArgs>(outSize, outAlignment);
+    return tv::checkedSize<write_args>(outSize, outAlignment);
 }
 
-EXPORT tv::Error TV_WriteArgs_placementNew(WriteArgs* self) {
+EXPORT tv::Error TV_WriteArgs_placementNew(write_args* self) {
     return tv::checkedPlacementNew(self);
 }
 
-EXPORT tv::Error TV_WriteArgs_placementDelete(WriteArgs* self) {
+EXPORT tv::Error TV_WriteArgs_placementDelete(write_args* self) {
     return tv::checkedPlacementDelete(self);
 }
 
 EXPORT tv::Error TV_WriteArgs_new(write_args** out) {
-    return tv::checkedNew(out);
+    return tv::checkedNew<write_args>(out);
 }
 
 EXPORT tv::Error TV_WriteArgs_delete(write_args* self) {

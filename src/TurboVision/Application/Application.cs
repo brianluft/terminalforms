@@ -30,41 +30,5 @@ public partial class Application
     {
         [LibraryImport(Global.DLL_NAME)]
         public static partial int TV_healthCheck();
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Application_new(out IntPtr @out);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Application_delete(IntPtr self);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Application_suspend(IntPtr self);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Application_suspend_base(IntPtr self);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Application_resume(IntPtr self);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Application_resume_base(IntPtr self);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Application_getTileRect(IntPtr self, out IntPtr @out);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Application_getTileRect_base(IntPtr self, out IntPtr @out);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Application_handleEvent(IntPtr self, IntPtr @event);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Application_handleEvent_base(IntPtr self, IntPtr @event);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Application_writeShellMsg(IntPtr self);
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Application_writeShellMsg_base(IntPtr self);
     }
 }

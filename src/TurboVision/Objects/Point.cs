@@ -2,7 +2,8 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.Objects;
 
-public partial class Point(IntPtr ptr, bool owned, bool placement) : NativeObject<Point>(ptr, owned, placement)
+public unsafe partial class Point(void* ptr, bool owned, bool placement)
+    : NativeObject<Point>(ptr, owned, placement)
 {
     private sealed class Factory : NativeObjectFactory<Factory>
     {
@@ -11,18 +12,18 @@ public partial class Point(IntPtr ptr, bool owned, bool placement) : NativeObjec
                 NativeMethods.TV_Point_placementSize,
                 NativeMethods.TV_Point_placementNew,
                 NativeMethods.TV_Point_new
-            )
-        {
-        }
+            ) { }
     }
 
     public static int PlacementSize => Factory.Instance.PlacementSize;
 
-    public Point(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+    public Point(byte* placement)
+        : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
-    public Point() : this(Factory.Instance.New(), owned: true, placement: false) { }
+    public Point()
+        : this(Factory.Instance.New(), owned: true, placement: false) { }
 
-    protected override void PlacementDeleteCore(IntPtr ptr)
+    protected override void PlacementDeleteCore(void* ptr)
     {
         TurboVisionException.Check(NativeMethods.TV_Point_placementDelete(ptr));
     }
@@ -60,24 +61,22 @@ public partial class Point(IntPtr ptr, bool owned, bool placement) : NativeObjec
         );
     }
 
-    public static Point operator +(Point one, Point two)
+    public static void Add(Point one, Point two, Point dst)
     {
         ObjectDisposedException.ThrowIf(one.IsDisposed, one);
         ObjectDisposedException.ThrowIf(two.IsDisposed, two);
-        TurboVisionException.Check(
-            NativeMethods.TV_Point_operator_add(one.Ptr, two.Ptr, out var ptr)
-        );
-        return new Point(ptr, owned: true, placement: false);
+        ObjectDisposedException.ThrowIf(dst.IsDisposed, dst);
+        TurboVisionException.Check(NativeMethods.TV_Point_operator_add(one.Ptr, two.Ptr, dst.Ptr));
     }
 
-    public static Point operator -(Point one, Point two)
+    public static void Subtract(Point one, Point two, Point dst)
     {
         ObjectDisposedException.ThrowIf(one.IsDisposed, one);
         ObjectDisposedException.ThrowIf(two.IsDisposed, two);
+        ObjectDisposedException.ThrowIf(dst.IsDisposed, dst);
         TurboVisionException.Check(
-            NativeMethods.TV_Point_operator_subtract(one.Ptr, two.Ptr, out var ptr)
+            NativeMethods.TV_Point_operator_subtract(one.Ptr, two.Ptr, dst.Ptr)
         );
-        return new Point(ptr, owned: true, placement: false);
     }
 
     public int X
@@ -116,53 +115,49 @@ public partial class Point(IntPtr ptr, bool owned, bool placement) : NativeObjec
         public static partial Error TV_Point_placementSize(out int outSize, out int outAlignment);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_placementNew(IntPtr self);
+        public static partial Error TV_Point_placementNew(byte* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_placementDelete(IntPtr self);
+        public static partial Error TV_Point_placementDelete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_new(out IntPtr @out);
+        public static partial Error TV_Point_new(out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_delete(IntPtr self);
+        public static partial Error TV_Point_delete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_Point_equals(
-            IntPtr self,
-            IntPtr other,
+            void* self,
+            void* other,
             [MarshalAs(UnmanagedType.I4)] out bool @out
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_hash(IntPtr self, out int @out);
+        public static partial Error TV_Point_hash(void* self, out int @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_operator_add_in_place(IntPtr self, IntPtr adder);
+        public static partial Error TV_Point_operator_add_in_place(void* self, void* adder);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_operator_subtract_in_place(IntPtr self, IntPtr subber);
+        public static partial Error TV_Point_operator_subtract_in_place(void* self, void* subber);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_operator_add(IntPtr one, IntPtr two, out IntPtr @out);
+        public static partial Error TV_Point_operator_add(void* one, void* two, void* dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_operator_subtract(
-            IntPtr one,
-            IntPtr two,
-            out IntPtr @out
-        );
+        public static partial Error TV_Point_operator_subtract(void* one, void* two, void* dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_get_x(IntPtr self, out int @out);
+        public static partial Error TV_Point_get_x(void* self, out int @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_set_x(IntPtr self, int x);
+        public static partial Error TV_Point_set_x(void* self, int x);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_get_y(IntPtr self, out int @out);
+        public static partial Error TV_Point_get_y(void* self, out int @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Point_set_y(IntPtr self, int y);
+        public static partial Error TV_Point_set_y(void* self, int y);
     }
 }

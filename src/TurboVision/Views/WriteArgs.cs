@@ -2,7 +2,8 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.Views;
 
-public partial class WriteArgs(IntPtr ptr, bool owned, bool placement) : NativeObject<WriteArgs>(ptr, owned, placement)
+public unsafe partial class WriteArgs(void* ptr, bool owned, bool placement)
+    : NativeObject<WriteArgs>(ptr, owned, placement)
 {
     private sealed class Factory : NativeObjectFactory<Factory>
     {
@@ -11,18 +12,18 @@ public partial class WriteArgs(IntPtr ptr, bool owned, bool placement) : NativeO
                 NativeMethods.TV_WriteArgs_placementSize,
                 NativeMethods.TV_WriteArgs_placementNew,
                 NativeMethods.TV_WriteArgs_new
-            )
-        {
-        }
+            ) { }
     }
 
     public static int PlacementSize => Factory.Instance.PlacementSize;
 
-    public WriteArgs(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+    public WriteArgs(byte* placement)
+        : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
-    public WriteArgs() : this(Factory.Instance.New(), owned: true, placement: false) { }
+    public WriteArgs()
+        : this(Factory.Instance.New(), owned: true, placement: false) { }
 
-    protected override void PlacementDeleteCore(IntPtr ptr)
+    protected override void PlacementDeleteCore(void* ptr)
     {
         TurboVisionException.Check(NativeMethods.TV_WriteArgs_placementDelete(ptr));
     }
@@ -46,7 +47,7 @@ public partial class WriteArgs(IntPtr ptr, bool owned, bool placement) : NativeO
         return hash;
     }
 
-    public IntPtr Self
+    public void* Self
     {
         get
         {
@@ -61,7 +62,7 @@ public partial class WriteArgs(IntPtr ptr, bool owned, bool placement) : NativeO
         }
     }
 
-    public IntPtr Target
+    public void* Target
     {
         get
         {
@@ -76,7 +77,7 @@ public partial class WriteArgs(IntPtr ptr, bool owned, bool placement) : NativeO
         }
     }
 
-    public IntPtr Buf
+    public void* Buf
     {
         get
         {
@@ -109,52 +110,55 @@ public partial class WriteArgs(IntPtr ptr, bool owned, bool placement) : NativeO
     internal static partial class NativeMethods
     {
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_placementSize(out int outSize, out int outAlignment);
+        public static partial Error TV_WriteArgs_placementSize(
+            out int outSize,
+            out int outAlignment
+        );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_placementNew(IntPtr self);
+        public static partial Error TV_WriteArgs_placementNew(byte* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_placementDelete(IntPtr self);
+        public static partial Error TV_WriteArgs_placementDelete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_new(out IntPtr @out);
+        public static partial Error TV_WriteArgs_new(out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_delete(IntPtr self);
+        public static partial Error TV_WriteArgs_delete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_WriteArgs_equals(
-            IntPtr self,
-            IntPtr other,
+            void* self,
+            void* other,
             [MarshalAs(UnmanagedType.I4)] out bool @out
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_hash(IntPtr self, out int @out);
+        public static partial Error TV_WriteArgs_hash(void* self, out int @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_get_self(IntPtr self, out IntPtr @out);
+        public static partial Error TV_WriteArgs_get_self(void* self, out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_set_self(IntPtr self, IntPtr value);
+        public static partial Error TV_WriteArgs_set_self(void* self, void* value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_get_target(IntPtr self, out IntPtr @out);
+        public static partial Error TV_WriteArgs_get_target(void* self, out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_set_target(IntPtr self, IntPtr value);
+        public static partial Error TV_WriteArgs_set_target(void* self, void* value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_get_buf(IntPtr self, out IntPtr @out);
+        public static partial Error TV_WriteArgs_get_buf(void* self, out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_set_buf(IntPtr self, IntPtr value);
+        public static partial Error TV_WriteArgs_set_buf(void* self, void* value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_get_offset(IntPtr self, out ushort @out);
+        public static partial Error TV_WriteArgs_get_offset(void* self, out ushort @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_set_offset(IntPtr self, ushort value);
+        public static partial Error TV_WriteArgs_set_offset(void* self, ushort value);
     }
 }

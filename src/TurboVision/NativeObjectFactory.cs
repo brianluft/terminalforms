@@ -7,18 +7,18 @@ public abstract class NativeObjectFactory<T>
     where T : NativeObjectFactory<T>, new()
 {
     public delegate Error PlacementSizeDelegate(out int outSize, out int outAlignment);
-    public delegate Error PlacementNewDelegate(IntPtr self);
-    public delegate Error NewDelegate(out IntPtr self);
+    public unsafe delegate Error PlacementNewDelegate(byte* buffer);
+    public unsafe delegate Error NewDelegate(out void* @out);
 
     public static T Instance { get; } = new();
 
     private readonly nuint _alignment;
     private readonly PlacementNewDelegate _placementNew;
     private readonly NewDelegate _new;
-    
+
     public int PlacementSize { get; } // Oversized to account for a byte-aligned buffer.
 
-    protected NativeObjectFactory(
+    public NativeObjectFactory(
         PlacementSizeDelegate placementSizeDelegate,
         PlacementNewDelegate placementNewDelegate,
         NewDelegate newDelegate
@@ -31,18 +31,18 @@ public abstract class NativeObjectFactory<T>
         PlacementSize = size + alignment;
     }
 
-    public IntPtr PlacementNew(IntPtr ptr)
+    public unsafe void* PlacementNew(byte* ptr)
     {
         // Align the pointer.
         nuint p = (nuint)ptr;
         nuint bumps = (_alignment - (p % _alignment)) % _alignment; // 0 when already aligned
-        ptr = IntPtr.Add(ptr, (int)bumps);
+        ptr += bumps;
 
         TurboVisionException.Check(_placementNew(ptr));
         return ptr;
     }
 
-    public IntPtr New()
+    public unsafe void* New()
     {
         TurboVisionException.Check(_new(out var ptr));
         return ptr;

@@ -46,6 +46,8 @@ add_library(tvision4c SHARED
     System/MessageEvent.cpp
     System/MouseEventType.cpp
 
+    Views/WriteArgs.cpp
+
     common.cpp
     Error.cpp
     VirtualMethodTable.cpp

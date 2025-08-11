@@ -3,7 +3,8 @@ using TurboVision.Objects;
 
 namespace TurboVision.System;
 
-public partial class MouseEventType(IntPtr ptr, bool owned, bool placement) : NativeObject<MouseEventType>(ptr, owned, placement)
+public unsafe partial class MouseEventType(void* ptr, bool owned, bool placement)
+    : NativeObject<MouseEventType>(ptr, owned, placement)
 {
     private sealed class Factory : NativeObjectFactory<Factory>
     {
@@ -12,18 +13,18 @@ public partial class MouseEventType(IntPtr ptr, bool owned, bool placement) : Na
                 NativeMethods.TV_MouseEventType_placementSize,
                 NativeMethods.TV_MouseEventType_placementNew,
                 NativeMethods.TV_MouseEventType_new
-            )
-        {
-        }
+            ) { }
     }
 
     public static int PlacementSize => Factory.Instance.PlacementSize;
 
-    public MouseEventType(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+    public MouseEventType(byte* placement)
+        : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
-    public MouseEventType() : this(Factory.Instance.New(), owned: true, placement: false) { }
+    public MouseEventType()
+        : this(Factory.Instance.New(), owned: true, placement: false) { }
 
-    protected override void PlacementDeleteCore(IntPtr ptr)
+    protected override void PlacementDeleteCore(void* ptr)
     {
         TurboVisionException.Check(NativeMethods.TV_MouseEventType_placementDelete(ptr));
     }
@@ -134,64 +135,64 @@ public partial class MouseEventType(IntPtr ptr, bool owned, bool placement) : Na
     internal static partial class NativeMethods
     {
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_placementSize(out int outSize, out int outAlignment);
+        public static partial Error TV_MouseEventType_placementSize(
+            out int outSize,
+            out int outAlignment
+        );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_placementNew(IntPtr self);
+        public static partial Error TV_MouseEventType_placementNew(byte* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_placementDelete(IntPtr self);
+        public static partial Error TV_MouseEventType_placementDelete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_new(out IntPtr @out);
+        public static partial Error TV_MouseEventType_new(out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_delete(IntPtr self);
+        public static partial Error TV_MouseEventType_delete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_MouseEventType_equals(
-            IntPtr self,
-            IntPtr other,
+            void* self,
+            void* other,
             [MarshalAs(UnmanagedType.I4)] out bool @out
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_hash(IntPtr self, out int @out);
+        public static partial Error TV_MouseEventType_hash(void* self, out int @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_get_where(IntPtr self, IntPtr dst);
+        public static partial Error TV_MouseEventType_get_where(void* self, void* dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_set_where(IntPtr self, IntPtr src);
+        public static partial Error TV_MouseEventType_set_where(void* self, void* src);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_get_eventFlags(IntPtr self, out ushort @out);
+        public static partial Error TV_MouseEventType_get_eventFlags(void* self, out ushort @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_set_eventFlags(IntPtr self, ushort value);
+        public static partial Error TV_MouseEventType_set_eventFlags(void* self, ushort value);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_MouseEventType_get_controlKeyState(
-            IntPtr self,
+            void* self,
             out ushort @out
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_set_controlKeyState(
-            IntPtr self,
-            ushort value
-        );
+        public static partial Error TV_MouseEventType_set_controlKeyState(void* self, ushort value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_get_buttons(IntPtr self, out byte @out);
+        public static partial Error TV_MouseEventType_get_buttons(void* self, out byte @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_set_buttons(IntPtr self, byte value);
+        public static partial Error TV_MouseEventType_set_buttons(void* self, byte value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_get_wheel(IntPtr self, out byte @out);
+        public static partial Error TV_MouseEventType_get_wheel(void* self, out byte @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_MouseEventType_set_wheel(IntPtr self, byte value);
+        public static partial Error TV_MouseEventType_set_wheel(void* self, byte value);
     }
 }

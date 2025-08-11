@@ -75,21 +75,21 @@ EXPORT tv::Error TV_Point_operator_subtract_in_place(TPoint* self, TPoint* subbe
     return tv::Success;
 }
 
-EXPORT tv::Error TV_Point_operator_add(TPoint* one, TPoint* two, TPoint** out) {
-    if (!one || !two || !out) {
+EXPORT tv::Error TV_Point_operator_add(TPoint* one, TPoint* two, TPoint* dst) {
+    if (!one || !two || !dst) {
         return tv::Error_ArgumentNull;
     }
 
-    *out = new TPoint{ *one + *two };
+    *dst = *one + *two;
     return tv::Success;
 }
 
-EXPORT tv::Error TV_Point_operator_subtract(TPoint* one, TPoint* two, TPoint** out) {
-    if (!one || !two || !out) {
+EXPORT tv::Error TV_Point_operator_subtract(TPoint* one, TPoint* two, TPoint* dst) {
+    if (!one || !two || !dst) {
         return tv::Error_ArgumentNull;
     }
 
-    *out = new TPoint{ *one - *two };
+    *dst = *one - *two;
     return tv::Success;
 }
 

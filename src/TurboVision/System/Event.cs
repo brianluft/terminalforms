@@ -2,7 +2,8 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.System;
 
-public partial class Event(IntPtr ptr, bool owned, bool placement) : NativeObject<Event>(ptr, owned, placement)
+public unsafe partial class Event(void* ptr, bool owned, bool placement)
+    : NativeObject<Event>(ptr, owned, placement)
 {
     private sealed class Factory : NativeObjectFactory<Factory>
     {
@@ -11,18 +12,18 @@ public partial class Event(IntPtr ptr, bool owned, bool placement) : NativeObjec
                 NativeMethods.TV_Event_placementSize,
                 NativeMethods.TV_Event_placementNew,
                 NativeMethods.TV_Event_new
-            )
-        {
-        }
+            ) { }
     }
 
     public static int PlacementSize => Factory.Instance.PlacementSize;
 
-    public Event(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+    public Event(byte* placement)
+        : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
-    public Event() : this(Factory.Instance.New(), owned: true, placement: false) { }
+    public Event()
+        : this(Factory.Instance.New(), owned: true, placement: false) { }
 
-    protected override void PlacementDeleteCore(IntPtr ptr)
+    protected override void PlacementDeleteCore(void* ptr)
     {
         TurboVisionException.Check(NativeMethods.TV_Event_placementDelete(ptr));
     }
@@ -119,55 +120,55 @@ public partial class Event(IntPtr ptr, bool owned, bool placement) : NativeObjec
         public static partial Error TV_Event_placementSize(out int outSize, out int outAlignment);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_placementNew(IntPtr self);
+        public static partial Error TV_Event_placementNew(byte* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_placementDelete(IntPtr self);
+        public static partial Error TV_Event_placementDelete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_new(out IntPtr @out);
+        public static partial Error TV_Event_new(out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_delete(IntPtr self);
+        public static partial Error TV_Event_delete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_Event_equals(
-            IntPtr self,
-            IntPtr other,
+            void* self,
+            void* other,
             [MarshalAs(UnmanagedType.I4)] out bool @out
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_hash(IntPtr self, out int @out);
+        public static partial Error TV_Event_hash(void* self, out int @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_get_what(IntPtr self, out ushort @out);
+        public static partial Error TV_Event_get_what(void* self, out ushort @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_set_what(IntPtr self, ushort value);
+        public static partial Error TV_Event_set_what(void* self, ushort value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_get_mouse(IntPtr self, IntPtr dst);
+        public static partial Error TV_Event_get_mouse(void* self, void* dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_set_mouse(IntPtr self, IntPtr src);
+        public static partial Error TV_Event_set_mouse(void* self, void* src);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_get_keyDown(IntPtr self, IntPtr dst);
+        public static partial Error TV_Event_get_keyDown(void* self, void* dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_set_keyDown(IntPtr self, IntPtr src);
+        public static partial Error TV_Event_set_keyDown(void* self, void* src);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_get_message(IntPtr self, IntPtr dst);
+        public static partial Error TV_Event_get_message(void* self, void* dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_set_message(IntPtr self, IntPtr src);
+        public static partial Error TV_Event_set_message(void* self, void* src);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_getMouseEvent(IntPtr self);
+        public static partial Error TV_Event_getMouseEvent(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Event_getKeyEvent(IntPtr self);
+        public static partial Error TV_Event_getKeyEvent(void* self);
     }
 }

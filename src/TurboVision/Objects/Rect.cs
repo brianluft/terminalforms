@@ -2,7 +2,8 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.Objects;
 
-public partial class Rect(IntPtr ptr, bool owned, bool placement) : NativeObject<Rect>(ptr, owned, placement)
+public unsafe partial class Rect(void* ptr, bool owned, bool placement)
+    : NativeObject<Rect>(ptr, owned, placement)
 {
     private sealed class Factory : NativeObjectFactory<Factory>
     {
@@ -11,18 +12,18 @@ public partial class Rect(IntPtr ptr, bool owned, bool placement) : NativeObject
                 NativeMethods.TV_Rect_placementSize,
                 NativeMethods.TV_Rect_placementNew,
                 NativeMethods.TV_Rect_new
-            )
-        {
-        }
+            ) { }
     }
 
     public static int PlacementSize => Factory.Instance.PlacementSize;
 
-    public Rect(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+    public Rect(byte* placement)
+        : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
-    public Rect() : this(Factory.Instance.New(), owned: true, placement: false) { }
+    public Rect()
+        : this(Factory.Instance.New(), owned: true, placement: false) { }
 
-    protected override void PlacementDeleteCore(IntPtr ptr)
+    protected override void PlacementDeleteCore(void* ptr)
     {
         TurboVisionException.Check(NativeMethods.TV_Rect_placementDelete(ptr));
     }
@@ -119,62 +120,62 @@ public partial class Rect(IntPtr ptr, bool owned, bool placement) : NativeObject
         public static partial Error TV_Rect_placementSize(out int outSize, out int outAlignment);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_placementNew(IntPtr self);
+        public static partial Error TV_Rect_placementNew(byte* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_placementDelete(IntPtr self);
+        public static partial Error TV_Rect_placementDelete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_new(out IntPtr @out);
+        public static partial Error TV_Rect_new(out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_delete(IntPtr self);
+        public static partial Error TV_Rect_delete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_Rect_equals(
-            IntPtr self,
-            IntPtr other,
+            void* self,
+            void* other,
             [MarshalAs(UnmanagedType.I4)] out bool @out
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_hash(IntPtr self, out int @out);
+        public static partial Error TV_Rect_hash(void* self, out int @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_move(IntPtr self, int aDX, int aDY);
+        public static partial Error TV_Rect_move(void* self, int aDX, int aDY);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_grow(IntPtr self, int aDX, int aDY);
+        public static partial Error TV_Rect_grow(void* self, int aDX, int aDY);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_intersect(IntPtr self, IntPtr r);
+        public static partial Error TV_Rect_intersect(void* self, void* r);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_Union(IntPtr self, IntPtr r);
+        public static partial Error TV_Rect_Union(void* self, void* r);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_Rect_contains(
-            IntPtr self,
-            IntPtr p,
+            void* self,
+            void* p,
             [MarshalAs(UnmanagedType.I4)] out bool @out
         );
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_Rect_isEmpty(
-            IntPtr self,
+            void* self,
             [MarshalAs(UnmanagedType.I4)] out bool @out
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_get_a(IntPtr self, IntPtr dst);
+        public static partial Error TV_Rect_get_a(void* self, void* dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_set_a(IntPtr self, IntPtr src);
+        public static partial Error TV_Rect_set_a(void* self, void* src);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_get_b(IntPtr self, IntPtr dst);
+        public static partial Error TV_Rect_get_b(void* self, void* dst);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_Rect_set_b(IntPtr self, IntPtr src);
+        public static partial Error TV_Rect_set_b(void* self, void* src);
     }
 }

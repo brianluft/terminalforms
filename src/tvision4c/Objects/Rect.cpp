@@ -1,4 +1,5 @@
 #include "Rect.h"
+#include "../common.h"
 
 EXPORT tv::Error TV_Rect_placementSize(int32_t* outSize, int32_t* outAlignment) {
     return tv::checkedSize<TRect>(outSize, outAlignment);
@@ -57,6 +58,7 @@ EXPORT tv::Error TV_Rect_hash(TRect* self, int32_t* out) {
         if (error != tv::Success) {
             return error;
         }
+        tv::hash(pointHash, &result);
     }
 
     {
@@ -65,6 +67,7 @@ EXPORT tv::Error TV_Rect_hash(TRect* self, int32_t* out) {
         if (error != tv::Success) {
             return error;
         }
+        tv::hash(pointHash, &result);
     }
 
     *out = result;

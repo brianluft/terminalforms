@@ -7,12 +7,14 @@ namespace TurboVision;
 /// <typeparam name="T">The type of the subclass.</typeparam>
 /// <param name="ptr">The pointer to the native object.</param>
 /// <param name="owned">Whether the native object is owned by the current instance.</param>
-public abstract class NativeObject<T>(IntPtr ptr, bool owned, bool placement) : IDisposable, IEquatable<T>
+public unsafe abstract class NativeObject<T>(void* ptr, bool owned, bool placement)
+    : IDisposable,
+        IEquatable<T>
     where T : NativeObject<T>
 {
     public bool IsDisposed { get; private set; }
 
-    internal IntPtr Ptr { get; } = ptr;
+    internal void* Ptr { get; } = ptr;
     public bool IsOwned { get; set; } = owned;
     public bool IsPlacementAllocated { get; } = placement;
 
@@ -70,7 +72,7 @@ public abstract class NativeObject<T>(IntPtr ptr, bool owned, bool placement) : 
         return GetHashCodeCore();
     }
 
-    protected abstract void PlacementDeleteCore(IntPtr ptr);
+    protected abstract unsafe void PlacementDeleteCore(void* ptr);
     protected abstract void DeleteCore();
     protected abstract bool EqualsCore(T other);
     protected abstract int GetHashCodeCore();

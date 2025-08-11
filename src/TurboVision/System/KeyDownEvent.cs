@@ -3,7 +3,8 @@ using System.Text;
 
 namespace TurboVision.System;
 
-public partial class KeyDownEvent(IntPtr ptr, bool owned, bool placement) : NativeObject<KeyDownEvent>(ptr, owned, placement)
+public unsafe partial class KeyDownEvent(void* ptr, bool owned, bool placement)
+    : NativeObject<KeyDownEvent>(ptr, owned, placement)
 {
     private sealed class Factory : NativeObjectFactory<Factory>
     {
@@ -12,18 +13,18 @@ public partial class KeyDownEvent(IntPtr ptr, bool owned, bool placement) : Nati
                 NativeMethods.TV_KeyDownEvent_placementSize,
                 NativeMethods.TV_KeyDownEvent_placementNew,
                 NativeMethods.TV_KeyDownEvent_new
-            )
-        {
-        }
+            ) { }
     }
 
     public static int PlacementSize => Factory.Instance.PlacementSize;
 
-    public KeyDownEvent(IntPtr placement) : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
+    public KeyDownEvent(byte* placement)
+        : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
-    public KeyDownEvent() : this(Factory.Instance.New(), owned: true, placement: false) { }
+    public KeyDownEvent()
+        : this(Factory.Instance.New(), owned: true, placement: false) { }
 
-    protected override void PlacementDeleteCore(IntPtr ptr)
+    protected override void PlacementDeleteCore(void* ptr)
     {
         TurboVisionException.Check(NativeMethods.TV_KeyDownEvent_placementDelete(ptr));
     }
@@ -145,67 +146,70 @@ public partial class KeyDownEvent(IntPtr ptr, bool owned, bool placement) : Nati
     internal static partial class NativeMethods
     {
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_placementSize(out int outSize, out int outAlignment);
+        public static partial Error TV_KeyDownEvent_placementSize(
+            out int outSize,
+            out int outAlignment
+        );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_placementNew(IntPtr self);
+        public static partial Error TV_KeyDownEvent_placementNew(byte* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_placementDelete(IntPtr self);
+        public static partial Error TV_KeyDownEvent_placementDelete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_new(out IntPtr @out);
+        public static partial Error TV_KeyDownEvent_new(out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_delete(IntPtr self);
+        public static partial Error TV_KeyDownEvent_delete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_KeyDownEvent_equals(
-            IntPtr self,
-            IntPtr other,
+            void* self,
+            void* other,
             [MarshalAs(UnmanagedType.I4)] out bool @out
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_hash(IntPtr self, out int @out);
+        public static partial Error TV_KeyDownEvent_hash(void* self, out int @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_get_keyCode(IntPtr self, out ushort @out);
+        public static partial Error TV_KeyDownEvent_get_keyCode(void* self, out ushort @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_set_keyCode(IntPtr self, ushort value);
+        public static partial Error TV_KeyDownEvent_set_keyCode(void* self, ushort value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_get_charCode(IntPtr self, out byte @out);
+        public static partial Error TV_KeyDownEvent_get_charCode(void* self, out byte @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_set_charCode(IntPtr self, byte value);
+        public static partial Error TV_KeyDownEvent_set_charCode(void* self, byte value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_get_scanCode(IntPtr self, out byte @out);
+        public static partial Error TV_KeyDownEvent_get_scanCode(void* self, out byte @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_set_scanCode(IntPtr self, byte value);
+        public static partial Error TV_KeyDownEvent_set_scanCode(void* self, byte value);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_KeyDownEvent_get_controlKeyState(
-            IntPtr self,
+            void* self,
             out ushort @out
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_KeyDownEvent_set_controlKeyState(IntPtr self, ushort value);
+        public static partial Error TV_KeyDownEvent_set_controlKeyState(void* self, ushort value);
 
         [LibraryImport(Global.DLL_NAME)]
         public static unsafe partial Error TV_KeyDownEvent_get_text(
-            IntPtr self,
+            void* self,
             out byte* @out,
             out byte outTextLength
         );
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_KeyDownEvent_set_text(
-            IntPtr self,
+            void* self,
             Span<byte> value,
             byte textLength
         );
