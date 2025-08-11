@@ -62,8 +62,15 @@ build_turbovision_demo() {
     cd "$ROOT_DIR"
 }
 
+build_tests() {
+    status "header" "Tests"
+    cd "$ROOT_DIR/src"
+    dotnet build Tests/Tests.csproj --runtime "$RID"
+    cd "$ROOT_DIR"
+}
+
 build_tvision4c
 build_turbovision
 build_turbovision_demo
-
+build_tests
 status "success" "Build complete."

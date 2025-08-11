@@ -53,4 +53,6 @@ jobs:
         DOTNET_CLI_TELEMETRY_OPTOUT: 1
         DOTNET_NOLOGO: 1
         CONFIGURATION: Release
-      run: bash scripts/build.sh
+      run: |
+        bash scripts/build.sh
+        bash scripts/test.sh
