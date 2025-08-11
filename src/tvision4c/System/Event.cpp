@@ -1,5 +1,5 @@
 #include "Event.h"
-#include "Error.h"
+#include "../Error.h"
 #include <cstring>
 
 #define Uses_TEventQueue

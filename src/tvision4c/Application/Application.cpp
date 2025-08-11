@@ -1,5 +1,5 @@
 #include "Application.h"
-#include "VirtualMethodTable.h"
+#include "../VirtualMethodTable.h"
 
 #define Uses_TApplication
 #include <tvision/tv.h>

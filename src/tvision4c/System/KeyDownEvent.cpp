@@ -1,6 +1,6 @@
 #include "KeyDownEvent.h"
-#include "Error.h"
-#include "Point.h"
+#include "../Error.h"
+#include "../Objects/Point.h"
 #include <cstring>
 
 EXPORT tv::Error TV_KeyDownEvent_placementSize(int32_t* outSize, int32_t* outAlignment) {

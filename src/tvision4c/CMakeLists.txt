@@ -36,15 +36,18 @@ endif()
 
 # Create the DLL
 add_library(tvision4c SHARED
-    Application.cpp
+    Application/Application.cpp
+
+    Objects/Point.cpp
+    Objects/Rect.cpp
+
+    System/Event.cpp
+    System/KeyDownEvent.cpp
+    System/MessageEvent.cpp
+    System/MouseEventType.cpp
+
     common.cpp
     Error.cpp
-    Event.cpp
-    KeyDownEvent.cpp
-    MessageEvent.cpp
-    MouseEventType.cpp
-    Point.cpp
-    Rect.cpp
     VirtualMethodTable.cpp
 )
 

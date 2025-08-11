@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common.h"
-#include "Error.h"
+#include "../common.h"
+#include "../Error.h"
 
 #define Uses_TPoint
 #include <tvision/tv.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common.h"
+#include "../common.h"
 #include "MouseEventType.h"
 #include "KeyDownEvent.h"
 #include "MessageEvent.h"

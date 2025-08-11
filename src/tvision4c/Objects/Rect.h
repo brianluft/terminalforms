@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common.h"
+#include "../common.h"
 #include "Point.h"
 
 #define Uses_TRect

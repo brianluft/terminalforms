@@ -1,5 +1,5 @@
 #include "MouseEventType.h"
-#include "Point.h"
+#include "../Objects/Point.h"
 
 EXPORT tv::Error TV_MouseEventType_placementSize(int32_t* outSize, int32_t* outAlignment) {
     return tv::checkedSize<MouseEventType>(outSize, outAlignment);
