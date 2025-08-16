@@ -5,7 +5,7 @@
 .gitattributes text eol=lf
 .gitignore text eol=lf
 *.cpp text eol=lf
-*.h text eol=lf
+*.h text eol=lf linguist-language=C++
 *.md text eol=lf
 *.mdc text eol=lf
 *.sh text eol=lf
