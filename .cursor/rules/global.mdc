@@ -5,15 +5,34 @@ This is TerminalForms, a C# wrapper for the Turbo Vision TUI library.
 Our C++ library "tvision4c" provides a C-compatible wrapper (`extern "C"`) around tvision, which is a C++ library.
 Then our .NET library "TurboVision" calls into the "tvision4c" library using P/Invoke.
 
+`scripts/build.sh` will build everything and run tests (`src/Tests`).
+
 # General Rules
 - Refer to me as "boss" so I know you've read this.
 
+# C Rules
+- Always use stdint types like `int32_t` (C# int) and `int16_t` (C# short). Our goal is to make it clear what the C# P/Invoke representation is. Never use native types like `int`, `short`, or `bool`.
+- Always use `BOOL` (4-byte) instead of C++ `bool` (1-byte).
+- Always return `tv::Error` for error handling. Never allow exceptions to bubble up past the C interface.
+- A normal C++ class `Foo` must be given, at minimum, these C API functions with formulaic implementations that you can copy from any other implementation:
+    ```
+    EXPORT tv::Error TV_Foo_placementSize(int32_t* outSize, int32_t* outAlignment);
+    EXPORT tv::Error TV_Foo_placementNew(Foo* self);
+    EXPORT tv::Error TV_Foo_placementDelete(Foo* self);
+    EXPORT tv::Error TV_Foo_new(Foo** out);
+    EXPORT tv::Error TV_Foo_delete(Foo* self);
+    EXPORT tv::Error TV_Foo_equals(Foo* self, Foo* other, BOOL* out);
+    EXPORT tv::Error TV_Foo_hash(Foo* self, int32_t* out);
+    ```
+- The C++ classes should all have default parameterless constructors, but they may *also* have constructors with parameters. Ignore those additional constructors and only create a C binding for the parameterless constructor.
+
 # C# Rules
 - Use `var` instead of explicit type names when possible.
-- Our C API uses C `BOOL` (4-byte) instead of C++ `bool` (1-byte).  Always specify `[MarshalAs(UnmanagedType.I4)]` for `bool` parameters and return types. C# requires it.
+- Always specify `[MarshalAs(UnmanagedType.I4)]` for `bool` parameters and return types. C# requires it.
 - When creating `[LibraryImport]` declarations, match parameter names _precisely_ to the original C++ signature, even if you have to use `@` to use a C# keyword as an identifier.
 - The native functions all return `enum Error`. Wrap your native calls in `TurboVisionException.Check(Error)` which will throw an exception if the error code is not successful.
 - Prefer modern `unsafe`/`Span` interop techniques over old fashioned `Marshal`/`IntPtr` techniques.
 - When converting a C# string to UTF-8, use `Global.UTFEncoding` which is configured _not_ to emit a BOM.
 - Translate C++ `TSpan` as C# `Span<T>`.
 - Translate C++ `TStringView` and all moral equivalents to strings as C# `String` via copying.
+- The C++ code has lots of typedefs for simple integers. Translate these as primitive C# integer types rather than trying to define the typedef on the C# side.

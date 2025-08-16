@@ -55,4 +55,3 @@ jobs:
         CONFIGURATION: Release
       run: |
         bash scripts/build.sh
-        bash scripts/test.sh
