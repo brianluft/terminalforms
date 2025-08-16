@@ -23,9 +23,9 @@ namespace tv {
 
 template <typename T>
 void hash(const T& v, int32_t* seed) {
-    auto x = *seed;
+    auto x = static_cast<int64_t>(*seed);
     x ^= std::hash<T>{}(v) + 0x9e3779b9 + (x << 6) + (x >> 2);
-    *seed = x;
+    *seed = static_cast<int32_t>(x);
 }
 
 }  // namespace tv
