@@ -1,19 +1,37 @@
 #pragma once
 
 #include "../common.h"
-#include "../Error.h"
 
 #define Uses_TEvent
 #include <tvision/tv.h>
 
-EXPORT tv::Error TV_MessageEvent_placementSize(int32_t* outSize, int32_t* outAlignment);
-EXPORT tv::Error TV_MessageEvent_placementNew(MessageEvent* self);
-EXPORT tv::Error TV_MessageEvent_placementDelete(MessageEvent* self);
-EXPORT tv::Error TV_MessageEvent_new(MessageEvent** out);
-EXPORT tv::Error TV_MessageEvent_delete(MessageEvent* self);
-EXPORT tv::Error TV_MessageEvent_equals(MessageEvent* self, MessageEvent* other, BOOL* out);
-EXPORT tv::Error TV_MessageEvent_hash(MessageEvent* self, int32_t* out);
-EXPORT tv::Error TV_MessageEvent_get_command(MessageEvent* self, uint16_t* out);
-EXPORT tv::Error TV_MessageEvent_set_command(MessageEvent* self, uint16_t value);
-EXPORT tv::Error TV_MessageEvent_get_infoPtr(MessageEvent* self, void** out);
-EXPORT tv::Error TV_MessageEvent_set_infoPtr(MessageEvent* self, void* value);
+namespace tv {
+
+template <>
+struct InitializePolicy<MessageEvent> {
+    static void initialize(MessageEvent* self) {
+        self->command = {};
+        self->infoPtr = {};
+    }
+};
+
+template <>
+struct EqualsPolicy<MessageEvent> {
+    static bool equals(const MessageEvent& self, const MessageEvent& other) {
+        return self.command == other.command && self.infoPtr == other.infoPtr;
+    }
+};
+
+template <>
+struct HashPolicy<MessageEvent> {
+    static void hash(const MessageEvent& self, int32_t* seed) {
+        tv::hash(self.command, seed);
+        tv::hash(reinterpret_cast<uintptr_t>(self.infoPtr), seed);
+    }
+};
+
+}  // namespace tv
+
+TV_DECLARE_BOILERPLATE_FUNCTIONS(MessageEvent)
+TV_DECLARE_GET_SET_PRIMITIVE(MessageEvent, uint16_t, command)
+TV_DECLARE_GET_SET_PRIMITIVE(MessageEvent, void*, infoPtr)

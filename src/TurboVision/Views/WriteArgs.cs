@@ -9,9 +9,9 @@ public unsafe partial class WriteArgs(void* ptr, bool owned, bool placement)
     {
         public Factory()
             : base(
-                NativeMethods.TV_WriteArgs_placementSize,
-                NativeMethods.TV_WriteArgs_placementNew,
-                NativeMethods.TV_WriteArgs_new
+                NativeMethods.TV_write_args_placementSize,
+                NativeMethods.TV_write_args_placementNew,
+                NativeMethods.TV_write_args_new
             ) { }
     }
 
@@ -25,25 +25,25 @@ public unsafe partial class WriteArgs(void* ptr, bool owned, bool placement)
 
     protected override void PlacementDeleteCore(void* ptr)
     {
-        TurboVisionException.Check(NativeMethods.TV_WriteArgs_placementDelete(ptr));
+        TurboVisionException.Check(NativeMethods.TV_write_args_placementDelete(ptr));
     }
 
     protected override void DeleteCore()
     {
-        TurboVisionException.Check(NativeMethods.TV_WriteArgs_delete(Ptr));
+        TurboVisionException.Check(NativeMethods.TV_write_args_delete(Ptr));
     }
 
     protected override bool EqualsCore(WriteArgs other)
     {
         TurboVisionException.Check(
-            NativeMethods.TV_WriteArgs_equals(Ptr, other.Ptr, out var equals)
+            NativeMethods.TV_write_args_equals(Ptr, other.Ptr, out var equals)
         );
         return equals;
     }
 
     protected override int GetHashCodeCore()
     {
-        TurboVisionException.Check(NativeMethods.TV_WriteArgs_hash(Ptr, out var hash));
+        TurboVisionException.Check(NativeMethods.TV_write_args_hash(Ptr, out var hash));
         return hash;
     }
 
@@ -52,13 +52,13 @@ public unsafe partial class WriteArgs(void* ptr, bool owned, bool placement)
         get
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_WriteArgs_get_self(Ptr, out var self));
+            TurboVisionException.Check(NativeMethods.TV_write_args_get_self(Ptr, out var self));
             return self;
         }
         set
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_WriteArgs_set_self(Ptr, value));
+            TurboVisionException.Check(NativeMethods.TV_write_args_set_self(Ptr, value));
         }
     }
 
@@ -67,13 +67,13 @@ public unsafe partial class WriteArgs(void* ptr, bool owned, bool placement)
         get
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_WriteArgs_get_target(Ptr, out var target));
+            TurboVisionException.Check(NativeMethods.TV_write_args_get_target(Ptr, out var target));
             return target;
         }
         set
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_WriteArgs_set_target(Ptr, value));
+            TurboVisionException.Check(NativeMethods.TV_write_args_set_target(Ptr, value));
         }
     }
 
@@ -82,13 +82,13 @@ public unsafe partial class WriteArgs(void* ptr, bool owned, bool placement)
         get
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_WriteArgs_get_buf(Ptr, out var buf));
+            TurboVisionException.Check(NativeMethods.TV_write_args_get_buf(Ptr, out var buf));
             return buf;
         }
         set
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_WriteArgs_set_buf(Ptr, value));
+            TurboVisionException.Check(NativeMethods.TV_write_args_set_buf(Ptr, value));
         }
     }
 
@@ -97,68 +97,68 @@ public unsafe partial class WriteArgs(void* ptr, bool owned, bool placement)
         get
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_WriteArgs_get_offset(Ptr, out var offset));
+            TurboVisionException.Check(NativeMethods.TV_write_args_get_offset(Ptr, out var offset));
             return offset;
         }
         set
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-            TurboVisionException.Check(NativeMethods.TV_WriteArgs_set_offset(Ptr, value));
+            TurboVisionException.Check(NativeMethods.TV_write_args_set_offset(Ptr, value));
         }
     }
 
     internal static partial class NativeMethods
     {
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_placementSize(
+        public static partial Error TV_write_args_placementSize(
             out int outSize,
             out int outAlignment
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_placementNew(byte* self);
+        public static partial Error TV_write_args_placementNew(byte* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_placementDelete(void* self);
+        public static partial Error TV_write_args_placementDelete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_new(out void* @out);
+        public static partial Error TV_write_args_new(out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_delete(void* self);
+        public static partial Error TV_write_args_delete(void* self);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_equals(
+        public static partial Error TV_write_args_equals(
             void* self,
             void* other,
             [MarshalAs(UnmanagedType.I4)] out bool @out
         );
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_hash(void* self, out int @out);
+        public static partial Error TV_write_args_hash(void* self, out int @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_get_self(void* self, out void* @out);
+        public static partial Error TV_write_args_get_self(void* self, out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_set_self(void* self, void* value);
+        public static partial Error TV_write_args_set_self(void* self, void* value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_get_target(void* self, out void* @out);
+        public static partial Error TV_write_args_get_target(void* self, out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_set_target(void* self, void* value);
+        public static partial Error TV_write_args_set_target(void* self, void* value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_get_buf(void* self, out void* @out);
+        public static partial Error TV_write_args_get_buf(void* self, out void* @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_set_buf(void* self, void* value);
+        public static partial Error TV_write_args_set_buf(void* self, void* value);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_get_offset(void* self, out ushort @out);
+        public static partial Error TV_write_args_get_offset(void* self, out ushort @out);
 
         [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_WriteArgs_set_offset(void* self, ushort value);
+        public static partial Error TV_write_args_set_offset(void* self, ushort value);
     }
 }

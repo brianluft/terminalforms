@@ -33,7 +33,7 @@ public sealed class MouseEventTypeTests
         using var a = new MouseEventType();
         using var b = new MouseEventType();
         using var c = new MouseEventType();
-        using var point = new Point { X = 10, Y = 20 };
+        using var TPoint = new TPoint { X = 10, Y = 20 };
 
         // Initially all should be equal
         Assert.IsTrue(a.Equals(b));
@@ -44,13 +44,13 @@ public sealed class MouseEventTypeTests
         a.ControlKeyState = 456;
         a.Buttons = 7;
         a.Wheel = 8;
-        a.SetWhere(point);
+        a.SetWhere(TPoint);
 
         c.EventFlags = 123;
         c.ControlKeyState = 456;
         c.Buttons = 7;
         c.Wheel = 8;
-        c.SetWhere(point);
+        c.SetWhere(TPoint);
 
         Assert.IsTrue(a.Equals(c));
         Assert.IsFalse(a.Equals(b));
@@ -64,7 +64,7 @@ public sealed class MouseEventTypeTests
         using var a = new MouseEventType();
         using var b = new MouseEventType();
         using var c = new MouseEventType();
-        using var point = new Point { X = 10, Y = 20 };
+        using var TPoint = new TPoint { X = 10, Y = 20 };
 
         // Initially all should have same hash
         Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
@@ -75,13 +75,13 @@ public sealed class MouseEventTypeTests
         a.ControlKeyState = 456;
         a.Buttons = 7;
         a.Wheel = 8;
-        a.SetWhere(point);
+        a.SetWhere(TPoint);
 
         c.EventFlags = 123;
         c.ControlKeyState = 456;
         c.Buttons = 7;
         c.Wheel = 8;
-        c.SetWhere(point);
+        c.SetWhere(TPoint);
 
         Assert.AreEqual(a.GetHashCode(), c.GetHashCode());
         Assert.AreNotEqual(a.GetHashCode(), b.GetHashCode());
@@ -91,8 +91,8 @@ public sealed class MouseEventTypeTests
     public void Test_GetWhere_SetWhere()
     {
         using var mouseEvent = new MouseEventType();
-        using var inputPoint = new Point { X = 15, Y = 25 };
-        using var outputPoint = new Point();
+        using var inputPoint = new TPoint { X = 15, Y = 25 };
+        using var outputPoint = new TPoint();
 
         mouseEvent.SetWhere(inputPoint);
         mouseEvent.GetWhere(outputPoint);
@@ -189,15 +189,15 @@ public sealed class MouseEventTypeTests
     public void Test_AllPropertiesTogether()
     {
         using var mouseEvent = new MouseEventType();
-        using var point = new Point { X = 100, Y = 200 };
-        using var resultPoint = new Point();
+        using var TPoint = new TPoint { X = 100, Y = 200 };
+        using var resultPoint = new TPoint();
 
         // Set all properties
         mouseEvent.EventFlags = 0x1111;
         mouseEvent.ControlKeyState = 0x2222;
         mouseEvent.Buttons = 0x33;
         mouseEvent.Wheel = 0x44;
-        mouseEvent.SetWhere(point);
+        mouseEvent.SetWhere(TPoint);
 
         // Verify all properties
         Assert.AreEqual(0x1111, mouseEvent.EventFlags);

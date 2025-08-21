@@ -8,24 +8,24 @@ public sealed class RectTests
     [TestMethod]
     public unsafe void Test_PlacementNew()
     {
-        var bytes = stackalloc byte[Rect.PlacementSize];
-        using var rect = new Rect(bytes);
+        var bytes = stackalloc byte[TRect.PlacementSize];
+        using var rect = new TRect(bytes);
     }
 
     [TestMethod]
     public void Test_New()
     {
-        using var rect = new Rect();
+        using var rect = new TRect();
     }
 
     [TestMethod]
     public void Test_Equals()
     {
-        using var a = new Rect();
-        using var b = new Rect();
-        using var pointA = new Point { X = 1, Y = 2 };
-        using var pointB = new Point { X = 3, Y = 4 };
-        using var c = new Rect();
+        using var a = new TRect();
+        using var b = new TRect();
+        using var pointA = new TPoint { X = 1, Y = 2 };
+        using var pointB = new TPoint { X = 3, Y = 4 };
+        using var c = new TRect();
 
         a.SetA(pointA);
         a.SetB(pointB);
@@ -41,11 +41,11 @@ public sealed class RectTests
     [TestMethod]
     public void Test_GetHashCode()
     {
-        using var a = new Rect();
-        using var b = new Rect();
-        using var pointA = new Point { X = 1, Y = 2 };
-        using var pointB = new Point { X = 3, Y = 4 };
-        using var c = new Rect();
+        using var a = new TRect();
+        using var b = new TRect();
+        using var pointA = new TPoint { X = 1, Y = 2 };
+        using var pointB = new TPoint { X = 3, Y = 4 };
+        using var c = new TRect();
 
         a.SetA(pointA);
         a.SetB(pointB);
@@ -59,11 +59,11 @@ public sealed class RectTests
     [TestMethod]
     public void Test_Move()
     {
-        using var rect = new Rect();
-        using var pointA = new Point { X = 1, Y = 2 };
-        using var pointB = new Point { X = 5, Y = 6 };
-        using var resultA = new Point();
-        using var resultB = new Point();
+        using var rect = new TRect();
+        using var pointA = new TPoint { X = 1, Y = 2 };
+        using var pointB = new TPoint { X = 5, Y = 6 };
+        using var resultA = new TPoint();
+        using var resultB = new TPoint();
 
         rect.SetA(pointA);
         rect.SetB(pointB);
@@ -81,11 +81,11 @@ public sealed class RectTests
     [TestMethod]
     public void Test_Grow()
     {
-        using var rect = new Rect();
-        using var pointA = new Point { X = 2, Y = 3 };
-        using var pointB = new Point { X = 6, Y = 7 };
-        using var resultA = new Point();
-        using var resultB = new Point();
+        using var rect = new TRect();
+        using var pointA = new TPoint { X = 2, Y = 3 };
+        using var pointB = new TPoint { X = 6, Y = 7 };
+        using var resultA = new TPoint();
+        using var resultB = new TPoint();
 
         rect.SetA(pointA);
         rect.SetB(pointB);
@@ -103,14 +103,14 @@ public sealed class RectTests
     [TestMethod]
     public void Test_Intersect()
     {
-        using var rect1 = new Rect();
-        using var rect2 = new Rect();
-        using var pointA1 = new Point { X = 0, Y = 0 };
-        using var pointB1 = new Point { X = 10, Y = 10 };
-        using var pointA2 = new Point { X = 5, Y = 5 };
-        using var pointB2 = new Point { X = 15, Y = 15 };
-        using var resultA = new Point();
-        using var resultB = new Point();
+        using var rect1 = new TRect();
+        using var rect2 = new TRect();
+        using var pointA1 = new TPoint { X = 0, Y = 0 };
+        using var pointB1 = new TPoint { X = 10, Y = 10 };
+        using var pointA2 = new TPoint { X = 5, Y = 5 };
+        using var pointB2 = new TPoint { X = 15, Y = 15 };
+        using var resultA = new TPoint();
+        using var resultB = new TPoint();
 
         rect1.SetA(pointA1);
         rect1.SetB(pointB1);
@@ -131,14 +131,14 @@ public sealed class RectTests
     [TestMethod]
     public void Test_Union()
     {
-        using var rect1 = new Rect();
-        using var rect2 = new Rect();
-        using var pointA1 = new Point { X = 0, Y = 0 };
-        using var pointB1 = new Point { X = 5, Y = 5 };
-        using var pointA2 = new Point { X = 3, Y = 3 };
-        using var pointB2 = new Point { X = 8, Y = 8 };
-        using var resultA = new Point();
-        using var resultB = new Point();
+        using var rect1 = new TRect();
+        using var rect2 = new TRect();
+        using var pointA1 = new TPoint { X = 0, Y = 0 };
+        using var pointB1 = new TPoint { X = 5, Y = 5 };
+        using var pointA2 = new TPoint { X = 3, Y = 3 };
+        using var pointB2 = new TPoint { X = 8, Y = 8 };
+        using var resultA = new TPoint();
+        using var resultB = new TPoint();
 
         rect1.SetA(pointA1);
         rect1.SetB(pointB1);
@@ -159,11 +159,11 @@ public sealed class RectTests
     [TestMethod]
     public void Test_Contains()
     {
-        using var rect = new Rect();
-        using var pointA = new Point { X = 1, Y = 2 };
-        using var pointB = new Point { X = 5, Y = 6 };
-        using var insidePoint = new Point { X = 3, Y = 4 };
-        using var outsidePoint = new Point { X = 7, Y = 8 };
+        using var rect = new TRect();
+        using var pointA = new TPoint { X = 1, Y = 2 };
+        using var pointB = new TPoint { X = 5, Y = 6 };
+        using var insidePoint = new TPoint { X = 3, Y = 4 };
+        using var outsidePoint = new TPoint { X = 7, Y = 8 };
 
         rect.SetA(pointA);
         rect.SetB(pointB);
@@ -175,10 +175,10 @@ public sealed class RectTests
     [TestMethod]
     public void Test_IsEmpty()
     {
-        using var emptyRect = new Rect();
-        using var nonEmptyRect = new Rect();
-        using var pointA = new Point { X = 1, Y = 2 };
-        using var pointB = new Point { X = 5, Y = 6 };
+        using var emptyRect = new TRect();
+        using var nonEmptyRect = new TRect();
+        using var pointA = new TPoint { X = 1, Y = 2 };
+        using var pointB = new TPoint { X = 5, Y = 6 };
 
         Assert.IsTrue(emptyRect.IsEmpty());
 
@@ -190,11 +190,11 @@ public sealed class RectTests
     [TestMethod]
     public void Test_GetA_SetA()
     {
-        using var rect = new Rect();
-        using var point = new Point { X = 3, Y = 4 };
-        using var result = new Point();
+        using var rect = new TRect();
+        using var TPoint = new TPoint { X = 3, Y = 4 };
+        using var result = new TPoint();
 
-        rect.SetA(point);
+        rect.SetA(TPoint);
         rect.GetA(result);
 
         Assert.AreEqual(3, result.X);
@@ -204,11 +204,11 @@ public sealed class RectTests
     [TestMethod]
     public void Test_GetB_SetB()
     {
-        using var rect = new Rect();
-        using var point = new Point { X = 7, Y = 8 };
-        using var result = new Point();
+        using var rect = new TRect();
+        using var TPoint = new TPoint { X = 7, Y = 8 };
+        using var result = new TPoint();
 
-        rect.SetB(point);
+        rect.SetB(TPoint);
         rect.GetB(result);
 
         Assert.AreEqual(7, result.X);

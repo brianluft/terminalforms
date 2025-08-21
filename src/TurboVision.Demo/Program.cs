@@ -1,4 +1,4 @@
 ﻿using TurboVision.Application;
 
 Console.WriteLine("Starting up.");
-var app = new Application();
+var app = new TApplication();

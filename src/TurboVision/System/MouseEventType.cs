@@ -48,14 +48,14 @@ public unsafe partial class MouseEventType(void* ptr, bool owned, bool placement
         return hash;
     }
 
-    public void GetWhere(Point dst)
+    public void GetWhere(TPoint dst)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
         ObjectDisposedException.ThrowIf(dst.IsDisposed, dst);
         TurboVisionException.Check(NativeMethods.TV_MouseEventType_get_where(Ptr, dst.Ptr));
     }
 
-    public void SetWhere(Point src)
+    public void SetWhere(TPoint src)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
         ObjectDisposedException.ThrowIf(src.IsDisposed, src);

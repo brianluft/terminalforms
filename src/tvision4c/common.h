@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <string>
 
 #ifdef _WIN32
 #define EXPORT extern "C" __declspec(dllexport)
@@ -21,6 +22,20 @@ typedef int BOOL;
 
 namespace tv {
 
+// Matches `src\TurboVision\Error.cs`
+enum Error {
+    Success = 0,
+    Error_Unknown,
+    Error_NativeInteropFailure,
+    Error_OutOfMemory,
+    Error_UnalignedObjectPlacement,
+    Error_ArgumentNull,
+    Error_ArgumentOutOfRange,
+    Error_BufferTooSmall,
+
+    Error_HasMessage = 0x8000,
+};
+
 template <typename T>
 void hash(const T& v, int32_t* seed) {
     auto x = static_cast<int64_t>(*seed);
@@ -28,6 +43,321 @@ void hash(const T& v, int32_t* seed) {
     *seed = static_cast<int32_t>(x);
 }
 
+// Thread-local storage for detailed error messages
+extern thread_local std::string lastErrorMessage;
+
+// This templated struct defines a policy for initializing members of a type `T`.
+// It is used by checkedNew and checkedPlacementNew to zero-initialize members that don't get initialized by the
+// default constructor.
+template <typename T>
+struct InitializePolicy {
+    static void initialize(T*) {
+        // By default, nothing is initialized. Specialize this if you need to initialize members.
+    }
+};
+
+// This templated struct defines a policy for comparing two objects of type `T`.
+// It is used by checkedEquals to compare two objects.
+// It assumes that &self != nullptr && &other != nullptr && &self != &other.
+template <typename T>
+struct EqualsPolicy {
+    static bool equals(const T& self, const T& other) {
+        // By default, use reference semantics. Specialize this if you want value semantics (almost always).
+        return &self == &other;
+    }
+};
+
+template <typename T>
+struct HashPolicy {
+    static void hash(const T& self, int32_t* seed) {
+        // By default, hash the pointer. Specialize this if you want value semantics (almost always).
+        tv::hash(reinterpret_cast<int64_t>(&self), seed);
+    }
+};
+
+// This templated function instantiates a new object of type `T`.
+// It catches any exception and converts to `Error`.
+template <typename T>
+Error checkedNew(T** out) {
+    if (!out) {
+        return tv::Error_ArgumentNull;
+    }
+
+    try {
+        *out = new T();
+        InitializePolicy<T>::initialize(*out);
+        return tv::Success;
+    } catch (const std::bad_alloc&) {
+        return tv::Error_OutOfMemory;
+    } catch (const std::exception& e) {
+        lastErrorMessage = e.what();
+        return static_cast<tv::Error>(Error_Unknown | Error_HasMessage);
+    }
+}
+
+// This templated function gets the size and alignment of a type `T`.
+// It catches any exception and converts to `Error`.
+template <typename T>
+Error checkedSize(int32_t* outSize, int32_t* outAlignment) {
+    if (!outSize || !outAlignment) {
+        return tv::Error_ArgumentNull;
+    }
+
+    *outSize = sizeof(T);
+    *outAlignment = alignof(T);
+    return tv::Success;
+}
+
+// This templated function instantiates an object of type `T` at a given address.
+// It catches any exception and converts to `Error`.
+template <typename T>
+Error checkedPlacementNew(T* self) {
+    if (!self) {
+        return tv::Error_ArgumentNull;
+    }
+
+    // Check alignment of the pointer.
+    if (reinterpret_cast<uintptr_t>(self) % alignof(T) != 0) {
+        return tv::Error_UnalignedObjectPlacement;
+    }
+
+    try {
+        new (self) T();
+        InitializePolicy<T>::initialize(self);
+        return tv::Success;
+    } catch (const std::bad_alloc&) {
+        return tv::Error_OutOfMemory;
+    } catch (const std::exception& e) {
+        lastErrorMessage = e.what();
+        return static_cast<tv::Error>(Error_Unknown | Error_HasMessage);
+    }
+}
+
+// This templated function deletes an object of type `T`.
+// It catches any exception and converts to `Error`.
+template <typename T>
+Error checkedDelete(T* self) {
+    if (!self) {
+        return tv::Success;  // Not an error.
+    }
+
+    try {
+        delete self;
+        return tv::Success;
+    } catch (const std::bad_alloc&) {
+        return tv::Error_OutOfMemory;
+    } catch (const std::exception& e) {
+        lastErrorMessage = e.what();
+        return static_cast<tv::Error>(Error_Unknown | Error_HasMessage);
+    }
+}
+
+// This templated function deletes an object of type `T` at a given address.
+// It catches any exception and converts to `Error`.
+template <typename T>
+Error checkedPlacementDelete(T* self) {
+    if (!self) {
+        return tv::Success;  // Not an error.
+    }
+
+    try {
+        self->~T();
+        return tv::Success;
+    } catch (const std::bad_alloc&) {
+        return tv::Error_OutOfMemory;
+    } catch (const std::exception& e) {
+        lastErrorMessage = e.what();
+        return static_cast<tv::Error>(Error_Unknown | Error_HasMessage);
+    }
+}
+
+// This templated function compares two objects of type `T`.
+// It catches any exception and converts to `Error`.
+template <typename T>
+Error checkedEquals(T* self, T* other, BOOL* out) {
+    if (!out) {
+        return tv::Error_ArgumentNull;
+    }
+
+    // Both null
+    if (!self && !other) {
+        *out = TRUE;
+        return tv::Success;
+    }
+
+    // One null, one not
+    if (!self || !other) {
+        *out = FALSE;
+        return tv::Success;
+    }
+
+    // Reference equality
+    if (self == other) {
+        *out = TRUE;
+        return tv::Success;
+    }
+
+    // Call the policy to compare the objects which are known to be non-null and different pointers.
+    *out = EqualsPolicy<T>::equals(*self, *other);
+    return tv::Success;
+}
+
+// This templated function hashes an object of type `T`.
+// It catches any exception and converts to `Error`.
+template <typename T>
+Error checkedHash(T* self, int32_t* out) {
+    if (!self || !out) {
+        return tv::Error_ArgumentNull;
+    }
+
+    // Call the policy to hash the object.
+    HashPolicy<T>::hash(*self, out);
+    return tv::Success;
+}
+
 }  // namespace tv
 
+// Every class/struct that is exported to C must have these functions.
+// Use this macro in the .h file.
+#define TV_DECLARE_BOILERPLATE_FUNCTIONS(type)                                           \
+    EXPORT tv::Error TV_##type##_placementSize(int32_t* outSize, int32_t* outAlignment); \
+    EXPORT tv::Error TV_##type##_placementNew(type* self);                               \
+    EXPORT tv::Error TV_##type##_placementDelete(type* self);                            \
+    EXPORT tv::Error TV_##type##_new(type** out);                                        \
+    EXPORT tv::Error TV_##type##_delete(type* self);                                     \
+    EXPORT tv::Error TV_##type##_equals(type* self, type* other, BOOL* out);             \
+    EXPORT tv::Error TV_##type##_hash(type* self, int32_t* out);
+
+// Use this macro in the .cpp file.
+#define TV_IMPLEMENT_BOILERPLATE_FUNCTIONS(type)                                          \
+    EXPORT tv::Error TV_##type##_placementSize(int32_t* outSize, int32_t* outAlignment) { \
+        return tv::checkedSize<type>(outSize, outAlignment);                              \
+    }                                                                                     \
+    EXPORT tv::Error TV_##type##_placementNew(type* self) {                               \
+        return tv::checkedPlacementNew(self);                                             \
+    }                                                                                     \
+    EXPORT tv::Error TV_##type##_placementDelete(type* self) {                            \
+        return tv::checkedPlacementDelete(self);                                          \
+    }                                                                                     \
+    EXPORT tv::Error TV_##type##_new(type** out) {                                        \
+        return tv::checkedNew(out);                                                       \
+    }                                                                                     \
+    EXPORT tv::Error TV_##type##_delete(type* self) {                                     \
+        return tv::checkedDelete(self);                                                   \
+    }                                                                                     \
+    EXPORT tv::Error TV_##type##_equals(type* self, type* other, BOOL* out) {             \
+        return tv::checkedEquals(self, other, out);                                       \
+    }                                                                                     \
+    EXPORT tv::Error TV_##type##_hash(type* self, int32_t* out) {                         \
+        return tv::checkedHash(self, out);                                                \
+    }
+
+// Getters and setters for public members are implemented in a standard way.
+// Use this pair of macros for primitives: integers and booleans.
+// TV_DECLARE_GET_SET_PRIMITIVE is when the way to access the member is simply by the member name.
+// TV_DECLARE_GET_SET_PRIMITIVE_EX is when the way to access the member is complicated (i.e. a dotted path).
+#define TV_DECLARE_GET_SET_PRIMITIVE_EX(objectType, memberType, memberName, accessor)       \
+    EXPORT tv::Error TV_##objectType##_get_##memberName(objectType* self, memberType* out); \
+    EXPORT tv::Error TV_##objectType##_set_##memberName(objectType* self, memberType value);
+
+#define TV_IMPLEMENT_GET_SET_PRIMITIVE_EX(objectType, memberType, memberName, accessor)       \
+    EXPORT tv::Error TV_##objectType##_get_##memberName(objectType* self, memberType* out) {  \
+        if (!self || !out) {                                                                  \
+            return tv::Error_ArgumentNull;                                                    \
+        }                                                                                     \
+        *out = self->accessor;                                                                \
+        return tv::Success;                                                                   \
+    }                                                                                         \
+    EXPORT tv::Error TV_##objectType##_set_##memberName(objectType* self, memberType value) { \
+        if (!self) {                                                                          \
+            return tv::Error_ArgumentNull;                                                    \
+        }                                                                                     \
+        self->accessor = value;                                                               \
+        return tv::Success;                                                                   \
+    }
+
+#define TV_DECLARE_GET_SET_PRIMITIVE(objectType, memberType, memberName) \
+    TV_DECLARE_GET_SET_PRIMITIVE_EX(objectType, memberType, memberName, memberName)
+
+#define TV_IMPLEMENT_GET_SET_PRIMITIVE(objectType, memberType, memberName) \
+    TV_IMPLEMENT_GET_SET_PRIMITIVE_EX(objectType, memberType, memberName, memberName)
+
+// Use this pair of macros for copyable objects.
+#define TV_DECLARE_GET_SET_COPYABLE_OBJECT(objectType, memberType, memberName)              \
+    EXPORT tv::Error TV_##objectType##_get_##memberName(objectType* self, memberType* out); \
+    EXPORT tv::Error TV_##objectType##_set_##memberName(objectType* self, memberType* value);
+
+#define TV_IMPLEMENT_GET_SET_COPYABLE_OBJECT(objectType, memberType, memberName)               \
+    EXPORT tv::Error TV_##objectType##_get_##memberName(objectType* self, memberType* out) {   \
+        if (!self || !out) {                                                                   \
+            return tv::Error_ArgumentNull;                                                     \
+        }                                                                                      \
+        *out = self->memberName;                                                               \
+        return tv::Success;                                                                    \
+    }                                                                                          \
+    EXPORT tv::Error TV_##objectType##_set_##memberName(objectType* self, memberType* value) { \
+        if (!self || !value) {                                                                 \
+            return tv::Error_ArgumentNull;                                                     \
+        }                                                                                      \
+        self->memberName = *value;                                                             \
+        return tv::Success;                                                                    \
+    }
+
+// Use this pair of macros for a C string with an associated length field.
+#define TV_DECLARE_GET_SET_STRING_BUFFER_WITH_LENGTH(objectType, stringMemberName)                                   \
+    EXPORT tv::Error TV_##objectType##_get_##stringMemberName(objectType* self, char** out, uint8_t* outTextLength); \
+    EXPORT tv::Error TV_##objectType##_set_##stringMemberName(objectType* self, char* value, uint8_t textLength);
+
+#define TV_IMPLEMENT_GET_SET_STRING_BUFFER_WITH_LENGTH(objectType, stringMemberName, lengthMemberName, bufferSize)    \
+    EXPORT tv::Error TV_##objectType##_get_##stringMemberName(objectType* self, char** out, uint8_t* outTextLength) { \
+        if (!self || !out || !outTextLength) {                                                                        \
+            return tv::Error_ArgumentNull;                                                                            \
+        }                                                                                                             \
+        *outTextLength = self->lengthMemberName;                                                                      \
+        *out = self->stringMemberName;                                                                                \
+        return tv::Success;                                                                                           \
+    }                                                                                                                 \
+    EXPORT tv::Error TV_##objectType##_set_##stringMemberName(objectType* self, char* value, uint8_t textLength) {    \
+        if (!self || (!value && textLength > 0)) {                                                                    \
+            return tv::Error_ArgumentNull;                                                                            \
+        }                                                                                                             \
+        if (textLength > bufferSize) {                                                                                \
+            return tv::Error_BufferTooSmall;                                                                          \
+        }                                                                                                             \
+        self->lengthMemberName = textLength;                                                                          \
+        memset(self->stringMemberName, 0, bufferSize);                                                                \
+        if (textLength > 0) {                                                                                         \
+            memcpy(self->stringMemberName, value, textLength);                                                        \
+        }                                                                                                             \
+        return tv::Success;                                                                                           \
+    }
+
+// Use this pair of macros for binary operators on copyable objects.
+#define TV_DECLARE_BINARY_OPERATOR_COPYABLE_OBJECT(lhsType, rhsType, operatorSymbol, operatorName, resultType) \
+    EXPORT tv::Error TV_##lhsType##_operator_##operatorName(lhsType* lhs, rhsType* rhs, resultType* out);
+
+#define TV_IMPLEMENT_BINARY_OPERATOR_COPYABLE_OBJECT(lhsType, rhsType, operatorSymbol, operatorName, resultType) \
+    EXPORT tv::Error TV_##lhsType##_operator_##operatorName(lhsType* lhs, rhsType* rhs, resultType* out) {       \
+        if (!lhs || !rhs || !out) {                                                                              \
+            return tv::Error_ArgumentNull;                                                                       \
+        }                                                                                                        \
+        *out = *lhs operatorSymbol * rhs;                                                                        \
+        return tv::Success;                                                                                      \
+    }
+
+// Use this pair of macros for in-place binary operators on copyable objects, like += and -=.
+#define TV_DECLARE_BINARY_OPERATOR_IN_PLACE(lhsType, rhsType, operatorSymbol, operatorName) \
+    EXPORT tv::Error TV_##lhsType##_operator_##operatorName##_in_place(lhsType* lhs, rhsType* rhs);
+
+#define TV_IMPLEMENT_BINARY_OPERATOR_IN_PLACE(lhsType, rhsType, operatorSymbol, operatorName)        \
+    EXPORT tv::Error TV_##lhsType##_operator_##operatorName##_in_place(lhsType* lhs, rhsType* rhs) { \
+        if (!lhs || !rhs) {                                                                          \
+            return tv::Error_ArgumentNull;                                                           \
+        }                                                                                            \
+        *lhs operatorSymbol## = *rhs;                                                                \
+        return tv::Success;                                                                          \
+    }
+
 EXPORT int32_t TV_healthCheck();
+EXPORT tv::Error TV_getLastErrorMessageLength(int32_t* out);
+EXPORT tv::Error TV_getLastErrorMessage(char* buffer, int32_t bufferSize);

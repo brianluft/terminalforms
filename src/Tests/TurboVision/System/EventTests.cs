@@ -11,14 +11,14 @@ public sealed class EventTests
     {
         var bytes = stackalloc byte[Event.PlacementSize];
         using var @event = new Event(bytes);
-        Assert.AreEqual((ushort)0, @event.What);
+        Assert.AreEqual((ushort)0x10, @event.What);
     }
 
     [TestMethod]
     public void Test_New()
     {
         using var @event = new Event();
-        Assert.AreEqual((ushort)0, @event.What);
+        Assert.AreEqual((ushort)0x10, @event.What);
     }
 
     [TestMethod]
@@ -56,7 +56,7 @@ public sealed class EventTests
     {
         using var @event = new Event();
 
-        Assert.AreEqual((ushort)0, @event.What);
+        Assert.AreEqual((ushort)0x10, @event.What);
 
         @event.What = 1234;
         Assert.AreEqual((ushort)1234, @event.What);
@@ -71,7 +71,7 @@ public sealed class EventTests
         using var @event = new Event();
         using var mouseEvent = new MouseEventType();
         using var retrievedMouseEvent = new MouseEventType();
-        using var point = new Point { X = 10, Y = 20 };
+        using var point = new TPoint { X = 10, Y = 20 };
 
         // Set up mouse event data
         mouseEvent.SetWhere(point);
@@ -85,7 +85,7 @@ public sealed class EventTests
         @event.GetMouse(retrievedMouseEvent);
 
         // Verify the data was transferred correctly
-        using var retrievedPoint = new Point();
+        using var retrievedPoint = new TPoint();
         retrievedMouseEvent.GetWhere(retrievedPoint);
 
         Assert.AreEqual(10, retrievedPoint.X);
@@ -153,7 +153,7 @@ public sealed class EventTests
         using var mouseEvent = new MouseEventType();
         using var keyEvent = new KeyDownEvent();
         using var messageEvent = new MessageEvent();
-        using var point = new Point { X = 5, Y = 15 };
+        using var point = new TPoint { X = 5, Y = 15 };
 
         // Test setting different event types on the same event object
         @event.What = 1;

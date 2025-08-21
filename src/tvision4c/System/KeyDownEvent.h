@@ -1,25 +1,61 @@
 #pragma once
 
 #include "../common.h"
-#include "../Error.h"
+#include <cstring>
 
 #define Uses_TEvent
 #include <tvision/tv.h>
 
-EXPORT tv::Error TV_KeyDownEvent_placementSize(int32_t* outSize, int32_t* outAlignment);
-EXPORT tv::Error TV_KeyDownEvent_placementNew(KeyDownEvent* self);
-EXPORT tv::Error TV_KeyDownEvent_placementDelete(KeyDownEvent* self);
-EXPORT tv::Error TV_KeyDownEvent_new(KeyDownEvent** out);
-EXPORT tv::Error TV_KeyDownEvent_delete(KeyDownEvent* self);
-EXPORT tv::Error TV_KeyDownEvent_equals(KeyDownEvent* self, KeyDownEvent* other, BOOL* out);
-EXPORT tv::Error TV_KeyDownEvent_hash(KeyDownEvent* self, int32_t* out);
-EXPORT tv::Error TV_KeyDownEvent_get_keyCode(KeyDownEvent* self, uint16_t* out);
-EXPORT tv::Error TV_KeyDownEvent_set_keyCode(KeyDownEvent* self, uint16_t value);
-EXPORT tv::Error TV_KeyDownEvent_get_charCode(KeyDownEvent* self, uint8_t* out);
-EXPORT tv::Error TV_KeyDownEvent_set_charCode(KeyDownEvent* self, uint8_t value);
-EXPORT tv::Error TV_KeyDownEvent_get_scanCode(KeyDownEvent* self, uint8_t* out);
-EXPORT tv::Error TV_KeyDownEvent_set_scanCode(KeyDownEvent* self, uint8_t value);
-EXPORT tv::Error TV_KeyDownEvent_get_controlKeyState(KeyDownEvent* self, uint16_t* out);
-EXPORT tv::Error TV_KeyDownEvent_set_controlKeyState(KeyDownEvent* self, uint16_t value);
-EXPORT tv::Error TV_KeyDownEvent_get_text(KeyDownEvent* self, char** out, uint8_t* outTextLength);
-EXPORT tv::Error TV_KeyDownEvent_set_text(KeyDownEvent* self, char* value, uint8_t textLength);
+namespace tv {
+
+template <>
+struct InitializePolicy<KeyDownEvent> {
+    static void initialize(KeyDownEvent* self) {
+        self->keyCode = {};
+        self->controlKeyState = {};
+        std::memset(self->text, 0, sizeof(self->text));
+        self->textLength = {};
+    }
+};
+
+template <>
+struct EqualsPolicy<KeyDownEvent> {
+    static bool equals(const KeyDownEvent& self, const KeyDownEvent& other) {
+        if (self.keyCode != other.keyCode || self.controlKeyState != other.controlKeyState ||
+            self.textLength != other.textLength) {
+            return false;
+        }
+
+        // Compare text content up to textLength
+        if (self.textLength > 0) {
+            return std::memcmp(self.text, other.text, self.textLength) == 0;
+        }
+
+        return true;
+    }
+};
+
+template <>
+struct HashPolicy<KeyDownEvent> {
+    static void hash(const KeyDownEvent& self, int32_t* seed) {
+        tv::hash(self.keyCode, seed);
+        tv::hash(self.controlKeyState, seed);
+        tv::hash(self.textLength, seed);
+
+        // Include text content in hash if present
+        if (self.textLength > 0) {
+            for (uint8_t i = 0; i < self.textLength; i++) {
+                tv::hash((uint8_t)self.text[i], seed);
+            }
+        }
+    }
+};
+
+}  // namespace tv
+
+TV_DECLARE_BOILERPLATE_FUNCTIONS(KeyDownEvent)
+TV_DECLARE_GET_SET_PRIMITIVE(KeyDownEvent, uint16_t, keyCode)
+TV_DECLARE_GET_SET_PRIMITIVE_EX(KeyDownEvent, uint8_t, charCode, charScan.charCode)
+TV_DECLARE_GET_SET_PRIMITIVE_EX(KeyDownEvent, uint8_t, scanCode, charScan.scanCode)
+TV_DECLARE_GET_SET_PRIMITIVE(KeyDownEvent, uint16_t, controlKeyState)
+TV_DECLARE_GET_SET_STRING_BUFFER_WITH_LENGTH(KeyDownEvent, text)
