@@ -16,6 +16,7 @@ Then our .NET library "TurboVision" calls into the "tvision4c" library using P/I
 - Always use stdint types like `int32_t` (C# int) and `int16_t` (C# short). Our goal is to make it clear what the C# P/Invoke representation is. Never use native types like `int`, `short`, or `bool`.
 - Always use `BOOL` (4-byte) instead of C++ `bool` (1-byte).
 - Always return `tv::Error` for error handling. Never allow exceptions to bubble up past the C interface. Feel free to add new error codes to `src\tvision4c\common.h` (`Error` enum) and make the corresponding change in `src\TurboVision\Error.cs`--these two files must be kept synchronized.
+- Never use `memcmp()` in `EqualsPolicy` implementations as this will compare padding bytes and cause incorrect results. Always compare individual members explicitly.
 - For a C++ type `TFoo` you must write, at minimum, the following binding code:
     ```cpp
     /*** TFoo.h ***/
@@ -66,3 +67,4 @@ Then our .NET library "TurboVision" calls into the "tvision4c" library using P/I
 - Translate C++ `TSpan` as C# `Span<T>`.
 - Translate C++ `TStringView` and all moral equivalents to strings as C# `String` via copying.
 - The C++ code has lots of typedefs for simple integers. Translate these as primitive C# integer types rather than trying to define the typedef on the C# side.
+- Translate any anonymous enums and C constants into C# public consts in the relevant class.

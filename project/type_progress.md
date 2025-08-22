@@ -11,9 +11,9 @@
 - [x] TTextMetrics
 - [x] TSubsystemsInit -- not bound, this will be an internal detail of our TApplicationImpl later
 - [x] TStrIndexRec
-- [ ] TStreamableClass
-- [ ] fLink (TStreamableClass)
-- [ ] TCellChar (TStringView)
+- [x] TStreamableClass -- not bound, this is an internal detail of the tvision library
+- [x] fLink (TStreamableClass) -- not bound, this is an internal detail of the tvision library
+- [x] TCellChar (TStringView)
 - [ ] TClipboard (TStringView)
 - [ ] TDirEntry (TStringView)
 - [ ] TNode (TStringView)
