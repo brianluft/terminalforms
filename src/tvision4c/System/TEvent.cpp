@@ -10,7 +10,7 @@ TV_IMPLEMENT_GET_SET_COPYABLE_OBJECT(TEvent, MouseEventType, mouse)
 TV_IMPLEMENT_GET_SET_COPYABLE_OBJECT(TEvent, KeyDownEvent, keyDown)
 TV_IMPLEMENT_GET_SET_COPYABLE_OBJECT(TEvent, MessageEvent, message)
 
-EXPORT tv::Error TV_Event_getMouseEvent(TEvent* self) {
+EXPORT tv::Error TV_TEvent_getMouseEvent(TEvent* self) {
     if (!self) {
         return tv::Error_ArgumentNull;
     }
@@ -19,7 +19,7 @@ EXPORT tv::Error TV_Event_getMouseEvent(TEvent* self) {
     return tv::Success;
 }
 
-EXPORT tv::Error TV_Event_getKeyEvent(TEvent* self) {
+EXPORT tv::Error TV_TEvent_getKeyEvent(TEvent* self) {
     if (!self) {
         return tv::Error_ArgumentNull;
     }
