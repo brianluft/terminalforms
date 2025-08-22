@@ -8,7 +8,7 @@
 - [x] TSpan -- translated as .NET Span<T>
 - [x] TStringView (TSpan) -- translated as .NET String, we will just copy back and forth
 - [x] TTimerQueue
-- [ ] TTextMetrics
+- [x] TTextMetrics
 - [ ] TSubsystemsInit
 - [ ] TStrIndexRec
 - [ ] TStreamableClass

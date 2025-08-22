@@ -47,6 +47,8 @@ add_library(tvision4c SHARED
     System/TEvent.cpp
     System/TTimerQueue.cpp
 
+    Text/TTextMetrics.cpp
+
     Views/write_args.cpp
 
     common.cpp
