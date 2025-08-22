@@ -49,6 +49,8 @@ add_library(tvision4c SHARED
 
     Text/TTextMetrics.cpp
 
+    Resources/TStrIndexRec.cpp
+
     Views/write_args.cpp
 
     common.cpp

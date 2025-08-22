@@ -9,8 +9,8 @@
 - [x] TStringView (TSpan) -- translated as .NET String, we will just copy back and forth
 - [x] TTimerQueue
 - [x] TTextMetrics
-- [ ] TSubsystemsInit
-- [ ] TStrIndexRec
+- [x] TSubsystemsInit -- not bound, this will be an internal detail of our TApplicationImpl later
+- [x] TStrIndexRec
 - [ ] TStreamableClass
 - [ ] fLink (TStreamableClass)
 - [ ] TCellChar (TStringView)
