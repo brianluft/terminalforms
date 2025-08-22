@@ -62,11 +62,3 @@ struct HashPolicy<TEvent> {
 };
 
 }  // namespace tv
-
-TV_DECLARE_BOILERPLATE_FUNCTIONS(TEvent)
-TV_DECLARE_GET_SET_PRIMITIVE(TEvent, uint16_t, what)
-TV_DECLARE_GET_SET_COPYABLE_OBJECT(TEvent, MouseEventType, mouse)
-TV_DECLARE_GET_SET_COPYABLE_OBJECT(TEvent, KeyDownEvent, keyDown)
-TV_DECLARE_GET_SET_COPYABLE_OBJECT(TEvent, MessageEvent, message)
-EXPORT tv::Error TV_TEvent_getMouseEvent(TEvent* self);
-EXPORT tv::Error TV_TEvent_getKeyEvent(TEvent* self);

@@ -40,10 +40,3 @@ struct HashPolicy<MouseEventType> {
 };
 
 }  // namespace tv
-
-TV_DECLARE_BOILERPLATE_FUNCTIONS(MouseEventType)
-TV_DECLARE_GET_SET_COPYABLE_OBJECT(MouseEventType, TPoint, where)
-TV_DECLARE_GET_SET_PRIMITIVE(MouseEventType, uint16_t, eventFlags)
-TV_DECLARE_GET_SET_PRIMITIVE(MouseEventType, uint16_t, controlKeyState)
-TV_DECLARE_GET_SET_PRIMITIVE(MouseEventType, uint8_t, buttons)
-TV_DECLARE_GET_SET_PRIMITIVE(MouseEventType, uint8_t, wheel)

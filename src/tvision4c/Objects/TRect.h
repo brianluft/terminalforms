@@ -32,13 +32,3 @@ struct HashPolicy<TRect> {
 };
 
 }  // namespace tv
-
-TV_DECLARE_BOILERPLATE_FUNCTIONS(TRect)
-TV_DECLARE_GET_SET_COPYABLE_OBJECT(TRect, TPoint, a)
-TV_DECLARE_GET_SET_COPYABLE_OBJECT(TRect, TPoint, b)
-EXPORT tv::Error TV_TRect_move(TRect* self, int32_t aDX, int32_t aDY);
-EXPORT tv::Error TV_TRect_grow(TRect* self, int32_t aDX, int32_t aDY);
-EXPORT tv::Error TV_TRect_intersect(TRect* self, TRect* r);
-EXPORT tv::Error TV_TRect_Union(TRect* self, TRect* r);
-EXPORT tv::Error TV_TRect_contains(TRect* self, TPoint* p, BOOL* out);
-EXPORT tv::Error TV_TRect_isEmpty(TRect* self, BOOL* out);

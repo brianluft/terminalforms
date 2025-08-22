@@ -34,15 +34,3 @@ class TApplicationImpl : public TApplication {
 
     // TODO: TProgram functions
 };
-
-TV_DECLARE_BOILERPLATE_FUNCTIONS(TApplicationImpl)
-EXPORT tv::Error TV_TApplication_suspend(TApplicationImpl* self);
-EXPORT tv::Error TV_TApplication_suspend_base(TApplicationImpl* self);
-EXPORT tv::Error TV_TApplication_resume(TApplicationImpl* self);
-EXPORT tv::Error TV_TApplication_resume_base(TApplicationImpl* self);
-EXPORT tv::Error TV_TApplication_getTileRect(TApplicationImpl* self, TRect** out);
-EXPORT tv::Error TV_TApplication_getTileRect_base(TApplicationImpl* self, TRect** out);
-EXPORT tv::Error TV_TApplication_handleEvent(TApplicationImpl* self, TEvent* event);
-EXPORT tv::Error TV_TApplication_handleEvent_base(TApplicationImpl* self, TEvent* event);
-EXPORT tv::Error TV_TApplication_writeShellMsg(TApplicationImpl* self);
-EXPORT tv::Error TV_TApplication_writeShellMsg_base(TApplicationImpl* self);

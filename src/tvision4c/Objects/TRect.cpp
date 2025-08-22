@@ -1,9 +1,9 @@
 #include "TRect.h"
 #include "../common.h"
 
-TV_IMPLEMENT_BOILERPLATE_FUNCTIONS(TRect)
-TV_IMPLEMENT_GET_SET_COPYABLE_OBJECT(TRect, TPoint, a)
-TV_IMPLEMENT_GET_SET_COPYABLE_OBJECT(TRect, TPoint, b)
+TV_BOILERPLATE_FUNCTIONS(TRect)
+TV_GET_SET_COPYABLE_OBJECT(TRect, TPoint, a)
+TV_GET_SET_COPYABLE_OBJECT(TRect, TPoint, b)
 
 EXPORT tv::Error TV_TRect_move(TRect* self, int32_t aDX, int32_t aDY) {
     if (!self) {

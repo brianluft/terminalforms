@@ -218,18 +218,8 @@ Error checkedHash(T* self, int32_t* out) {
 }  // namespace tv
 
 // Every class/struct that is exported to C must have these functions.
-// Use this macro in the .h file.
-#define TV_DECLARE_BOILERPLATE_FUNCTIONS(type)                                           \
-    EXPORT tv::Error TV_##type##_placementSize(int32_t* outSize, int32_t* outAlignment); \
-    EXPORT tv::Error TV_##type##_placementNew(type* self);                               \
-    EXPORT tv::Error TV_##type##_placementDelete(type* self);                            \
-    EXPORT tv::Error TV_##type##_new(type** out);                                        \
-    EXPORT tv::Error TV_##type##_delete(type* self);                                     \
-    EXPORT tv::Error TV_##type##_equals(type* self, type* other, BOOL* out);             \
-    EXPORT tv::Error TV_##type##_hash(type* self, int32_t* out);
-
 // Use this macro in the .cpp file.
-#define TV_IMPLEMENT_BOILERPLATE_FUNCTIONS(type)                                          \
+#define TV_BOILERPLATE_FUNCTIONS(type)                                                    \
     EXPORT tv::Error TV_##type##_placementSize(int32_t* outSize, int32_t* outAlignment) { \
         return tv::checkedSize<type>(outSize, outAlignment);                              \
     }                                                                                     \
@@ -253,14 +243,10 @@ Error checkedHash(T* self, int32_t* out) {
     }
 
 // Getters and setters for public members are implemented in a standard way.
-// Use this pair of macros for primitives: integers and booleans.
-// TV_DECLARE_GET_SET_PRIMITIVE is when the way to access the member is simply by the member name.
-// TV_DECLARE_GET_SET_PRIMITIVE_EX is when the way to access the member is complicated (i.e. a dotted path).
-#define TV_DECLARE_GET_SET_PRIMITIVE_EX(objectType, memberType, memberName, accessor)       \
-    EXPORT tv::Error TV_##objectType##_get_##memberName(objectType* self, memberType* out); \
-    EXPORT tv::Error TV_##objectType##_set_##memberName(objectType* self, memberType value);
-
-#define TV_IMPLEMENT_GET_SET_PRIMITIVE_EX(objectType, memberType, memberName, accessor)       \
+// Use this macro for primitives: integers and booleans.
+// TV_GET_SET_PRIMITIVE is when the way to access the member is simply by the member name.
+// TV_GET_SET_PRIMITIVE_EX is when the way to access the member is complicated (i.e. a dotted path).
+#define TV_GET_SET_PRIMITIVE_EX(objectType, memberType, memberName, accessor)                 \
     EXPORT tv::Error TV_##objectType##_get_##memberName(objectType* self, memberType* out) {  \
         if (!self || !out) {                                                                  \
             return tv::Error_ArgumentNull;                                                    \
@@ -276,18 +262,15 @@ Error checkedHash(T* self, int32_t* out) {
         return tv::Success;                                                                   \
     }
 
-#define TV_DECLARE_GET_SET_PRIMITIVE(objectType, memberType, memberName) \
-    TV_DECLARE_GET_SET_PRIMITIVE_EX(objectType, memberType, memberName, memberName)
+#define TV_GET_SET_PRIMITIVE(objectType, memberType, memberName) \
+    TV_GET_SET_PRIMITIVE_EX(objectType, memberType, memberName, memberName)
 
-#define TV_IMPLEMENT_GET_SET_PRIMITIVE(objectType, memberType, memberName) \
-    TV_IMPLEMENT_GET_SET_PRIMITIVE_EX(objectType, memberType, memberName, memberName)
-
-// Use this pair of macros for copyable objects.
+// Use this macro for copyable objects.
 #define TV_DECLARE_GET_SET_COPYABLE_OBJECT(objectType, memberType, memberName)              \
     EXPORT tv::Error TV_##objectType##_get_##memberName(objectType* self, memberType* out); \
     EXPORT tv::Error TV_##objectType##_set_##memberName(objectType* self, memberType* value);
 
-#define TV_IMPLEMENT_GET_SET_COPYABLE_OBJECT(objectType, memberType, memberName)               \
+#define TV_GET_SET_COPYABLE_OBJECT(objectType, memberType, memberName)                         \
     EXPORT tv::Error TV_##objectType##_get_##memberName(objectType* self, memberType* out) {   \
         if (!self || !out) {                                                                   \
             return tv::Error_ArgumentNull;                                                     \
@@ -303,12 +286,8 @@ Error checkedHash(T* self, int32_t* out) {
         return tv::Success;                                                                    \
     }
 
-// Use this pair of macros for a C string with an associated length field.
-#define TV_DECLARE_GET_SET_STRING_BUFFER_WITH_LENGTH(objectType, stringMemberName)                                   \
-    EXPORT tv::Error TV_##objectType##_get_##stringMemberName(objectType* self, char** out, uint8_t* outTextLength); \
-    EXPORT tv::Error TV_##objectType##_set_##stringMemberName(objectType* self, char* value, uint8_t textLength);
-
-#define TV_IMPLEMENT_GET_SET_STRING_BUFFER_WITH_LENGTH(objectType, stringMemberName, lengthMemberName, bufferSize)    \
+// Use this macro for a C string with an associated length field.
+#define TV_GET_SET_STRING_BUFFER_WITH_LENGTH(objectType, stringMemberName, lengthMemberName, bufferSize)              \
     EXPORT tv::Error TV_##objectType##_get_##stringMemberName(objectType* self, char** out, uint8_t* outTextLength) { \
         if (!self || !out || !outTextLength) {                                                                        \
             return tv::Error_ArgumentNull;                                                                            \
@@ -332,24 +311,18 @@ Error checkedHash(T* self, int32_t* out) {
         return tv::Success;                                                                                           \
     }
 
-// Use this pair of macros for binary operators on copyable objects.
-#define TV_DECLARE_BINARY_OPERATOR_COPYABLE_OBJECT(lhsType, rhsType, operatorSymbol, operatorName, resultType) \
-    EXPORT tv::Error TV_##lhsType##_operator_##operatorName(lhsType* lhs, rhsType* rhs, resultType* out);
-
-#define TV_IMPLEMENT_BINARY_OPERATOR_COPYABLE_OBJECT(lhsType, rhsType, operatorSymbol, operatorName, resultType) \
-    EXPORT tv::Error TV_##lhsType##_operator_##operatorName(lhsType* lhs, rhsType* rhs, resultType* out) {       \
-        if (!lhs || !rhs || !out) {                                                                              \
-            return tv::Error_ArgumentNull;                                                                       \
-        }                                                                                                        \
-        *out = *lhs operatorSymbol * rhs;                                                                        \
-        return tv::Success;                                                                                      \
+// Use this macro for binary operators on copyable objects.
+#define TV_BINARY_OPERATOR_COPYABLE_OBJECT(lhsType, rhsType, operatorSymbol, operatorName, resultType)     \
+    EXPORT tv::Error TV_##lhsType##_operator_##operatorName(lhsType* lhs, rhsType* rhs, resultType* out) { \
+        if (!lhs || !rhs || !out) {                                                                        \
+            return tv::Error_ArgumentNull;                                                                 \
+        }                                                                                                  \
+        *out = *lhs operatorSymbol * rhs;                                                                  \
+        return tv::Success;                                                                                \
     }
 
-// Use this pair of macros for in-place binary operators on copyable objects, like += and -=.
-#define TV_DECLARE_BINARY_OPERATOR_IN_PLACE(lhsType, rhsType, operatorSymbol, operatorName) \
-    EXPORT tv::Error TV_##lhsType##_operator_##operatorName##_in_place(lhsType* lhs, rhsType* rhs);
-
-#define TV_IMPLEMENT_BINARY_OPERATOR_IN_PLACE(lhsType, rhsType, operatorSymbol, operatorName)        \
+// Use this macro for in-place binary operators on copyable objects, like += and -=.
+#define TV_BINARY_OPERATOR_IN_PLACE(lhsType, rhsType, operatorSymbol, operatorName)                  \
     EXPORT tv::Error TV_##lhsType##_operator_##operatorName##_in_place(lhsType* lhs, rhsType* rhs) { \
         if (!lhs || !rhs) {                                                                          \
             return tv::Error_ArgumentNull;                                                           \

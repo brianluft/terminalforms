@@ -47,7 +47,7 @@ You will be given the name of a type to bind, below it will be `TFoo`. We will f
             - `src\tvision4c\System\MouseEventType.cpp`
             - `src\TurboVision\System\MouseEventType.cs`
     - For types that DO contain virtual functions or protected members:
-        - You must write a subclass `tv::TFooImpl` to override all virtual functions and provide public access to all protected members.
+        - You must write a subclass `TFooImpl` (global namespace, not `tv`) to override all virtual functions and provide public access to all protected members.
         - Your input:
             - `build\prefix\include\tvision\app.h` (lines 321-342)
         - Your output:

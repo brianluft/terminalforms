@@ -19,7 +19,6 @@ Then our .NET library "TurboVision" calls into the "tvision4c" library using P/I
 - For a C++ type `TFoo` you must write, at minimum, the following binding code:
     ```cpp
     /*** TFoo.h ***/
-    ...
     namespace tv {
 
     // Initialize public members. If there are none, then omit this specialization.
@@ -50,14 +49,12 @@ Then our .NET library "TurboVision" calls into the "tvision4c" library using P/I
 
     }  // namespace tv
 
-    TV_DECLARE_BOILERPLATE_FUNCTIONS(TFoo)
-    // ... Other EXPORT function prototypes ...
-
     /*** TFoo.cpp ***/
-    TV_IMPLEMENT_BOILERPLATE_FUNCTIONS(TFoo)
-    // ... Other EXPORT function implementations ...
+    TV_BOILERPLATE_FUNCTIONS(TFoo)
+    // ... Other TV_* macros and EXPORT function implementations ...
     ```
-- I believe the C++ classes all have default parameterless constructors, but they may *also* have constructors with parameters. Ignore those additional constructors and only create a C binding for the parameterless constructor--this is what `TV_DECLARE_BOILERPLATE_FUNCTIONS`/`TV_IMPLEMENT_BOILERPLATE_FUNCTIONS` provides.
+- See `src/tvision4c/common.h` for various TV_* macros you can use in your implementation. Don't provide function prototypes for the exported C methods in the .h file, as they will be consumed from C# which doesn't use the header files and just wastes our time.
+- I believe the C++ classes all have default parameterless constructors, but they may *also* have constructors with parameters. Ignore those additional constructors and only create a C binding for the parameterless constructor--this is what `TV_DECLARE_BOILERPLATE_FUNCTIONS`/`TV_BOILERPLATE_FUNCTIONS` provides.
 
 # C# Rules
 - Use `var` instead of explicit type names when possible.

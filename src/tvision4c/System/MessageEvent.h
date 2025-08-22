@@ -31,7 +31,3 @@ struct HashPolicy<MessageEvent> {
 };
 
 }  // namespace tv
-
-TV_DECLARE_BOILERPLATE_FUNCTIONS(MessageEvent)
-TV_DECLARE_GET_SET_PRIMITIVE(MessageEvent, uint16_t, command)
-TV_DECLARE_GET_SET_PRIMITIVE(MessageEvent, void*, infoPtr)

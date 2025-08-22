@@ -36,9 +36,3 @@ struct HashPolicy<write_args> {
 };
 
 }  // namespace tv
-
-TV_DECLARE_BOILERPLATE_FUNCTIONS(write_args)
-TV_DECLARE_GET_SET_PRIMITIVE(write_args, void*, self)
-TV_DECLARE_GET_SET_PRIMITIVE(write_args, void*, target)
-TV_DECLARE_GET_SET_PRIMITIVE(write_args, void*, buf)
-TV_DECLARE_GET_SET_PRIMITIVE(write_args, uint16_t, offset)
