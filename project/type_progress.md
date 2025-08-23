@@ -14,7 +14,7 @@
 - [x] TStreamableClass -- not bound, this is an internal detail of the tvision library
 - [x] fLink (TStreamableClass) -- not bound, this is an internal detail of the tvision library
 - [x] TCellChar (TStringView)
-- [ ] TClipboard (TStringView)
+- [x] TClipboard (TStringView)
 - [ ] TDirEntry (TStringView)
 - [ ] TNode (TStringView)
 - [ ] TSItem (TStringView)

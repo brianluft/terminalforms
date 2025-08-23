@@ -44,6 +44,7 @@ add_library(tvision4c SHARED
     System/KeyDownEvent.cpp
     System/MessageEvent.cpp
     System/MouseEventType.cpp
+    System/TClipboard.cpp
     System/TEvent.cpp
     System/TTimerQueue.cpp
 
