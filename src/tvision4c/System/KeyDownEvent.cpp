@@ -1,5 +1,6 @@
 #include "KeyDownEvent.h"
 
+TV_DEFAULT_CONSTRUCTOR(KeyDownEvent)
 TV_BOILERPLATE_FUNCTIONS(KeyDownEvent)
 TV_GET_SET_PRIMITIVE(KeyDownEvent, uint16_t, keyCode)
 TV_GET_SET_PRIMITIVE_EX(KeyDownEvent, uint8_t, charCode, charScan.charCode)

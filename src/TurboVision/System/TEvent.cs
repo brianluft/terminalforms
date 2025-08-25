@@ -2,26 +2,35 @@ using System.Runtime.InteropServices;
 
 namespace TurboVision.System;
 
-public unsafe partial class Event(void* ptr, bool owned, bool placement)
-    : NativeObject<Event>(ptr, owned, placement)
+public unsafe partial class TEvent(void* ptr, bool owned, bool placement)
+    : NativeObject<TEvent>(ptr, owned, placement)
 {
     private sealed class Factory : NativeObjectFactory<Factory>
     {
         public Factory()
-            : base(
-                NativeMethods.TV_TEvent_placementSize,
-                NativeMethods.TV_TEvent_placementNew,
-                NativeMethods.TV_TEvent_new
-            ) { }
+            : base(NativeMethods.TV_TEvent_placementSize) { }
+
+        public unsafe void* PlacementNew(byte* ptr)
+        {
+            ptr = Align(ptr);
+            TurboVisionException.Check(NativeMethods.TV_TEvent_placementNew(ptr));
+            return ptr;
+        }
+
+        public static unsafe void* New()
+        {
+            TurboVisionException.Check(NativeMethods.TV_TEvent_new(out var ptr));
+            return ptr;
+        }
     }
 
     public static int PlacementSize => Factory.Instance.PlacementSize;
 
-    public Event(byte* placement)
+    public TEvent(byte* placement)
         : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
-    public Event()
-        : this(Factory.Instance.New(), owned: true, placement: false) { }
+    public TEvent()
+        : this(Factory.New(), owned: true, placement: false) { }
 
     protected override void PlacementDeleteCore(void* ptr)
     {
@@ -33,7 +42,7 @@ public unsafe partial class Event(void* ptr, bool owned, bool placement)
         TurboVisionException.Check(NativeMethods.TV_TEvent_delete(Ptr));
     }
 
-    protected override bool EqualsCore(Event other)
+    protected override bool EqualsCore(TEvent other)
     {
         TurboVisionException.Check(NativeMethods.TV_TEvent_equals(Ptr, other.Ptr, out var equals));
         return equals;

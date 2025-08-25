@@ -9,24 +9,24 @@ public sealed class EventTests
     [TestMethod]
     public unsafe void Test_PlacementNew()
     {
-        var bytes = stackalloc byte[Event.PlacementSize];
-        using var @event = new Event(bytes);
+        var bytes = stackalloc byte[TEvent.PlacementSize];
+        using var @event = new TEvent(bytes);
         Assert.AreEqual((ushort)0x10, @event.What);
     }
 
     [TestMethod]
     public void Test_New()
     {
-        using var @event = new Event();
+        using var @event = new TEvent();
         Assert.AreEqual((ushort)0x10, @event.What);
     }
 
     [TestMethod]
     public void Test_Equals()
     {
-        using var a = new Event();
-        using var b = new Event();
-        using var c = new Event();
+        using var a = new TEvent();
+        using var b = new TEvent();
+        using var c = new TEvent();
 
         a.What = 100;
         c.What = 100;
@@ -40,9 +40,9 @@ public sealed class EventTests
     [TestMethod]
     public void Test_GetHashCode()
     {
-        using var a = new Event();
-        using var b = new Event();
-        using var c = new Event();
+        using var a = new TEvent();
+        using var b = new TEvent();
+        using var c = new TEvent();
 
         a.What = 100;
         c.What = 100;
@@ -54,7 +54,7 @@ public sealed class EventTests
     [TestMethod]
     public void Test_What_Property()
     {
-        using var @event = new Event();
+        using var @event = new TEvent();
 
         Assert.AreEqual((ushort)0x10, @event.What);
 
@@ -68,7 +68,7 @@ public sealed class EventTests
     [TestMethod]
     public void Test_GetMouse_SetMouse()
     {
-        using var @event = new Event();
+        using var @event = new TEvent();
         using var mouseEvent = new MouseEventType();
         using var retrievedMouseEvent = new MouseEventType();
         using var point = new TPoint { X = 10, Y = 20 };
@@ -99,7 +99,7 @@ public sealed class EventTests
     [TestMethod]
     public void Test_GetKeyDown_SetKeyDown()
     {
-        using var @event = new Event();
+        using var @event = new TEvent();
         using var keyEvent = new KeyDownEvent();
         using var retrievedKeyEvent = new KeyDownEvent();
 
@@ -123,7 +123,7 @@ public sealed class EventTests
     [TestMethod]
     public void Test_GetMessage_SetMessage()
     {
-        using var @event = new Event();
+        using var @event = new TEvent();
         using var messageEvent = new MessageEvent();
         using var retrievedMessageEvent = new MessageEvent();
 
@@ -149,7 +149,7 @@ public sealed class EventTests
     [TestMethod]
     public void Test_Multiple_Event_Types()
     {
-        using var @event = new Event();
+        using var @event = new TEvent();
         using var mouseEvent = new MouseEventType();
         using var keyEvent = new KeyDownEvent();
         using var messageEvent = new MessageEvent();

@@ -4,6 +4,7 @@
 #define Uses_TEventQueue
 #include <tvision/tv.h>
 
+TV_DEFAULT_CONSTRUCTOR(TEvent)
 TV_BOILERPLATE_FUNCTIONS(TEvent)
 TV_GET_SET_PRIMITIVE(TEvent, uint16_t, what)
 TV_GET_SET_COPYABLE_OBJECT(TEvent, MouseEventType, mouse)

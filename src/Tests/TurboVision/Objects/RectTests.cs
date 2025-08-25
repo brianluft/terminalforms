@@ -19,6 +19,60 @@ public sealed class RectTests
     }
 
     [TestMethod]
+    public unsafe void Test_PlacementNew2()
+    {
+        var bytes = stackalloc byte[TRect.PlacementSize];
+        using var rect = new TRect(bytes, 1, 2, 3, 4);
+        using var pointA = new TPoint();
+        using var pointB = new TPoint();
+        rect.GetA(pointA);
+        rect.GetB(pointB);
+        Assert.AreEqual(1, pointA.X);
+        Assert.AreEqual(2, pointA.Y);
+        Assert.AreEqual(3, pointB.X);
+        Assert.AreEqual(4, pointB.Y);
+    }
+
+    [TestMethod]
+    public unsafe void Test_New2()
+    {
+        using var rect = new TRect(1, 2, 3, 4);
+        using var pointA = new TPoint();
+        using var pointB = new TPoint();
+        rect.GetA(pointA);
+        rect.GetB(pointB);
+        Assert.AreEqual(1, pointA.X);
+        Assert.AreEqual(2, pointA.Y);
+        Assert.AreEqual(3, pointB.X);
+        Assert.AreEqual(4, pointB.Y);
+    }
+
+    [TestMethod]
+    public unsafe void Test_PlacementNew3()
+    {
+        var bytes = stackalloc byte[TRect.PlacementSize];
+        using var pointA = new TPoint { X = 1, Y = 2 };
+        using var pointB = new TPoint { X = 3, Y = 4 };
+        using var rect = new TRect(bytes, pointA, pointB);
+        using var resultA = new TPoint();
+        using var resultB = new TPoint();
+        rect.GetA(resultA);
+        rect.GetB(resultB);
+        Assert.AreEqual(1, resultA.X);
+        Assert.AreEqual(2, resultA.Y);
+        Assert.AreEqual(3, resultB.X);
+        Assert.AreEqual(4, resultB.Y);
+    }
+
+    [TestMethod]
+    public void Test_New3()
+    {
+        using var pointA = new TPoint { X = 1, Y = 2 };
+        using var pointB = new TPoint { X = 3, Y = 4 };
+        using var rect = new TRect(pointA, pointB);
+    }
+
+    [TestMethod]
     public void Test_Equals()
     {
         using var a = new TRect();

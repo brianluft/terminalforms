@@ -8,11 +8,46 @@ public unsafe partial class TRect(void* ptr, bool owned, bool placement)
     private sealed class Factory : NativeObjectFactory<Factory>
     {
         public Factory()
-            : base(
-                NativeMethods.TV_TRect_placementSize,
-                NativeMethods.TV_TRect_placementNew,
-                NativeMethods.TV_TRect_new
-            ) { }
+            : base(NativeMethods.TV_TRect_placementSize) { }
+
+        public unsafe void* PlacementNew(byte* ptr)
+        {
+            ptr = Align(ptr);
+            TurboVisionException.Check(NativeMethods.TV_TRect_placementNew(ptr));
+            return ptr;
+        }
+
+        public static unsafe void* New()
+        {
+            TurboVisionException.Check(NativeMethods.TV_TRect_new(out var ptr));
+            return ptr;
+        }
+
+        public unsafe void* PlacementNew2(byte* ptr, int ax, int ay, int bx, int by)
+        {
+            ptr = Align(ptr);
+            TurboVisionException.Check(NativeMethods.TV_TRect_placementNew2(ptr, ax, ay, bx, by));
+            return ptr;
+        }
+
+        public static unsafe void* New2(int ax, int ay, int bx, int by)
+        {
+            TurboVisionException.Check(NativeMethods.TV_TRect_new2(out var ptr, ax, ay, bx, by));
+            return ptr;
+        }
+
+        public unsafe void* PlacementNew3(byte* ptr, void* p1, void* p2)
+        {
+            ptr = Align(ptr);
+            TurboVisionException.Check(NativeMethods.TV_TRect_placementNew3(ptr, p1, p2));
+            return ptr;
+        }
+
+        public static unsafe void* New3(void* p1, void* p2)
+        {
+            TurboVisionException.Check(NativeMethods.TV_TRect_new3(out var ptr, p1, p2));
+            return ptr;
+        }
     }
 
     public static int PlacementSize => Factory.Instance.PlacementSize;
@@ -21,7 +56,27 @@ public unsafe partial class TRect(void* ptr, bool owned, bool placement)
         : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
     public TRect()
-        : this(Factory.Instance.New(), owned: true, placement: false) { }
+        : this(Factory.New(), owned: true, placement: false) { }
+
+    public TRect(byte* placement, int ax, int ay, int bx, int by)
+        : this(
+            Factory.Instance.PlacementNew2(placement, ax, ay, bx, by),
+            owned: true,
+            placement: true
+        ) { }
+
+    public TRect(int ax, int ay, int bx, int by)
+        : this(Factory.New2(ax, ay, bx, by), owned: true, placement: false) { }
+
+    public TRect(byte* placement, TPoint p1, TPoint p2)
+        : this(
+            Factory.Instance.PlacementNew3(placement, p1.Ptr, p2.Ptr),
+            owned: true,
+            placement: true
+        ) { }
+
+    public TRect(TPoint p1, TPoint p2)
+        : this(Factory.New3(p1.Ptr, p2.Ptr), owned: true, placement: false) { }
 
     protected override void PlacementDeleteCore(void* ptr)
     {
@@ -121,6 +176,24 @@ public unsafe partial class TRect(void* ptr, bool owned, bool placement)
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_TRect_placementNew(byte* self);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_TRect_placementNew2(
+            byte* self,
+            int ax,
+            int ay,
+            int bx,
+            int by
+        );
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_TRect_new2(out void* @out, int ax, int ay, int bx, int by);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_TRect_placementNew3(byte* self, void* p1, void* p2);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_TRect_new3(out void* @out, void* p1, void* p2);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_TRect_placementDelete(void* self);

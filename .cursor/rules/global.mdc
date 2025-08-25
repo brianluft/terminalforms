@@ -51,7 +51,25 @@ Then our .NET library "TurboVision" calls into the "tvision4c" library using P/I
     }  // namespace tv
 
     /*** TFoo.cpp ***/
+    // If TFoo has a default constructor:
+    TV_DEFAULT_CONSTRUCTOR(TFoo)
+
+    // If TFoo has non-default constructors, define this pair for each such ctor.
+    // Give the pair a numeric suffix starting at 2 so the names do not collide.
+    // The default constructor is always the pair without a numeric suffix.
+    // Always take class/structs by pointer even if the underlying constructor takes it by value or by reference.
+    // Convert machine integers like int into explicit stdint types like int32_t.
+    EXPORT tv::Error TV_TFoo_placementNew2(TFoo* self, int32_t bar, TWhatever* baz) {
+        return tv::checkedPlacementNew(self, bar, *baz);
+    }
+
+    EXPORT tv::Error TV_TFoo_new2(TFoo** out, int32_t bar, TWhatever* baz) {
+        return tv::checkedNew(out, bar, *baz);
+    }
+
+    // For any non-static type:
     TV_BOILERPLATE_FUNCTIONS(TFoo)
+
     // ... Other TV_* macros and EXPORT function implementations ...
     ```
 - See `src/tvision4c/common.h` for various TV_* macros you can use in your implementation. Don't provide function prototypes for the exported C methods in the .h file, as they will be consumed from C# which doesn't use the header files and just wastes our time.

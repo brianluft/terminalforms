@@ -77,15 +77,21 @@ struct HashPolicy {
 
 // This templated function instantiates a new object of type `T`.
 // It catches any exception and converts to `Error`.
-template <typename T>
-Error checkedNew(T** out) {
+// If constructor arguments are provided, InitializePolicy is skipped.
+template <typename T, typename... Args>
+Error checkedNew(T** out, Args&&... args) {
     if (!out) {
         return tv::Error_ArgumentNull;
     }
 
     try {
-        *out = new T();
-        InitializePolicy<T>::initialize(*out);
+        *out = new T(std::forward<Args>(args)...);
+
+        // Only call InitializePolicy if this was the default constructor (no args)
+        if constexpr (sizeof...(args) == 0) {
+            InitializePolicy<T>::initialize(*out);
+        }
+
         return tv::Success;
     } catch (const std::bad_alloc&) {
         return tv::Error_OutOfMemory;
@@ -110,8 +116,9 @@ Error checkedSize(int32_t* outSize, int32_t* outAlignment) {
 
 // This templated function instantiates an object of type `T` at a given address.
 // It catches any exception and converts to `Error`.
-template <typename T>
-Error checkedPlacementNew(T* self) {
+// If constructor arguments are provided, InitializePolicy is skipped.
+template <typename T, typename... Args>
+Error checkedPlacementNew(T* self, Args&&... args) {
     if (!self) {
         return tv::Error_ArgumentNull;
     }
@@ -122,8 +129,13 @@ Error checkedPlacementNew(T* self) {
     }
 
     try {
-        new (self) T();
-        InitializePolicy<T>::initialize(self);
+        new (self) T(std::forward<Args>(args)...);
+
+        // Only call InitializePolicy if this was the default constructor (no args)
+        if constexpr (sizeof...(args) == 0) {
+            InitializePolicy<T>::initialize(self);
+        }
+
         return tv::Success;
     } catch (const std::bad_alloc&) {
         return tv::Error_OutOfMemory;
@@ -217,20 +229,23 @@ Error checkedHash(T* self, int32_t* out) {
 
 }  // namespace tv
 
+// Use this macro if the class has a default parameterless constructor.
+#define TV_DEFAULT_CONSTRUCTOR(type)                        \
+    EXPORT tv::Error TV_##type##_placementNew(type* self) { \
+        return tv::checkedPlacementNew(self);               \
+    }                                                       \
+    EXPORT tv::Error TV_##type##_new(type** out) {          \
+        return tv::checkedNew(out);                         \
+    }
+
 // Every class/struct that is exported to C must have these functions.
 // Use this macro in the .cpp file.
 #define TV_BOILERPLATE_FUNCTIONS(type)                                                    \
     EXPORT tv::Error TV_##type##_placementSize(int32_t* outSize, int32_t* outAlignment) { \
         return tv::checkedSize<type>(outSize, outAlignment);                              \
     }                                                                                     \
-    EXPORT tv::Error TV_##type##_placementNew(type* self) {                               \
-        return tv::checkedPlacementNew(self);                                             \
-    }                                                                                     \
     EXPORT tv::Error TV_##type##_placementDelete(type* self) {                            \
         return tv::checkedPlacementDelete(self);                                          \
-    }                                                                                     \
-    EXPORT tv::Error TV_##type##_new(type** out) {                                        \
-        return tv::checkedNew(out);                                                       \
     }                                                                                     \
     EXPORT tv::Error TV_##type##_delete(type* self) {                                     \
         return tv::checkedDelete(self);                                                   \

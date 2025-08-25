@@ -1,5 +1,6 @@
 #include "TCellChar.h"
 
+TV_DEFAULT_CONSTRUCTOR(TCellChar)
 TV_BOILERPLATE_FUNCTIONS(TCellChar)
 
 // Constants

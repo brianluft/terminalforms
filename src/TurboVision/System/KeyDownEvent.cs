@@ -9,11 +9,20 @@ public unsafe partial class KeyDownEvent(void* ptr, bool owned, bool placement)
     private sealed class Factory : NativeObjectFactory<Factory>
     {
         public Factory()
-            : base(
-                NativeMethods.TV_KeyDownEvent_placementSize,
-                NativeMethods.TV_KeyDownEvent_placementNew,
-                NativeMethods.TV_KeyDownEvent_new
-            ) { }
+            : base(NativeMethods.TV_KeyDownEvent_placementSize) { }
+
+        public unsafe void* PlacementNew(byte* ptr)
+        {
+            ptr = Align(ptr);
+            TurboVisionException.Check(NativeMethods.TV_KeyDownEvent_placementNew(ptr));
+            return ptr;
+        }
+
+        public static unsafe void* New()
+        {
+            TurboVisionException.Check(NativeMethods.TV_KeyDownEvent_new(out var ptr));
+            return ptr;
+        }
     }
 
     public static int PlacementSize => Factory.Instance.PlacementSize;
@@ -22,7 +31,7 @@ public unsafe partial class KeyDownEvent(void* ptr, bool owned, bool placement)
         : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
     public KeyDownEvent()
-        : this(Factory.Instance.New(), owned: true, placement: false) { }
+        : this(Factory.New(), owned: true, placement: false) { }
 
     protected override void PlacementDeleteCore(void* ptr)
     {

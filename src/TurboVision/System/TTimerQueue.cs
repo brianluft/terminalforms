@@ -8,11 +8,20 @@ public unsafe partial class TTimerQueue(void* ptr, bool owned, bool placement)
     private sealed class Factory : NativeObjectFactory<Factory>
     {
         public Factory()
-            : base(
-                NativeMethods.TV_TTimerQueue_placementSize,
-                NativeMethods.TV_TTimerQueue_placementNew,
-                NativeMethods.TV_TTimerQueue_new
-            ) { }
+            : base(NativeMethods.TV_TTimerQueue_placementSize) { }
+
+        public unsafe void* PlacementNew(byte* ptr)
+        {
+            ptr = Align(ptr);
+            TurboVisionException.Check(NativeMethods.TV_TTimerQueue_placementNew(ptr));
+            return ptr;
+        }
+
+        public static unsafe void* New()
+        {
+            TurboVisionException.Check(NativeMethods.TV_TTimerQueue_new(out var ptr));
+            return ptr;
+        }
     }
 
     public static int PlacementSize => Factory.Instance.PlacementSize;
@@ -21,7 +30,7 @@ public unsafe partial class TTimerQueue(void* ptr, bool owned, bool placement)
         : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
     public TTimerQueue()
-        : this(Factory.Instance.New(), owned: true, placement: false) { }
+        : this(Factory.New(), owned: true, placement: false) { }
 
     protected override void PlacementDeleteCore(void* ptr)
     {
@@ -45,6 +54,27 @@ public unsafe partial class TTimerQueue(void* ptr, bool owned, bool placement)
     {
         TurboVisionException.Check(NativeMethods.TV_TTimerQueue_hash(Ptr, out var hash));
         return hash;
+    }
+
+    public unsafe void* SetTimer(uint timeoutMs, int periodMs)
+    {
+        TurboVisionException.Check(
+            NativeMethods.TV_TTimerQueue_setTimer(Ptr, timeoutMs, periodMs, out var id)
+        );
+        return id;
+    }
+
+    public unsafe void KillTimer(void* id)
+    {
+        TurboVisionException.Check(NativeMethods.TV_TTimerQueue_killTimer(Ptr, id));
+    }
+
+    public int TimeUntilNextTimeout()
+    {
+        TurboVisionException.Check(
+            NativeMethods.TV_TTimerQueue_timeUntilNextTimeout(Ptr, out var time)
+        );
+        return time;
     }
 
     internal static partial class NativeMethods
@@ -76,5 +106,19 @@ public unsafe partial class TTimerQueue(void* ptr, bool owned, bool placement)
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_TTimerQueue_hash(void* self, out int @out);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_TTimerQueue_setTimer(
+            void* self,
+            uint timeoutMs,
+            int periodMs,
+            out void* @out
+        );
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_TTimerQueue_killTimer(void* self, void* id);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TV_TTimerQueue_timeUntilNextTimeout(void* self, out int @out);
     }
 }

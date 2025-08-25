@@ -8,11 +8,20 @@ public unsafe partial class MessageEvent(void* ptr, bool owned, bool placement)
     private sealed class Factory : NativeObjectFactory<Factory>
     {
         public Factory()
-            : base(
-                NativeMethods.TV_MessageEvent_placementSize,
-                NativeMethods.TV_MessageEvent_placementNew,
-                NativeMethods.TV_MessageEvent_new
-            ) { }
+            : base(NativeMethods.TV_MessageEvent_placementSize) { }
+
+        public unsafe void* PlacementNew(byte* ptr)
+        {
+            ptr = Align(ptr);
+            TurboVisionException.Check(NativeMethods.TV_MessageEvent_placementNew(ptr));
+            return ptr;
+        }
+
+        public static unsafe void* New()
+        {
+            TurboVisionException.Check(NativeMethods.TV_MessageEvent_new(out var ptr));
+            return ptr;
+        }
     }
 
     public static int PlacementSize => Factory.Instance.PlacementSize;
@@ -21,7 +30,7 @@ public unsafe partial class MessageEvent(void* ptr, bool owned, bool placement)
         : this(Factory.Instance.PlacementNew(placement), owned: true, placement: true) { }
 
     public MessageEvent()
-        : this(Factory.Instance.New(), owned: true, placement: false) { }
+        : this(Factory.New(), owned: true, placement: false) { }
 
     protected override void PlacementDeleteCore(void* ptr)
     {

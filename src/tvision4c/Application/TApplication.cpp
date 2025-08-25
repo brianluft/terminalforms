@@ -59,6 +59,7 @@ void TApplicationImpl::writeShellMsg_base() {
     TApplication::writeShellMsg();
 }
 
+TV_DEFAULT_CONSTRUCTOR(TApplicationImpl)
 TV_BOILERPLATE_FUNCTIONS(TApplicationImpl)
 
 EXPORT tv::Error TV_TApplicationImpl_suspend(TApplicationImpl* self) {
