@@ -331,6 +331,41 @@ Error checkedHash(T* self, int32_t* out) {
         return tv::Success;                                                                                           \
     }
 
+// Use this macro for a C string pointer that is owned by the object and must be freed when changing.
+#define TV_GET_SET_OWNED_STRING(objectType, stringMemberName)                                        \
+    EXPORT tv::Error TV_##objectType##_get_##stringMemberName(objectType* self, const char** out) {  \
+        if (!self || !out) {                                                                         \
+            return tv::Error_ArgumentNull;                                                           \
+        }                                                                                            \
+        *out = self->stringMemberName;                                                               \
+        return tv::Success;                                                                          \
+    }                                                                                                \
+    EXPORT tv::Error TV_##objectType##_set_##stringMemberName(objectType* self, const char* value) { \
+        if (!self || !value) {                                                                       \
+            return tv::Error_ArgumentNull;                                                           \
+        }                                                                                            \
+        delete[] self->stringMemberName;                                                             \
+        self->stringMemberName = newStr(value);                                                      \
+        return tv::Success;                                                                          \
+    }
+
+// Use this macro for a C++ bool type that we have to convert to C BOOL.
+#define TV_GET_SET_BOOL(objectType, memberName)                                         \
+    EXPORT tv::Error TV_##objectType##_get_##memberName(objectType* self, BOOL* out) {  \
+        if (!self || !out) {                                                            \
+            return tv::Error_ArgumentNull;                                              \
+        }                                                                               \
+        *out = self->memberName ? TRUE : FALSE;                                         \
+        return tv::Success;                                                             \
+    }                                                                                   \
+    EXPORT tv::Error TV_##objectType##_set_##memberName(objectType* self, BOOL value) { \
+        if (!self) {                                                                    \
+            return tv::Error_ArgumentNull;                                              \
+        }                                                                               \
+        self->memberName = value == TRUE;                                               \
+        return tv::Success;                                                             \
+    }
+
 // Use this macro for binary operators on copyable objects.
 #define TV_BINARY_OPERATOR_COPYABLE_OBJECT(lhsType, rhsType, operatorSymbol, operatorName, resultType)     \
     EXPORT tv::Error TV_##lhsType##_operator_##operatorName(lhsType* lhs, rhsType* rhs, resultType* out) { \

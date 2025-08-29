@@ -16,7 +16,7 @@
 - [x] TCellChar (TStringView)
 - [x] TClipboard (TStringView)
 - [x] TDirEntry (TStringView)
-- [ ] TNode (TStringView)
+- [x] TNode (TStringView)
 - [ ] TSItem (TStringView)
 - [ ] TSearchRec
 - [ ] TResourceItem

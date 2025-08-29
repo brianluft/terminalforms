@@ -58,6 +58,8 @@ add_library(tvision4c SHARED
 
     Dialogs/TDirEntry.cpp
 
+    Outlines/TNode.cpp
+
     common.cpp
     VirtualMethodTable.cpp
 )

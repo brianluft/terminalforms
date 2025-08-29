@@ -35,7 +35,7 @@ You will be given the name of a type to bind, below it will be `TFoo`. We will f
     util.h -> Utilities
     validate.h -> Validators
     views.h -> Views
-2. Make a decision: does this type contain virtual functions or protected members, yes or no? Is it effectively static with a private constructor? This will determine which implementation pattern we follow.
+2. Make a decision: does this type contain virtual functions (ignoring virtual destructor) or protected members, yes or no? Is it effectively static with a private constructor? This will determine which implementation pattern we follow.
 3. Read the fully worked pattern provided below.
     - Base class: `src\TurboVision\NativeObject.cs` and `src\TurboVision\NativeObjectFactory.cs`
     - For types that are effectively static:
@@ -46,7 +46,7 @@ You will be given the name of a type to bind, below it will be `TFoo`. We will f
             - `src\tvision4c\System\TClipboard.h`
             - `src\tvision4c\System\TClipboard.cpp`
             - `src\TurboVision\System\TClipboard.cs`
-    - For types that DO NOT contain virtual functions or protected members:
+    - For types that DO NOT contain virtual functions (or only a virtual destructor) or protected members:
         - You can use the underlying type as-is without subclassing it, since we wouldn't gain anything by subclassing it.
         - Your input:
             - `build\prefix\include\tvision\system.h` (lines 178-216)
@@ -54,7 +54,7 @@ You will be given the name of a type to bind, below it will be `TFoo`. We will f
             - `src\tvision4c\System\MouseEventType.h`
             - `src\tvision4c\System\MouseEventType.cpp`
             - `src\TurboVision\System\MouseEventType.cs`
-    - For types that DO contain virtual functions or protected members:
+    - For types that DO contain virtual functions (more than just a virtual destructor) or protected members:
         - You must write a subclass `TFooImpl` (global namespace, not `tv`) to override all virtual functions and provide public access to all protected members.
         - Your input:
             - `build\prefix\include\tvision\app.h` (lines 321-342)
