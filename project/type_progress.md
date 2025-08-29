@@ -17,7 +17,7 @@
 - [x] TClipboard (TStringView)
 - [x] TDirEntry (TStringView)
 - [x] TNode (TStringView)
-- [ ] TSItem (TStringView)
+- [x] TSItem (TStringView)
 - [ ] TSearchRec
 - [ ] TResourceItem
 - [ ] TReplaceDialogRec

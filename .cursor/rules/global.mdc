@@ -72,10 +72,10 @@ TV_BOILERPLATE_FUNCTIONS(TFoo)
 # C# Rules
 - Use `var` instead of explicit type names when possible.
 - Always specify `[MarshalAs(UnmanagedType.I4)]` for `bool` parameters and return types. C# requires it.
+- For string input parameters, prefer `[LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]` or `[MarshalAs(UnmanagedType.LPUTF8Str)]` over explicit `UTF8Encoding`, `Marshal`, or `fixed` use when possible. If you must use `UTF8Encoding` explicitly, then use the shared instance `Global.UTF8Encoding`. Never implement `strlen(byte*)` in C#--you can always avoid this.
 - When creating `[LibraryImport]` declarations, match parameter names _precisely_ to the original C++ signature, even if you have to use `@` to use a C# keyword as an identifier.
 - The native functions all return `enum Error`. Wrap your native calls in `TurboVisionException.Check(Error)` which will throw an exception if the error code is not successful.
 - Prefer modern `unsafe`/`Span` interop techniques over old fashioned `Marshal`/`IntPtr` techniques when possible.
-- When converting *from* C# string *to* UTF-8 bytes, use `Global.UTF8Encoding.GetBytes()` to avoid emitting a BOM. *Don't* use this in the other direction (from UTF-8 bytes to C# string); when forming C# strings, prefer automatic string marshaling as part of the `LibraryImport` declaration, and failing that, prefer the `Marshal` class's string handling methods. Never implement `strlen(byte*)` in C#--you can always avoid this.
 - Translate C++ `TSpan` as C# `Span<T>`.
 - Translate C++ `TStringView` and all moral equivalents to strings as C# `String` via copying.
 - The C++ code has lots of typedefs for simple integers. Translate these as primitive C# integer types rather than trying to define the typedef on the C# side.

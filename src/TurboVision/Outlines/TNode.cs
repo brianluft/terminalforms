@@ -13,7 +13,7 @@ public unsafe partial class TNode(void* ptr, bool owned, bool placement)
         public Factory()
             : base(NativeMethods.TV_TNode_placementSize) { }
 
-        public unsafe void* PlacementNew(byte* ptr, byte* aText)
+        public unsafe void* PlacementNew(byte* ptr, string aText)
         {
             ptr = Align(ptr);
             TurboVisionException.Check(NativeMethods.TV_TNode_placementNew(ptr, aText));
@@ -22,7 +22,7 @@ public unsafe partial class TNode(void* ptr, bool owned, bool placement)
 
         public unsafe void* PlacementNew2(
             byte* ptr,
-            byte* aText,
+            string aText,
             void* aChildren,
             void* aNext,
             int initialState
@@ -35,13 +35,18 @@ public unsafe partial class TNode(void* ptr, bool owned, bool placement)
             return ptr;
         }
 
-        public static unsafe void* New(byte* aText)
+        public static unsafe void* New(string aText)
         {
             TurboVisionException.Check(NativeMethods.TV_TNode_new(out var ptr, aText));
             return ptr;
         }
 
-        public static unsafe void* New2(byte* aText, void* aChildren, void* aNext, int initialState)
+        public static unsafe void* New2(
+            string aText,
+            void* aChildren,
+            void* aNext,
+            int initialState
+        )
         {
             TurboVisionException.Check(
                 NativeMethods.TV_TNode_new2(out var ptr, aText, aChildren, aNext, initialState)
@@ -94,11 +99,7 @@ public unsafe partial class TNode(void* ptr, bool owned, bool placement)
 
     private static unsafe void* CreateWithPlacement(byte* placement, string aText)
     {
-        var textBytes = Global.UTF8Encoding.GetBytes(aText + "\0");
-        fixed (byte* textPtr = textBytes)
-        {
-            return Factory.Instance.PlacementNew(placement, textPtr);
-        }
+        return Factory.Instance.PlacementNew(placement, aText);
     }
 
     private static unsafe void* CreateWithPlacement2(
@@ -109,28 +110,20 @@ public unsafe partial class TNode(void* ptr, bool owned, bool placement)
         bool initialState
     )
     {
-        var textBytes = Global.UTF8Encoding.GetBytes(aText + "\0");
-        fixed (byte* textPtr = textBytes)
-        {
-            void* childPtr = aChildren != null ? aChildren.Ptr : null;
-            void* nextPtr = aNext != null ? aNext.Ptr : null;
-            return Factory.Instance.PlacementNew2(
-                placement,
-                textPtr,
-                childPtr,
-                nextPtr,
-                initialState ? 1 : 0
-            );
-        }
+        void* childPtr = aChildren != null ? aChildren.Ptr : null;
+        void* nextPtr = aNext != null ? aNext.Ptr : null;
+        return Factory.Instance.PlacementNew2(
+            placement,
+            aText,
+            childPtr,
+            nextPtr,
+            initialState ? 1 : 0
+        );
     }
 
     private static unsafe void* CreateNew(string aText)
     {
-        var textBytes = Global.UTF8Encoding.GetBytes(aText + "\0");
-        fixed (byte* textPtr = textBytes)
-        {
-            return Factory.New(textPtr);
-        }
+        return Factory.New(aText);
     }
 
     private static unsafe void* CreateNew2(
@@ -140,13 +133,9 @@ public unsafe partial class TNode(void* ptr, bool owned, bool placement)
         bool initialState
     )
     {
-        var textBytes = Global.UTF8Encoding.GetBytes(aText + "\0");
-        fixed (byte* textPtr = textBytes)
-        {
-            void* childPtr = aChildren != null ? aChildren.Ptr : null;
-            void* nextPtr = aNext != null ? aNext.Ptr : null;
-            return Factory.New2(textPtr, childPtr, nextPtr, initialState ? 1 : 0);
-        }
+        void* childPtr = aChildren != null ? aChildren.Ptr : null;
+        void* nextPtr = aNext != null ? aNext.Ptr : null;
+        return Factory.New2(aText, childPtr, nextPtr, initialState ? 1 : 0);
     }
 
     protected override void PlacementDeleteCore(void* ptr)
@@ -200,14 +189,7 @@ public unsafe partial class TNode(void* ptr, bool owned, bool placement)
                 ? Marshal.PtrToStringUTF8((nint)result) ?? string.Empty
                 : string.Empty;
         }
-        set
-        {
-            var textBytes = Global.UTF8Encoding.GetBytes(value + "\0");
-            fixed (byte* textPtr = textBytes)
-            {
-                TurboVisionException.Check(NativeMethods.TV_TNode_set_text(Ptr, textPtr));
-            }
-        }
+        set { TurboVisionException.Check(NativeMethods.TV_TNode_set_text(Ptr, value)); }
     }
 
     /// <summary>
@@ -245,13 +227,13 @@ public unsafe partial class TNode(void* ptr, bool owned, bool placement)
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_TNode_placementSize(out int outSize, out int outAlignment);
 
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_TNode_placementNew(void* self, byte* aText);
+        [LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
+        public static partial Error TV_TNode_placementNew(void* self, string aText);
 
-        [LibraryImport(Global.DLL_NAME)]
+        [LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
         public static partial Error TV_TNode_placementNew2(
             void* self,
-            byte* aText,
+            string aText,
             void* aChildren,
             void* aNext,
             int initialState
@@ -260,13 +242,13 @@ public unsafe partial class TNode(void* ptr, bool owned, bool placement)
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_TNode_placementDelete(void* self);
 
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_TNode_new(out void* @out, byte* aText);
+        [LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
+        public static partial Error TV_TNode_new(out void* @out, string aText);
 
-        [LibraryImport(Global.DLL_NAME)]
+        [LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
         public static partial Error TV_TNode_new2(
             out void* @out,
-            byte* aText,
+            string aText,
             void* aChildren,
             void* aNext,
             int initialState
@@ -294,8 +276,8 @@ public unsafe partial class TNode(void* ptr, bool owned, bool placement)
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_TNode_get_text(void* self, out byte* result);
 
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TV_TNode_set_text(void* self, byte* value);
+        [LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
+        public static partial Error TV_TNode_set_text(void* self, string value);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TV_TNode_get_childList(void* self, out void* result);
