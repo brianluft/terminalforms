@@ -11,16 +11,16 @@
 namespace tv {
 
 template <>
-struct InitializePolicy<TEvent> {
-    static void initialize(TEvent* self) {
+struct initialize<TEvent> {
+    void operator()(TEvent* self) const {
         self->what = evKeyDown;
-        InitializePolicy<KeyDownEvent>::initialize(&self->keyDown);
+        tv::initialize<KeyDownEvent>{}(&self->keyDown);
     }
 };
 
 template <>
-struct EqualsPolicy<TEvent> {
-    static bool equals(const TEvent& self, const TEvent& other) {
+struct equals<TEvent> {
+    bool operator()(const TEvent& self, const TEvent& other) const {
         if (self.what != other.what) {
             return false;
         }
@@ -31,34 +31,38 @@ struct EqualsPolicy<TEvent> {
             case evMouseMove:
             case evMouseAuto:
             case evMouseWheel:
-                return EqualsPolicy<MouseEventType>::equals(self.mouse, other.mouse);
+                return tv::equals<MouseEventType>{}(self.mouse, other.mouse);
             case evKeyDown:
-                return EqualsPolicy<KeyDownEvent>::equals(self.keyDown, other.keyDown);
+                return tv::equals<KeyDownEvent>{}(self.keyDown, other.keyDown);
             default:
-                return EqualsPolicy<MessageEvent>::equals(self.message, other.message);
+                return tv::equals<MessageEvent>{}(self.message, other.message);
         }
     }
 };
 
+}  // namespace tv
+
+namespace std {
 template <>
-struct HashPolicy<TEvent> {
-    static void hash(const TEvent& self, int32_t* seed) {
+struct hash<TEvent> {
+    std::size_t operator()(const TEvent& self) const noexcept {
+        std::size_t x{};
         switch (self.what) {
             case evMouseDown:
             case evMouseUp:
             case evMouseMove:
             case evMouseAuto:
             case evMouseWheel:
-                HashPolicy<MouseEventType>::hash(self.mouse, seed);
+                tv::combineHash(std::hash<MouseEventType>{}(self.mouse), &x);
                 break;
             case evKeyDown:
-                HashPolicy<KeyDownEvent>::hash(self.keyDown, seed);
+                tv::combineHash(std::hash<KeyDownEvent>{}(self.keyDown), &x);
                 break;
             default:
-                HashPolicy<MessageEvent>::hash(self.message, seed);
+                tv::combineHash(std::hash<MessageEvent>{}(self.message), &x);
                 break;
         }
+        return x;
     }
 };
-
-}  // namespace tv
+}  // namespace std

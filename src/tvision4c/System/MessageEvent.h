@@ -8,26 +8,30 @@
 namespace tv {
 
 template <>
-struct InitializePolicy<MessageEvent> {
-    static void initialize(MessageEvent* self) {
+struct initialize<MessageEvent> {
+    void operator()(MessageEvent* self) const {
         self->command = {};
         self->infoPtr = {};
     }
 };
 
 template <>
-struct EqualsPolicy<MessageEvent> {
-    static bool equals(const MessageEvent& self, const MessageEvent& other) {
+struct equals<MessageEvent> {
+    bool operator()(const MessageEvent& self, const MessageEvent& other) const {
         return self.command == other.command && self.infoPtr == other.infoPtr;
     }
 };
 
+}  // namespace tv
+
+namespace std {
 template <>
-struct HashPolicy<MessageEvent> {
-    static void hash(const MessageEvent& self, int32_t* seed) {
-        tv::hash(self.command, seed);
-        tv::hash(reinterpret_cast<uintptr_t>(self.infoPtr), seed);
+struct hash<MessageEvent> {
+    std::size_t operator()(const MessageEvent& self) const noexcept {
+        std::size_t x{};
+        tv::combineHash(std::hash<uint16_t>{}(self.command), &x);
+        tv::combineHash(std::hash<uintptr_t>{}(reinterpret_cast<uintptr_t>(self.infoPtr)), &x);
+        return x;
     }
 };
-
-}  // namespace tv
+}  // namespace std

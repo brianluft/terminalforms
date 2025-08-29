@@ -8,8 +8,8 @@
 namespace tv {
 
 template <>
-struct InitializePolicy<TTextMetrics> {
-    static void initialize(TTextMetrics* self) {
+struct initialize<TTextMetrics> {
+    void operator()(TTextMetrics* self) const {
         self->width = {};
         self->characterCount = {};
         self->graphemeCount = {};
@@ -17,20 +17,24 @@ struct InitializePolicy<TTextMetrics> {
 };
 
 template <>
-struct EqualsPolicy<TTextMetrics> {
-    static bool equals(const TTextMetrics& self, const TTextMetrics& other) {
+struct equals<TTextMetrics> {
+    bool operator()(const TTextMetrics& self, const TTextMetrics& other) const {
         return self.width == other.width && self.characterCount == other.characterCount &&
             self.graphemeCount == other.graphemeCount;
     }
 };
 
+}  // namespace tv
+
+namespace std {
 template <>
-struct HashPolicy<TTextMetrics> {
-    static void hash(const TTextMetrics& self, int32_t* seed) {
-        tv::hash(self.width, seed);
-        tv::hash(self.characterCount, seed);
-        tv::hash(self.graphemeCount, seed);
+struct hash<TTextMetrics> {
+    std::size_t operator()(const TTextMetrics& self) const noexcept {
+        std::size_t x{};
+        tv::combineHash(std::hash<uint32_t>{}(self.width), &x);
+        tv::combineHash(std::hash<uint32_t>{}(self.characterCount), &x);
+        tv::combineHash(std::hash<uint32_t>{}(self.graphemeCount), &x);
+        return x;
     }
 };
-
-}  // namespace tv
+}  // namespace std

@@ -39,7 +39,7 @@ You will be given the name of a type to bind, below it will be `TFoo`. We will f
 3. Read the fully worked pattern provided below.
     - Base class: `src\TurboVision\NativeObject.cs` and `src\TurboVision\NativeObjectFactory.cs`
     - For types that are effectively static:
-        - Skip boilerplate construction/destruction functions. Skip Initialize/Equals/HashPolicy. Still create the .h file, but it will simply include common.h and tv.h with `#define Uses_TFoo`. Only write bindings for the public static functions.
+        - Skip boilerplate construction/destruction functions. Skip tv::initialize/tv::equals/std::Hash. Still create the .h file, but it will simply include common.h and tv.h with `#define Uses_TFoo`. Only write bindings for the public static functions.
         - Your input:
             - `build\prefix\include\tvision\system.h` (lines 369-387)
         - Your output:

@@ -8,8 +8,8 @@
 namespace tv {
 
 template <>
-struct InitializePolicy<TStrIndexRec> {
-    static void initialize(TStrIndexRec* self) {
+struct initialize<TStrIndexRec> {
+    void operator()(TStrIndexRec* self) const {
         self->key = {};
         self->count = {};
         self->offset = {};
@@ -17,19 +17,23 @@ struct InitializePolicy<TStrIndexRec> {
 };
 
 template <>
-struct EqualsPolicy<TStrIndexRec> {
-    static bool equals(const TStrIndexRec& self, const TStrIndexRec& other) {
+struct equals<TStrIndexRec> {
+    bool operator()(const TStrIndexRec& self, const TStrIndexRec& other) const {
         return self.key == other.key && self.count == other.count && self.offset == other.offset;
     }
 };
 
+}  // namespace tv
+
+namespace std {
 template <>
-struct HashPolicy<TStrIndexRec> {
-    static void hash(const TStrIndexRec& self, int32_t* seed) {
-        tv::hash(self.key, seed);
-        tv::hash(self.count, seed);
-        tv::hash(self.offset, seed);
+struct hash<TStrIndexRec> {
+    std::size_t operator()(const TStrIndexRec& self) const noexcept {
+        std::size_t x{};
+        tv::combineHash(std::hash<uint16_t>{}(self.key), &x);
+        tv::combineHash(std::hash<uint16_t>{}(self.count), &x);
+        tv::combineHash(std::hash<uint16_t>{}(self.offset), &x);
+        return x;
     }
 };
-
-}  // namespace tv
+}  // namespace std

@@ -34,3 +34,13 @@ class TApplicationImpl : public TApplication {
 
     // TODO: TProgram functions
 };
+
+namespace std {
+template <>
+struct hash<TApplicationImpl> {
+    std::size_t operator()(const TApplicationImpl& self) const noexcept {
+        // Use pointer hash as default (reference equality)
+        return std::hash<const void*>{}(&self);
+    }
+};
+}  // namespace std

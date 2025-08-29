@@ -8,8 +8,8 @@
 namespace tv {
 
 template <>
-struct InitializePolicy<write_args> {
-    static void initialize(write_args* self) {
+struct initialize<write_args> {
+    void operator()(write_args* self) const {
         self->self = {};
         self->target = {};
         self->buf = {};
@@ -18,21 +18,25 @@ struct InitializePolicy<write_args> {
 };
 
 template <>
-struct EqualsPolicy<write_args> {
-    static bool equals(const write_args& self, const write_args& other) {
+struct equals<write_args> {
+    bool operator()(const write_args& self, const write_args& other) const {
         return self.self == other.self && self.target == other.target && self.buf == other.buf &&
             self.offset == other.offset;
     }
 };
 
+}  // namespace tv
+
+namespace std {
 template <>
-struct HashPolicy<write_args> {
-    static void hash(const write_args& self, int32_t* seed) {
-        tv::hash(reinterpret_cast<uintptr_t>(self.self), seed);
-        tv::hash(reinterpret_cast<uintptr_t>(self.target), seed);
-        tv::hash(reinterpret_cast<uintptr_t>(self.buf), seed);
-        tv::hash(self.offset, seed);
+struct hash<write_args> {
+    std::size_t operator()(const write_args& self) const noexcept {
+        std::size_t x{};
+        tv::combineHash(std::hash<uintptr_t>{}(reinterpret_cast<uintptr_t>(self.self)), &x);
+        tv::combineHash(std::hash<uintptr_t>{}(reinterpret_cast<uintptr_t>(self.target)), &x);
+        tv::combineHash(std::hash<uintptr_t>{}(reinterpret_cast<uintptr_t>(self.buf)), &x);
+        tv::combineHash(std::hash<uint16_t>{}(self.offset), &x);
+        return x;
     }
 };
-
-}  // namespace tv
+}  // namespace std

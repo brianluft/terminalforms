@@ -18,7 +18,7 @@
 #define TRUE 1
 #endif
 
-typedef int BOOL;
+typedef int32_t BOOL;
 
 namespace tv {
 
@@ -36,48 +36,42 @@ enum Error {
     Error_HasMessage = 0x8000,
 };
 
-template <typename T>
-void hash(const T& v, int32_t* seed) {
-    auto x = static_cast<int64_t>(*seed);
-    x ^= std::hash<T>{}(v) + 0x9e3779b9 + (x << 6) + (x >> 2);
-    *seed = static_cast<int32_t>(x);
-}
-
 // Thread-local storage for detailed error messages
 extern thread_local std::string lastErrorMessage;
 
-// This templated struct defines a policy for initializing members of a type `T`.
+// This is a policy for initializing members of a type `T`.
 // It is used by checkedNew and checkedPlacementNew to zero-initialize members that don't get initialized by the
 // default constructor.
 template <typename T>
-struct InitializePolicy {
-    static void initialize(T*) {
-        // By default, nothing is initialized. Specialize this if you need to initialize members.
+struct initialize {
+    void operator()(T*) const {
+        // Do nothing by default.
     }
 };
 
-// This templated struct defines a policy for comparing two objects of type `T`.
+// This is a policy for comparing two objects of type `T`.
 // It is used by checkedEquals to compare two objects.
-// It assumes that &self != nullptr && &other != nullptr && &self != &other.
+// It assumes that &self != nullptr && &other != nullptr.
 template <typename T>
-struct EqualsPolicy {
-    static bool equals(const T& self, const T& other) {
-        // By default, use reference semantics. Specialize this if you want value semantics (almost always).
+struct equals {
+    bool operator()(const T& self, const T& other) const {
+        // Reference equality by default.
         return &self == &other;
     }
 };
 
+// Use this in your std::hash<T> specialization to combine the hash of a field with the running seed.
+// Call it multiple times to build up the hash.
 template <typename T>
-struct HashPolicy {
-    static void hash(const T& self, int32_t* seed) {
-        // By default, hash the pointer. Specialize this if you want value semantics (almost always).
-        tv::hash(reinterpret_cast<int64_t>(&self), seed);
-    }
-};
+void combineHash(const T& v, std::size_t* seed) noexcept {
+    auto x = *seed;
+    x ^= std::hash<T>{}(v) + 0x9e3779b9 + (x << 6) + (x >> 2);
+    *seed = x;
+}
 
 // This templated function instantiates a new object of type `T`.
 // It catches any exception and converts to `Error`.
-// If constructor arguments are provided, InitializePolicy is skipped.
+// If constructor arguments are provided, initialize is skipped.
 template <typename T, typename... Args>
 Error checkedNew(T** out, Args&&... args) {
     if (!out) {
@@ -87,9 +81,9 @@ Error checkedNew(T** out, Args&&... args) {
     try {
         *out = new T(std::forward<Args>(args)...);
 
-        // Only call InitializePolicy if this was the default constructor (no args)
+        // Only call initialize if this was the default constructor (no args)
         if constexpr (sizeof...(args) == 0) {
-            InitializePolicy<T>::initialize(*out);
+            tv::initialize<T>{}(*out);
         }
 
         return tv::Success;
@@ -116,7 +110,7 @@ Error checkedSize(int32_t* outSize, int32_t* outAlignment) {
 
 // This templated function instantiates an object of type `T` at a given address.
 // It catches any exception and converts to `Error`.
-// If constructor arguments are provided, InitializePolicy is skipped.
+// If constructor arguments are provided, initialize is skipped.
 template <typename T, typename... Args>
 Error checkedPlacementNew(T* self, Args&&... args) {
     if (!self) {
@@ -131,9 +125,9 @@ Error checkedPlacementNew(T* self, Args&&... args) {
     try {
         new (self) T(std::forward<Args>(args)...);
 
-        // Only call InitializePolicy if this was the default constructor (no args)
+        // Only call initialize if this was the default constructor (no args)
         if constexpr (sizeof...(args) == 0) {
-            InitializePolicy<T>::initialize(self);
+            tv::initialize<T>{}(self);
         }
 
         return tv::Success;
@@ -209,9 +203,14 @@ Error checkedEquals(T* self, T* other, BOOL* out) {
         return tv::Success;
     }
 
-    // Call the policy to compare the objects which are known to be non-null and different pointers.
-    *out = EqualsPolicy<T>::equals(*self, *other);
-    return tv::Success;
+    try {
+        // Call the policy to compare the objects which are known to be non-null and different pointers.
+        *out = tv::equals<T>{}(*self, *other) ? TRUE : FALSE;
+        return tv::Success;
+    } catch (const std::exception& e) {
+        lastErrorMessage = e.what();
+        return static_cast<tv::Error>(Error_Unknown | Error_HasMessage);
+    }
 }
 
 // This templated function hashes an object of type `T`.
@@ -222,9 +221,15 @@ Error checkedHash(T* self, int32_t* out) {
         return tv::Error_ArgumentNull;
     }
 
-    // Call the policy to hash the object.
-    HashPolicy<T>::hash(*self, out);
-    return tv::Success;
+    try {
+        // Use std::hash to hash the object.
+        std::size_t hash_value = std::hash<T>{}(*self);
+        *out = static_cast<int32_t>(hash_value);
+        return tv::Success;
+    } catch (const std::exception& e) {
+        lastErrorMessage = e.what();
+        return static_cast<tv::Error>(Error_Unknown | Error_HasMessage);
+    }
 }
 
 }  // namespace tv

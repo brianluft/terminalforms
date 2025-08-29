@@ -10,8 +10,8 @@ namespace tv {
 
 // Initialize public members
 template <>
-struct InitializePolicy<TCellChar> {
-    static void initialize(TCellChar* self) {
+struct initialize<TCellChar> {
+    void operator()(TCellChar* self) const {
         // TCellChar has a default constructor that does the right thing
         // But we should zero-initialize for consistency
         memset(self, 0, sizeof(*self));
@@ -20,8 +20,8 @@ struct InitializePolicy<TCellChar> {
 
 // Use value semantics for TCellChar
 template <>
-struct EqualsPolicy<TCellChar> {
-    static bool equals(const TCellChar& self, const TCellChar& other) {
+struct equals<TCellChar> {
+    bool operator()(const TCellChar& self, const TCellChar& other) const {
         // Compare individual members to avoid padding issues
         if (self._textLength != other._textLength)
             return false;
@@ -38,17 +38,21 @@ struct EqualsPolicy<TCellChar> {
     }
 };
 
+}  // namespace tv
+
 // Hash the same fields as equals
+namespace std {
 template <>
-struct HashPolicy<TCellChar> {
-    static void hash(const TCellChar& self, int32_t* seed) {
+struct hash<TCellChar> {
+    std::size_t operator()(const TCellChar& self) const noexcept {
+        std::size_t x{};
         // Hash the text content and flags
         for (size_t i = 0; i < self._textLength; ++i) {
-            tv::hash(self._text[i], seed);
+            tv::combineHash(std::hash<char>{}(self._text[i]), &x);
         }
-        tv::hash(self._textLength, seed);
-        tv::hash(self._flags, seed);
+        tv::combineHash(std::hash<uint8_t>{}(self._textLength), &x);
+        tv::combineHash(std::hash<uint8_t>{}(self._flags), &x);
+        return x;
     }
 };
-
-}  // namespace tv
+}  // namespace std

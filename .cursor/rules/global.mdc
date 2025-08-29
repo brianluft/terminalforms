@@ -16,62 +16,54 @@ Then our .NET library "TurboVision" calls into the "tvision4c" library using P/I
 - Always use stdint types like `int32_t` (C# int) and `int16_t` (C# short). Our goal is to make it clear what the C# P/Invoke representation is. Never use native types like `int`, `short`, or `bool`.
 - Always use `BOOL` (4-byte) instead of C++ `bool` (1-byte).
 - Always return `tv::Error` for error handling. Never allow exceptions to bubble up past the C interface. Feel free to add new error codes to `src\tvision4c\common.h` (`Error` enum) and make the corresponding change in `src\TurboVision\Error.cs`--these two files must be kept synchronized.
-- Never use `memcmp()` in `EqualsPolicy` implementations as this will compare padding bytes and cause incorrect results. Always compare individual members explicitly.
+- Never use `memcmp()` in `tv::equals` implementations as this will compare padding bytes and cause incorrect results. Always compare individual members explicitly.
 - For a C++ type `TFoo` you must write, at minimum, the following binding code:
-    ```cpp
-    /*** TFoo.h ***/
-    namespace tv {
 
-    // Initialize public members. If there are none, then omit this specialization.
-    template<>
-    struct InitializePolicy<TFoo> {
-        static void initialize(TFoo* self) {
-            self->bar = {};
-            self->baz = {};
-        }
-    };
+```cpp
+/*** TFoo.h ***/
+namespace tv {
+// Initialize public members, if any.
+// Omit this if you have no initialization to do.
+template<> struct initialize<TFoo> {
+    void operator()(TFoo* self) const { self->bar = {}; self->baz = {}; }
+}
+// Decide if this type should use value semantics *or* reference semantics. Think about the intent of the C++ class.
+// Omit this if you want to use pointer equality.
+template<> struct equals<TFoo> {
+    bool operator()(const TFoo& self, const TFoo& other) const { return self.bar == other.bar && self.baz == other.baz; }
+};
+}  // namespace tv
+// Your std::hash specialization should match the semantics of your tv::equals specialization.
+// Omit this if you want to use pointer hashing.
+namespace std {
+template<> struct hash<TFoo> {
+    std::size_t operator()(const TFoo& p) const noexcept { std::size_t x{}; tv::combineHash(p.bar, &x); tv::combineHash(p.baz, &x); return x; }
+};
+}  // namespace std
 
-    // Decide if this type should use value semantics *or* reference semantics. Think about the intent of the C++ class. If you need value semantics, then implement a specialization of EqualsPolicy and HashPolicy. If you're ok with reference semantics, then omit both.
-    template<>
-    struct EqualsPolicy<TFoo> {
-        static bool equals(const TFoo& self, const TFoo& other) {
-            return self.bar == other.bar && self.baz == other.baz;
-        }
-    };
+/*** TFoo.cpp ***/
+// If TFoo has a default constructor:
+TV_DEFAULT_CONSTRUCTOR(TFoo)
 
-    // If you specialized EqualsPolicy, then also specialize HashPolicy to hash the same fields.
-    template<>
-    struct HashPolicy<TFoo> {
-        static void hash(const TFoo& self, int32_t* seed) {
-            tv::hash(self.bar, seed);
-            tv::hash(self.baz, seed);
-        }
-    };
+// If TFoo has non-default constructors, define this pair for each such ctor.
+// Give the pair a numeric suffix starting at 2 so the names do not collide.
+// The default constructor is always the pair without a numeric suffix.
+// Always take class/structs by pointer even if the underlying constructor takes it by value or by reference.
+// Convert machine integers like int into explicit stdint types like int32_t.
+EXPORT tv::Error TV_TFoo_placementNew2(TFoo* self, int32_t bar, TWhatever* baz) {
+    return tv::checkedPlacementNew(self, bar, *baz);
+}
 
-    }  // namespace tv
+EXPORT tv::Error TV_TFoo_new2(TFoo** out, int32_t bar, TWhatever* baz) {
+    return tv::checkedNew(out, bar, *baz);
+}
 
-    /*** TFoo.cpp ***/
-    // If TFoo has a default constructor:
-    TV_DEFAULT_CONSTRUCTOR(TFoo)
+// For any non-static type:
+TV_BOILERPLATE_FUNCTIONS(TFoo)
 
-    // If TFoo has non-default constructors, define this pair for each such ctor.
-    // Give the pair a numeric suffix starting at 2 so the names do not collide.
-    // The default constructor is always the pair without a numeric suffix.
-    // Always take class/structs by pointer even if the underlying constructor takes it by value or by reference.
-    // Convert machine integers like int into explicit stdint types like int32_t.
-    EXPORT tv::Error TV_TFoo_placementNew2(TFoo* self, int32_t bar, TWhatever* baz) {
-        return tv::checkedPlacementNew(self, bar, *baz);
-    }
+// ... Other TV_* macros and EXPORT function implementations ...
+```
 
-    EXPORT tv::Error TV_TFoo_new2(TFoo** out, int32_t bar, TWhatever* baz) {
-        return tv::checkedNew(out, bar, *baz);
-    }
-
-    // For any non-static type:
-    TV_BOILERPLATE_FUNCTIONS(TFoo)
-
-    // ... Other TV_* macros and EXPORT function implementations ...
-    ```
 - See `src/tvision4c/common.h` for various TV_* macros you can use in your implementation. Don't provide function prototypes for the exported C methods in the .h file, as they will be consumed from C# which doesn't use the header files and just wastes our time.
 - I believe the C++ classes all have default parameterless constructors, but they may *also* have constructors with parameters. Ignore those additional constructors and only create a C binding for the parameterless constructor--this is what `TV_DECLARE_BOILERPLATE_FUNCTIONS`/`TV_BOILERPLATE_FUNCTIONS` provides.
 

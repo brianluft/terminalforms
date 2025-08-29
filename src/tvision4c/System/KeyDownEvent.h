@@ -9,8 +9,8 @@
 namespace tv {
 
 template <>
-struct InitializePolicy<KeyDownEvent> {
-    static void initialize(KeyDownEvent* self) {
+struct initialize<KeyDownEvent> {
+    void operator()(KeyDownEvent* self) const {
         self->keyCode = {};
         self->controlKeyState = {};
         std::memset(self->text, 0, sizeof(self->text));
@@ -19,8 +19,8 @@ struct InitializePolicy<KeyDownEvent> {
 };
 
 template <>
-struct EqualsPolicy<KeyDownEvent> {
-    static bool equals(const KeyDownEvent& self, const KeyDownEvent& other) {
+struct equals<KeyDownEvent> {
+    bool operator()(const KeyDownEvent& self, const KeyDownEvent& other) const {
         if (self.keyCode != other.keyCode || self.controlKeyState != other.controlKeyState ||
             self.textLength != other.textLength) {
             return false;
@@ -35,20 +35,24 @@ struct EqualsPolicy<KeyDownEvent> {
     }
 };
 
+}  // namespace tv
+
+namespace std {
 template <>
-struct HashPolicy<KeyDownEvent> {
-    static void hash(const KeyDownEvent& self, int32_t* seed) {
-        tv::hash(self.keyCode, seed);
-        tv::hash(self.controlKeyState, seed);
-        tv::hash(self.textLength, seed);
+struct hash<KeyDownEvent> {
+    std::size_t operator()(const KeyDownEvent& self) const noexcept {
+        std::size_t x{};
+        tv::combineHash(std::hash<uint16_t>{}(self.keyCode), &x);
+        tv::combineHash(std::hash<uint16_t>{}(self.controlKeyState), &x);
+        tv::combineHash(std::hash<uint8_t>{}(self.textLength), &x);
 
         // Include text content in hash if present
         if (self.textLength > 0) {
             for (uint8_t i = 0; i < self.textLength; i++) {
-                tv::hash((uint8_t)self.text[i], seed);
+                tv::combineHash(std::hash<uint8_t>{}((uint8_t)self.text[i]), &x);
             }
         }
+        return x;
     }
 };
-
-}  // namespace tv
+}  // namespace std

@@ -8,15 +8,15 @@
 namespace tv {
 
 template <>
-struct InitializePolicy<TDirEntry> {
-    static void initialize(TDirEntry* self) {
+struct initialize<TDirEntry> {
+    void operator()(TDirEntry* self) const {
         // No public members to initialize
     }
 };
 
 template <>
-struct EqualsPolicy<TDirEntry> {
-    static bool equals(const TDirEntry& self, const TDirEntry& other) {
+struct equals<TDirEntry> {
+    bool operator()(const TDirEntry& self, const TDirEntry& other) const {
         // Compare the actual string contents
         // Need to cast away const since dir() and text() are not const methods, but we happen to know that this
         // doesn't mutate the object.
@@ -32,19 +32,23 @@ struct EqualsPolicy<TDirEntry> {
     }
 };
 
+}  // namespace tv
+
+namespace std {
 template <>
-struct HashPolicy<TDirEntry> {
-    static void hash(const TDirEntry& self, int32_t* seed) {
+struct hash<TDirEntry> {
+    std::size_t operator()(const TDirEntry& self) const noexcept {
+        std::size_t x{};
         // Need to cast away const since dir() and text() are not const methods
         const char* dir = const_cast<TDirEntry&>(self).dir();
         const char* text = const_cast<TDirEntry&>(self).text();
         if (dir) {
-            tv::hash(TStringView(dir), seed);
+            tv::combineHash(std::hash<TStringView>{}(TStringView(dir)), &x);
         }
         if (text) {
-            tv::hash(TStringView(text), seed);
+            tv::combineHash(std::hash<TStringView>{}(TStringView(text)), &x);
         }
+        return x;
     }
 };
-
-}  // namespace tv
+}  // namespace std

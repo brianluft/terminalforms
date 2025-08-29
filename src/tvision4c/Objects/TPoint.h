@@ -8,24 +8,28 @@
 namespace tv {
 
 template <>
-struct InitializePolicy<TPoint> {
-    static void initialize(TPoint* self) {
+struct initialize<TPoint> {
+    void operator()(TPoint* self) const {
         self->x = {};
         self->y = {};
     }
 };
 
 template <>
-struct EqualsPolicy<TPoint> {
-    static bool equals(const TPoint& self, const TPoint& other) { return self.x == other.x && self.y == other.y; }
-};
-
-template <>
-struct HashPolicy<TPoint> {
-    static void hash(const TPoint& self, int32_t* seed) {
-        tv::hash(self.x, seed);
-        tv::hash(self.y, seed);
-    }
+struct equals<TPoint> {
+    bool operator()(const TPoint& self, const TPoint& other) const { return self.x == other.x && self.y == other.y; }
 };
 
 }  // namespace tv
+
+namespace std {
+template <>
+struct hash<TPoint> {
+    std::size_t operator()(const TPoint& self) const noexcept {
+        std::size_t x{};
+        tv::combineHash(std::hash<int32_t>{}(self.x), &x);
+        tv::combineHash(std::hash<int32_t>{}(self.y), &x);
+        return x;
+    }
+};
+}  // namespace std
