@@ -56,6 +56,8 @@ add_library(tvision4c SHARED
 
     Views/write_args.cpp
 
+    Dialogs/TDirEntry.cpp
+
     common.cpp
     VirtualMethodTable.cpp
 )
