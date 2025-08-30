@@ -61,6 +61,8 @@ add_library(tvision4c SHARED
     Dialogs/TSearchRec.cpp
     Dialogs/TSItem.cpp
 
+    Editors/TFindDialogRec.cpp
+
     Outlines/TNode.cpp
 
     common.cpp

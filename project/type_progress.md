@@ -53,7 +53,7 @@
 - [ ] THWMouse
 - [ ] TMouse (THWMouse)
 - [ ] THelpIndex
-- [ ] TFindDialogRec
+- [x] TFindDialogRec
 - [ ] TDeskInit
 - [ ] TCrossRef
 - [ ] THelpTopic (TCrossRef, TParagraph, TPoint, TStringView)
