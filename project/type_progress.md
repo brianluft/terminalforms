@@ -20,7 +20,8 @@
 - [x] TSItem (TStringView)
 - [x] TSearchRec
 - [x] TResourceItem
-- [ ] TReplaceDialogRec
+- [x] TFindDialogRec
+- [x] TReplaceDialogRec
 - [ ] TPWObj
 - [ ] TPMRegs
 - [ ] TParagraph
@@ -53,7 +54,6 @@
 - [ ] THWMouse
 - [ ] TMouse (THWMouse)
 - [ ] THelpIndex
-- [x] TFindDialogRec
 - [ ] TDeskInit
 - [ ] TCrossRef
 - [ ] THelpTopic (TCrossRef, TParagraph, TPoint, TStringView)
