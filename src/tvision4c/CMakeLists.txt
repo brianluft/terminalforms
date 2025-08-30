@@ -51,6 +51,7 @@ add_library(tvision4c SHARED
     Text/TTextMetrics.cpp
 
     Resources/TStrIndexRec.cpp
+    Resources/TResourceItem.cpp
 
     ScreenCells/TCellChar.cpp
 

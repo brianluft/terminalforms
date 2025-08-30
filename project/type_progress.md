@@ -19,7 +19,7 @@
 - [x] TNode (TStringView)
 - [x] TSItem (TStringView)
 - [x] TSearchRec
-- [ ] TResourceItem
+- [x] TResourceItem
 - [ ] TReplaceDialogRec
 - [ ] TPWObj
 - [ ] TPMRegs
