@@ -306,29 +306,49 @@ Error checkedHash(T* self, int32_t* out) {
         return tv::Success;                                                                    \
     }
 
-// Use this macro for a C string with an associated length field.
-#define TV_GET_SET_STRING_BUFFER_WITH_LENGTH(objectType, stringMemberName, lengthMemberName, bufferSize)              \
-    EXPORT tv::Error TV_##objectType##_get_##stringMemberName(objectType* self, char** out, uint8_t* outTextLength) { \
-        if (!self || !out || !outTextLength) {                                                                        \
-            return tv::Error_ArgumentNull;                                                                            \
-        }                                                                                                             \
-        *outTextLength = self->lengthMemberName;                                                                      \
-        *out = self->stringMemberName;                                                                                \
-        return tv::Success;                                                                                           \
-    }                                                                                                                 \
-    EXPORT tv::Error TV_##objectType##_set_##stringMemberName(objectType* self, char* value, uint8_t textLength) {    \
-        if (!self || (!value && textLength > 0)) {                                                                    \
-            return tv::Error_ArgumentNull;                                                                            \
-        }                                                                                                             \
-        if (textLength > bufferSize) {                                                                                \
-            return tv::Error_BufferTooSmall;                                                                          \
-        }                                                                                                             \
-        self->lengthMemberName = textLength;                                                                          \
-        memset(self->stringMemberName, 0, bufferSize);                                                                \
-        if (textLength > 0) {                                                                                         \
-            memcpy(self->stringMemberName, value, textLength);                                                        \
-        }                                                                                                             \
-        return tv::Success;                                                                                           \
+// Use this macro for a null-terminated char array with no associated length field.
+#define TV_GET_SET_STRING_BUFFER(objectType, stringMemberName)                                       \
+    EXPORT tv::Error TV_##objectType##_get_##stringMemberName(objectType* self, const char** out) {  \
+        if (!self || !out) {                                                                         \
+            return tv::Error_ArgumentNull;                                                           \
+        }                                                                                            \
+        *out = self->stringMemberName;                                                               \
+        return tv::Success;                                                                          \
+    }                                                                                                \
+    EXPORT tv::Error TV_##objectType##_set_##stringMemberName(objectType* self, const char* value) { \
+        if (!self || !value) {                                                                       \
+            return tv::Error_ArgumentNull;                                                           \
+        }                                                                                            \
+        strncpy(self->stringMemberName, value, sizeof(self->stringMemberName) - 1);                  \
+        self->stringMemberName[sizeof(self->stringMemberName) - 1] = '\0';                           \
+        return tv::Success;                                                                          \
+    }
+
+// Use this macro for a char array with an associated length field.
+#define TV_GET_SET_STRING_BUFFER_WITH_LENGTH(objectType, stringMemberName, lengthMemberName, bufferSize) \
+    EXPORT tv::Error TV_##objectType##_get_##stringMemberName(                                           \
+        objectType* self, const char** out, uint8_t* outTextLength) {                                    \
+        if (!self || !out || !outTextLength) {                                                           \
+            return tv::Error_ArgumentNull;                                                               \
+        }                                                                                                \
+        *outTextLength = self->lengthMemberName;                                                         \
+        *out = self->stringMemberName;                                                                   \
+        return tv::Success;                                                                              \
+    }                                                                                                    \
+    EXPORT tv::Error TV_##objectType##_set_##stringMemberName(                                           \
+        objectType* self, const char* value, uint8_t textLength) {                                       \
+        if (!self || (!value && textLength > 0)) {                                                       \
+            return tv::Error_ArgumentNull;                                                               \
+        }                                                                                                \
+        if (textLength > bufferSize) {                                                                   \
+            return tv::Error_BufferTooSmall;                                                             \
+        }                                                                                                \
+        self->lengthMemberName = textLength;                                                             \
+        memset(self->stringMemberName, 0, bufferSize);                                                   \
+        if (textLength > 0) {                                                                            \
+            memcpy(self->stringMemberName, value, textLength);                                           \
+        }                                                                                                \
+        return tv::Success;                                                                              \
     }
 
 // Use this macro for a C string pointer that is owned by the object and must be freed when changing.

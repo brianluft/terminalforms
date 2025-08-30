@@ -18,7 +18,7 @@
 - [x] TDirEntry (TStringView)
 - [x] TNode (TStringView)
 - [x] TSItem (TStringView)
-- [ ] TSearchRec
+- [x] TSearchRec
 - [ ] TResourceItem
 - [ ] TReplaceDialogRec
 - [ ] TPWObj
