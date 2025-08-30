@@ -7,6 +7,32 @@ namespace tv {
 
 thread_local std::string lastErrorMessage;
 
+// String utility functions for owned string management
+char* newStr(const char* source) {
+    if (!source) {
+        return nullptr;
+    }
+
+    size_t len = strlen(source) + 1;
+    char* result = new char[len];
+    strcpy(result, source);
+    return result;
+}
+
+bool stringEquals(const char* a, const char* b) {
+    if (a == b)
+        return true;
+    if (!a || !b)
+        return false;
+    return strcmp(a, b) == 0;
+}
+
+std::size_t stringHash(const char* str) {
+    if (!str)
+        return 0;
+    return std::hash<std::string>{}(std::string(str));
+}
+
 }  // namespace tv
 
 EXPORT int32_t TV_healthCheck() {

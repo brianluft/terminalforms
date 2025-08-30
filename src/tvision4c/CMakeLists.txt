@@ -65,6 +65,8 @@ add_library(tvision4c SHARED
     Editors/TFindDialogRec.cpp
     Editors/TReplaceDialogRec.cpp
 
+    HelpBase/TParagraph.cpp
+
     Outlines/TNode.cpp
 
     common.cpp

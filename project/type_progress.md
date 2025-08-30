@@ -24,7 +24,7 @@
 - [x] TReplaceDialogRec
 - [x] TPWObj -- not bound, this is internal to tvision
 - [x] TPMRegs
-- [ ] TParagraph
+- [x] TParagraph
 - [ ] TObject
 - [ ] TNSCollection (TObject)
 - [ ] TCollection (TNSCollection)

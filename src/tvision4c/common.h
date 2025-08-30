@@ -232,6 +232,11 @@ Error checkedHash(T* self, int32_t* out) {
     }
 }
 
+// String utility functions for owned string management
+char* newStr(const char* source);
+bool stringEquals(const char* a, const char* b);
+std::size_t stringHash(const char* str);
+
 }  // namespace tv
 
 // Use this macro if the class has a default parameterless constructor.
@@ -365,7 +370,7 @@ Error checkedHash(T* self, int32_t* out) {
             return tv::Error_ArgumentNull;                                                           \
         }                                                                                            \
         delete[] self->stringMemberName;                                                             \
-        self->stringMemberName = newStr(value);                                                      \
+        self->stringMemberName = tv::newStr(value);                                                  \
         return tv::Success;                                                                          \
     }
 
