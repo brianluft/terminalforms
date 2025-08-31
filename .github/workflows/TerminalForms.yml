@@ -8,50 +8,151 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: mac-x64
-            os: macos-15
-            mac_arch: x64
-          - name: mac-arm64
-            os: macos-15
-            mac_arch: arm64
-          - name: win-x64
-            os: windows-2022
-          - name: win-arm64
-            os: windows-11-arm
-          - name: linux-x64
-            os: ubuntu-24.04
-          - name: linux-arm64
-            os: ubuntu-24.04-arm
 
-    runs-on: ${{ matrix.os }}
+          - name: osx-x64
+            runner: macos-13
+            target_arch: x64
+
+          - name: osx-arm64
+            runner: macos-15
+            target_arch: arm64
+
+          - name: win-x64
+            runner: windows-2022
+            target_arch: x64
+
+          - name: win-x86
+            runner: windows-2022
+            target_arch: x86
+
+          - name: win-arm64
+            runner: windows-11-arm
+            target_arch: arm64
+
+          - name: linux-x64
+            runner: ubuntu-24.04
+            target_arch: x64
+
+          - name: linux-arm64
+            runner: ubuntu-24.04-arm
+            target_arch: arm64
+
+          - name: linux-arm
+            runner: ubuntu-24.04-arm
+            target_arch: arm
+
+    runs-on: ${{ matrix.runner }}
     name: ${{ matrix.name }}
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.0.x
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
 
-    - name: Mac setup
-      if: startsWith(matrix.os, 'macos')
-      run: |
-        echo "MAC_ARCH=${{ matrix.mac_arch }}" >> $GITHUB_ENV
-        brew install bash coreutils
-        echo "/opt/homebrew/bin/bash" >> $GITHUB_PATH
-        echo "bash: $(which bash)"
-        echo "sha256sum: $(which sha256sum)"
+      - name: Install bash and coreutils (mac)
+        if: startsWith(matrix.runner, 'macos')
+        run: |
+          brew install bash coreutils
+          echo "/opt/homebrew/bin/bash" >> $GITHUB_PATH
+          echo "bash: $(which bash)"
+          echo "sha256sum: $(which sha256sum)"
 
-    - name: Initialize
-      shell: bash
-      run: CONFIGURATION=Release bash scripts/init.sh
+      - name: Install X86 .NET (win-x86)
+        if: startsWith(matrix.runner, 'windows') && matrix.target_arch == 'x86'
+        shell: pwsh
+        run: |
+          $dir = "$env:USERPROFILE\dotnet-x86"
+          iwr https://dot.net/v1/dotnet-install.ps1 -OutFile dotnet-install.ps1
+          ./dotnet-install.ps1 -Architecture x86 -Runtime dotnet -Channel 9.0 -Quality GA -InstallDir $dir
+          echo "TARGET_DOTNET_ROOT=$dir" >> $env:GITHUB_ENV
 
-    - name: Build
-      shell: bash
-      env:
-        DOTNET_CLI_TELEMETRY_OPTOUT: 1
-        DOTNET_NOLOGO: 1
-        CONFIGURATION: Release
-      run: |
-        bash scripts/build.sh
+      - name: Install ARM .NET and system packages (linux-arm)
+        if: startsWith(matrix.runner, 'ubuntu') && matrix.target_arch == 'arm'
+        shell: bash
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+
+          # Enable 32-bit ARM (armhf) and refresh indexes
+          sudo dpkg --add-architecture armhf
+          sudo apt-get update
+
+          # Install core 32-bit deps used by .NET runtime
+          sudo apt-get install -y --no-install-recommends \
+            ca-certificates:armhf \
+            libc6:armhf \
+            libgcc-s1:armhf \
+            libicu74:armhf \
+            libssl3t64:armhf \
+            libstdc++6:armhf \
+            zlib1g:armhf
+
+          # Install ARM .NET
+          curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
+          bash dotnet-install.sh --arch arm --channel 9.0
+          echo "TARGET_DOTNET_ROOT=$HOME/.dotnet" >> $GITHUB_ENV
+
+      - name: Build
+        shell: bash
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: 1
+          DOTNET_NOLOGO: 1
+          CONFIGURATION: Release
+          TARGET_ARCH: ${{ matrix.target_arch }}
+        run: |
+          bash scripts/init.sh
+          bash scripts/build.sh
+
+  build-musl:
+    strategy:
+      matrix:
+        include:
+
+          - name: linux-musl-x64
+            runner: ubuntu-24.04
+            target_arch: x64
+    
+          - name: linux-musl-arm64
+            runner: ubuntu-24.04-arm
+            target_arch: arm64
+
+    runs-on: ${{ matrix.runner }}
+    container: alpine:3.22
+    name: ${{ matrix.name }}
+
+    steps:
+      - name: Install Alpine deps
+        run: |
+          apk add --no-cache build-base git curl bash icu-libs cmake ncurses-dev linux-headers
+
+      # We can't use JavaScript-based actions in Alpine on arm64 runners.
+      # That excludes both actions/checkout and actions/setup-dotnet.
+      - name: Manual checkout (shallow)
+        run: |
+          git init /repo
+          cd /repo
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --no-tags --prune --progress --depth=1 origin "${GITHUB_SHA}"
+          git checkout --progress --force "${GITHUB_SHA}"
+
+      - name: Setup .NET
+        run: |
+          curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
+          bash dotnet-install.sh --channel 9.0
+          echo "$HOME/.dotnet" >> $GITHUB_PATH
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Build
+        shell: bash
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: 1
+          DOTNET_NOLOGO: 1
+          CONFIGURATION: Release
+          TARGET_ARCH: ${{ matrix.target_arch }}
+          USE_SYSTEM_CMAKE: 1
+        run: |
+          cd /repo
+          bash scripts/init.sh
+          bash scripts/build.sh

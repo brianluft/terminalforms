@@ -9,8 +9,11 @@ cd $ROOT_DIR
 # Set NO_HASH to skip hash verification.
 # When updating to new versions of deps, set both NO_MIRROR=1 NO_HASH=1 to download fresh.
 
-# Set MAC_ARCH to set the target architecture of the macOS build (x64 or arm64). This is required for macOS builds.
+# Set TARGET_ARCH to set the target architecture of the macOS build (x64 or arm64). This is required for macOS builds.
 # Other platforms always build for the host architecture.
+
+# Set USE_SYSTEM_CMAKE to use the system's cmake instead of the project-local install.
+# On Alpine you *must* install a system cmake.
 
 # Constants
 TVISION_VERSION="df6424f1eee4f5fca9d5530118cab63e0a3c00fa"
@@ -133,7 +136,7 @@ install_cmake() {
         "https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-linux-aarch64.tar.gz" \
         "https://brianluft-mirror.com/cmake/cmake-linux-glibc-aarch64-$CMAKE_VERSION.tar.gz"
 
-    if [ "$OS_ARCH" == "linux-arm64" ]; then
+    if [ "$OS_NATIVE_ARCH" == "linux-arm64" ]; then
         native_tar_gz=$DOWNLOAD_FILE
     fi
 
@@ -143,7 +146,7 @@ install_cmake() {
         "https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-linux-x86_64.tar.gz" \
         "https://brianluft-mirror.com/cmake/cmake-linux-glibc-x86_64-$CMAKE_VERSION.tar.gz"
 
-    if [ "$OS_ARCH" == "linux-x64" ]; then
+    if [ "$OS_NATIVE_ARCH" == "linux-x64" ]; then
         native_tar_gz=$DOWNLOAD_FILE
     fi
 
@@ -153,7 +156,7 @@ install_cmake() {
         "https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-windows-arm64.zip" \
         "https://brianluft-mirror.com/cmake/cmake-$CMAKE_VERSION-windows-arm64.zip"
 
-    if [ "$OS_ARCH" == "windows-arm64" ]; then
+    if [ "$OS_NATIVE_ARCH" == "windows-arm64" ]; then
         native_zip=$DOWNLOAD_FILE
     fi
 
@@ -163,27 +166,17 @@ install_cmake() {
         "https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-windows-x86_64.zip" \
         "https://brianluft-mirror.com/cmake/cmake-$CMAKE_VERSION-windows-x86_64.zip"
 
-    if [ "$OS_ARCH" == "windows-x64" ]; then
+    if [ "$OS_NATIVE_ARCH" == "windows-x64" ]; then
         native_zip=$DOWNLOAD_FILE
     fi
 
-    # On musl-based Linux, we expect the system to provide cmake.
-    if [ "$LINUX_LIBC" == "musl" ]; then
-        # Check that cmake is installed.
-        if ! command -v cmake &> /dev/null; then
-            status "error" "cmake could not be found. On musl-based Linux, cmake must be preinstalled."
-            exit 1
-        fi
-        return
-    fi
-
-    # On all other systems, proceed to extract so we can use this local cmake.
+    # Proceed to extract so we can use this local cmake.
     if [ ! -z "$native_tar_gz" ]; then
         extract_tar_gz "cmake" "$native_tar_gz"
     elif [ ! -z "$native_zip" ]; then
         extract_zip "cmake" "$native_zip"
     else
-        status "error" "No cmake found for $OS_ARCH."
+        status "error" "No cmake found for $OS_NATIVE_ARCH."
         exit 1
     fi
 
@@ -226,7 +219,7 @@ install_tvision() {
     if [ "$OS" == "windows" ]; then
         cmake \
             -G "Visual Studio 17 2022" \
-            -A "$WINDOWS_MSVC_ARCH" \
+            -A "$WINDOWS_MSVC_TARGET_ARCH" \
             -DCMAKE_PREFIX_PATH="$PREFIX_DIR" \
             -DCMAKE_INSTALL_PREFIX="$PREFIX_DIR" \
             -DTV_BUILD_EXAMPLES=OFF \
@@ -260,6 +253,12 @@ restore_dotnet_tools() {
     cd "$ROOT_DIR"
 }
 
-install_cmake # Must be first, as this creates the initial prefix directory.
+# Installing cmake must be first, as this creates the initial prefix directory.
+if [ -z "${USE_SYSTEM_CMAKE:-}" ]; then
+    install_cmake
+else
+    mkdir -p "$PREFIX_DIR/bin" "$PREFIX_DIR/doc" "$PREFIX_DIR/include" "$PREFIX_DIR/lib" "$PREFIX_DIR/man" "$PREFIX_DIR/share"
+fi
+
 install_tvision
 restore_dotnet_tools

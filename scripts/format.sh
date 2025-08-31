@@ -21,7 +21,7 @@ find_clang_format() {
     # If this is Windows, we expect it has been installed via Visual Studio Installer.
     local vswhere="$PROGRAMFILES (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
     local vsdir="$("$vswhere" -latest -property installationPath)"
-    CLANG_FORMAT="$vsdir\\VC\\Tools\\Llvm\\$ARCH\\bin\\clang-format.exe"
+    CLANG_FORMAT="$vsdir\\VC\\Tools\\Llvm\\$NATIVE_ARCH\\bin\\clang-format.exe"
 
     # Did we find it?
     if [ ! -f "$CLANG_FORMAT" ]; then

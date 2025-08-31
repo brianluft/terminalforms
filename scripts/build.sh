@@ -15,7 +15,7 @@ build_terminalformsnative() {
     if [ "$OS" == "windows" ]; then
         cmake \
             -G "Visual Studio 17 2022" \
-            -A "$WINDOWS_MSVC_ARCH" \
+            -A "$WINDOWS_MSVC_TARGET_ARCH" \
             -B "../../build/native-artifacts/TerminalFormsNative/build" \
             -S . \
             -DCMAKE_PREFIX_PATH="$ROOT_DIR/build/prefix" \
@@ -54,6 +54,14 @@ build_turbovision_demo() {
 run_tests() {
     status "header" "Tests"
     cd "$ROOT_DIR/src"
+
+    # Is TARGET_DOTNET_ROOT set? If so, switch over to it for test running.
+    if [ -n "${TARGET_DOTNET_ROOT:-}" ]; then
+        export DOTNET_ROOT="$TARGET_DOTNET_ROOT"
+        export PATH="$DOTNET_ROOT:$DOTNET_ROOT/tools:$PATH"
+        echo "Using dotnet: $(which dotnet)"
+    fi
+
     dotnet test Tests/Tests.csproj --runtime "$RID"
     cd "$ROOT_DIR"
 }
