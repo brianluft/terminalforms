@@ -1,18 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
-# Change to the repository root.
-cd "$( dirname "${BASH_SOURCE[0]}" )"
-cd ..
-ROOT_DIR="$PWD"
-
-# Shortcut for running echo_status.sh
-status() {
-    "$ROOT_DIR/scripts/helpers/echo_status.sh" "$@"
-}
-
-# Set OS, ARCH, etc.
-source "build/config.sh"
+source "$( dirname "${BASH_SOURCE[0]}" )/env.sh"
+cd $ROOT_DIR
 
 # Set CLANG_FORMAT to the path of the clang-format executable.
 CLANG_FORMAT=""
@@ -44,7 +33,7 @@ find_clang_format
 
 # Format C++ code.
 status "header" "clang-format"
-find src/tvision4c/ -type f \( -iname \*.h -o -iname \*.cpp \) | xargs "$CLANG_FORMAT" -i
+find src/TerminalFormsNative/ -type f \( -iname \*.h -o -iname \*.cpp \) | xargs "$CLANG_FORMAT" -i
 
 # Format C# code.
 status "header" "csharpier"

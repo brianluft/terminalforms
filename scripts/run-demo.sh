@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source "$( dirname "${BASH_SOURCE[0]}" )/env.sh"
+cd $ROOT_DIR
 
-# Change to the repository root.
-cd "$( dirname "${BASH_SOURCE[0]}" )"
-cd ..
-
-# Set OS, ARCH, etc.
-source "build/config.sh"
-
-"build/dotnet-artifacts/bin/TurboVision.Demo/debug_$RID/TurboVision.Demo.exe"
+"build/dotnet-artifacts/bin/TerminalFormsDemo/debug_$RID/TerminalFormsDemo.exe"

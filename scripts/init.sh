@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+set -euo pipefail
+source "$( dirname "${BASH_SOURCE[0]}" )/env.sh"
+cd $ROOT_DIR
 
 # Downloads and installs dependencies for the project.
 
@@ -8,23 +11,6 @@
 
 # Set MAC_ARCH to set the target architecture of the macOS build (x64 or arm64). This is required for macOS builds.
 # Other platforms always build for the host architecture.
-
-set -euo pipefail
-
-# If $CONFIGURATION is not set, set it to "Debug".
-if [ -z "${CONFIGURATION:-}" ]; then
-    CONFIGURATION="Debug"
-fi
-
-# Change to the repository root.
-cd "$( dirname "${BASH_SOURCE[0]}" )"
-cd ..
-ROOT_DIR="$PWD"
-
-# Shortcut for running echo_status.sh
-status() {
-    "$ROOT_DIR/scripts/helpers/echo_status.sh" "$@"
-}
 
 # Constants
 TVISION_VERSION="df6424f1eee4f5fca9d5530118cab63e0a3c00fa"
@@ -56,44 +42,6 @@ mkdir -p "$SOURCES_DIR"
 
 PREFIX_DIR="$PWD/build/prefix"
 mkdir -p "$PREFIX_DIR"
-
-# Set OS, ARCH, etc.
-# Write "config.h" that sets these variables so we don't have to re-detect every time.
-status "action" "Detecting system..."
-CONFIG_FILE="$ROOT_DIR/build/config.sh"
-function write_config_file() {
-    source "scripts/helpers/detect_system.sh"
-    local CMAKE_FLAGS=""
-    if [ "$OS" == "windows" ]; then
-        local RID="win-$ARCH"
-    elif [ "$OS" == "mac" ]; then
-        local RID="osx-$ARCH"
-        if [ "$MAC_ARCH" == "x64" ]; then
-            local CMAKE_FLAGS="-DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0"
-        elif [ "$MAC_ARCH" == "arm64" ]; then
-            local CMAKE_FLAGS="-DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0"
-        else
-            status "error" "Invalid MAC_ARCH: $MAC_ARCH"
-            exit 1
-        fi
-    else
-        local RID="linux-$ARCH"
-    fi
-
-    echo "
-OS=\"$OS\"
-ARCH=\"$ARCH\"
-LINUX_LIBC=\"$LINUX_LIBC\"
-WINDOWS_MSVC_ARCH=\"$WINDOWS_MSVC_ARCH\"
-RID=\"$RID\"
-CMAKE_FLAGS=\"$CMAKE_FLAGS\"
-CONFIGURATION=\"$CONFIGURATION\"
-echo \"OS=\$OS | ARCH=\$ARCH | LINUX_LIBC=\$LINUX_LIBC | WINDOWS_MSVC_ARCH=\$WINDOWS_MSVC_ARCH | RID=\$RID | CONFIGURATION=\$CONFIGURATION\"
-" > "$CONFIG_FILE"
-    
-    source "$CONFIG_FILE"
-}
-write_config_file
 
 # Checks to see if a given URL has been downloaded to the given filename. If not, it downloads it.
 # Sets DOWNLOAD_FILE to the absolute path to the downloaded file.
@@ -255,20 +203,6 @@ install_cmake() {
     status "action" "Removing temporary directory: $INSTALL_DIR"
     rm -rf "$INSTALL_DIR"
 
-    # Set CMAKE and make sure it exists.
-    if [ "$OS" == "windows" ]; then
-        CMAKE="$PREFIX_DIR/bin/cmake.exe"
-    else
-        CMAKE="$PREFIX_DIR/bin/cmake"
-    fi
-    echo "CMAKE=\"$CMAKE\"" >> "$CONFIG_FILE"
-
-    if [ ! -f "$CMAKE" ]; then
-        status "error" "cmake could not be found at $CMAKE"
-        find "$PREFIX_DIR" -type f -name "cmake"
-        exit 1
-    fi
-
     status "success" "Installed cmake"
     cd "$ROOT_DIR"
 }
@@ -290,7 +224,7 @@ install_tvision() {
 
     status "action" "Generating cmake files..."
     if [ "$OS" == "windows" ]; then
-        "$CMAKE" \
+        cmake \
             -G "Visual Studio 17 2022" \
             -A "$WINDOWS_MSVC_ARCH" \
             -DCMAKE_PREFIX_PATH="$PREFIX_DIR" \
@@ -298,7 +232,7 @@ install_tvision() {
             -DTV_BUILD_EXAMPLES=OFF \
             ..
     else
-        "$CMAKE" \
+        cmake \
             -G "Unix Makefiles" \
             -DCMAKE_PREFIX_PATH="$PREFIX_DIR" \
             -DCMAKE_INSTALL_PREFIX="$PREFIX_DIR" \
@@ -308,10 +242,10 @@ install_tvision() {
     fi
 
     status "action" "Building tvision..."
-    "$CMAKE" --build . --config "$CONFIGURATION"
+    cmake --build . --config "$CONFIGURATION"
 
     status "action" "Installing tvision..."
-    "$CMAKE" --install . --config "$CONFIGURATION"
+    cmake --install . --config "$CONFIGURATION"
 
     status "success" "Installed tvision"
     cd "$ROOT_DIR"

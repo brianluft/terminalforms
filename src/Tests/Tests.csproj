@@ -11,7 +11,7 @@
     <PackageReference Include="MSTest" Version="3.6.4" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TurboVision\TurboVision.csproj" />
+    <ProjectReference Include="..\TerminalForms\TerminalForms.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />

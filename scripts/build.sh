@@ -1,41 +1,30 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source "$( dirname "${BASH_SOURCE[0]}" )/env.sh"
+cd $ROOT_DIR
 
-# Change to the repository root.
-cd "$( dirname "${BASH_SOURCE[0]}" )"
-cd ..
-ROOT_DIR="$PWD"
-
-# Shortcut for running echo_status.sh
-status() {
-    "$ROOT_DIR/scripts/helpers/echo_status.sh" "$@"
-}
-
-# Set OS, ARCH, etc.
-source "build/config.sh"
-
-build_tvision4c() {
-    status "header" "tvision4c"
+build_terminalformsnative() {
+    status "header" "TerminalFormsNative"
 
     # Create directories
-    mkdir -p "build/native-artifacts/tvision4c/build"
-    mkdir -p "build/native-artifacts/tvision4c/bin"
+    mkdir -p "build/native-artifacts/TerminalFormsNative/build"
+    mkdir -p "build/native-artifacts/TerminalFormsNative/bin"
 
     # Configure cmake
-    cd "src/tvision4c"
+    cd "src/TerminalFormsNative"
     if [ "$OS" == "windows" ]; then
-        "$CMAKE" \
+        cmake \
             -G "Visual Studio 17 2022" \
             -A "$WINDOWS_MSVC_ARCH" \
-            -B "../../build/native-artifacts/tvision4c/build" \
+            -B "../../build/native-artifacts/TerminalFormsNative/build" \
             -S . \
             -DCMAKE_PREFIX_PATH="$ROOT_DIR/build/prefix" \
             -DCMAKE_INSTALL_PREFIX="$ROOT_DIR/build/prefix" \
             -DCMAKE_BUILD_TYPE="$CONFIGURATION"
     else
-        "$CMAKE" \
+        cmake \
             -G "Unix Makefiles" \
-            -B "../../build/native-artifacts/tvision4c/build" \
+            -B "../../build/native-artifacts/TerminalFormsNative/build" \
             -S . \
             -DCMAKE_PREFIX_PATH="$ROOT_DIR/build/prefix" \
             -DCMAKE_INSTALL_PREFIX="$ROOT_DIR/build/prefix" \
@@ -43,22 +32,22 @@ build_tvision4c() {
     fi
 
     # Build
-    "$CMAKE" --build "../../build/native-artifacts/tvision4c/build" --config "$CONFIGURATION"
+    cmake --build "../../build/native-artifacts/TerminalFormsNative/build" --config "$CONFIGURATION"
 
     cd "$ROOT_DIR"
 }
 
 build_turbovision() {
-    status "header" "TurboVision"
+    status "header" "TerminalForms"
     cd "$ROOT_DIR/src"
-    dotnet build TurboVision/TurboVision.csproj --runtime "$RID"
+    dotnet build TerminalForms/TerminalForms.csproj --runtime "$RID"
     cd "$ROOT_DIR"
 }
 
 build_turbovision_demo() {
-    status "header" "TurboVision.Demo"
+    status "header" "TerminalFormsDemo"
     cd "$ROOT_DIR/src"
-    dotnet build TurboVision.Demo/TurboVision.Demo.csproj --runtime "$RID"
+    dotnet build TerminalFormsDemo/TerminalFormsDemo.csproj --runtime "$RID"
     cd "$ROOT_DIR"
 }
 
@@ -69,7 +58,7 @@ run_tests() {
     cd "$ROOT_DIR"
 }
 
-build_tvision4c
+build_terminalformsnative
 build_turbovision
 build_turbovision_demo
 run_tests
