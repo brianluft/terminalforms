@@ -25,11 +25,7 @@ public static class ErrorExtensions
             Error.Error_NativeInteropFailure =>
                 "There was a problem connecting to the TerminalForms native library (TerminalFormsNative).",
             Error.Error_OutOfMemory => "There is not enough memory to complete the operation.",
-            Error.Error_UnalignedObjectPlacement =>
-                "The pointer is not aligned correctly for this object.",
             Error.Error_ArgumentNull => "The function argument must not be null.",
-            Error.Error_ArgumentOutOfRange => "The function argument is out of range.",
-            Error.Error_BufferTooSmall => "The text is too long to fit in the destination.",
             _ => $"An unknown error occurred ({(int)error}).",
         };
 }

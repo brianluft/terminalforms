@@ -36,7 +36,9 @@ endif()
 
 # Create the DLL
 add_library(TerminalFormsNative SHARED
+    Application.cpp
     common.cpp
+    Form.cpp
 )
 
 # Apply compiler options

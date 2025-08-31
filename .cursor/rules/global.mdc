@@ -12,69 +12,64 @@ Then our .NET library "TerminalForms" calls into the "TerminalFormsNative" libra
 - We are establishing a convention for our bindings as we go. Perform a codebase search for other examples of bindings we have done for guidance and precedent. Consistency is key.
 
 # C++ Rules
-- Always use the `tv` namespace for C++ classes and internal implementation details. Put `EXPORT` (`extern "C"`) functions in the global namespace.
+- Always use the `tf` namespace for C++ classes and internal implementation details. Put `EXPORT` (`extern "C"`) functions in the global namespace.
 - Always use stdint types like `int32_t` (C# int) and `int16_t` (C# short). Our goal is to make it clear what the C# P/Invoke representation is. Never use native types like `int`, `short`, or `bool`.
 - Always use `BOOL` (4-byte) instead of C++ `bool` (1-byte).
-- Always return `tv::Error` for error handling. Never allow exceptions to bubble up past the C interface. Feel free to add new error codes to `src\TerminalFormsNative\common.h` (`Error` enum) and make the corresponding change in `src\TerminalForms\Error.cs`--these two files must be kept synchronized.
-- Never use `memcmp()` in `tv::equals` implementations as this will compare padding bytes and cause incorrect results. Always compare individual members explicitly.
+- Always return `tf::Error` for error handling. Never allow exceptions to bubble up past the C interface. Feel free to add new error codes to `src\TerminalFormsNative\common.h` (`Error` enum) and make the corresponding change in `src\TerminalForms\Error.cs`--these two files must be kept synchronized.
+- Never use `memcmp()` in `tf::equals` implementations as this will compare padding bytes and cause incorrect results. Always compare individual members explicitly.
 - The underlying tvision library often lies about const, and const doesn't indicate (lack of) ownership. Read the implementation for the type you are binding to understand ownership of pointers.
-- For a C++ type `TFoo` you must write, at minimum, the following binding code:
+- For a C++ type `Foo` that is exposed to C#, you must write, at minimum, the following binding code:
 
 ```cpp
-/*** TFoo.h ***/
-namespace tv {
-// Initialize public members, if any.
-// Omit this if you have no initialization to do.
-template<> struct initialize<TFoo> {
-    void operator()(TFoo* self) const { self->bar = {}; self->baz = {}; }
-}
+/*** Foo.h ***/
+namespace tf {
 // Decide if this type should use value semantics *or* reference semantics. Think about the intent of the C++ class.
-// Omit this if you want to use pointer equality.
-template<> struct equals<TFoo> {
-    bool operator()(const TFoo& self, const TFoo& other) const { return self.bar == other.bar && self.baz == other.baz; }
+template<> struct equals<Foo> {
+    bool operator()(const Foo& self, const Foo& other) const { return self.bar == other.bar && self.baz == other.baz; }
 };
-}  // namespace tv
-// Your std::hash specialization should match the semantics of your tv::equals specialization.
-// Omit this if you want to use pointer hashing.
+}
+// Your std::hash specialization should match the semantics of your tf::equals specialization.
 namespace std {
-template<> struct hash<TFoo> {
-    std::size_t operator()(const TFoo& p) const noexcept { std::size_t x{}; tv::combineHash(p.bar, &x); tv::combineHash(p.baz, &x); return x; }
+template<> struct hash<Foo> {
+    std::size_t operator()(const Foo& p) const noexcept { std::size_t x{}; tf::combineHash(p.bar, &x); tf::combineHash(p.baz, &x); return x; }
 };
-}  // namespace std
+}
 
-/*** TFoo.cpp ***/
-// If TFoo has a default constructor:
-TV_DEFAULT_CONSTRUCTOR(TFoo)
+/*** Foo.cpp ***/
+// If Foo has a default constructor:
+TF_DEFAULT_CONSTRUCTOR(Foo)
 
-// If TFoo has non-default constructors, define this pair for each such ctor.
-// Give the pair a numeric suffix starting at 2 so the names do not collide.
-// The default constructor is always the pair without a numeric suffix.
+// If Foo has non-default constructors, define this for each such ctor.
+// Give it a numeric suffix starting at 2 so the names do not collide.
+// The default constructor is always the one without a numeric suffix.
 // Always take class/structs by pointer even if the underlying constructor takes it by value or by reference.
 // Convert machine integers like int into explicit stdint types like int32_t.
-EXPORT tv::Error TV_TFoo_placementNew2(TFoo* self, int32_t bar, TWhatever* baz) {
-    return tv::checkedPlacementNew(self, bar, *baz);
-}
-
-EXPORT tv::Error TV_TFoo_new2(TFoo** out, int32_t bar, TWhatever* baz) {
-    return tv::checkedNew(out, bar, *baz);
+EXPORT tf::Error TfFooNew2(Foo** out, int32_t bar, TWhatever* baz) {
+    return tf::checkedNew(out, bar, *baz);
 }
 
 // For any non-static type:
-TV_BOILERPLATE_FUNCTIONS(TFoo)
+TF_BOILERPLATE_FUNCTIONS(Foo)
 
-// ... Other TV_* macros and EXPORT function implementations ...
+// ... EXPORT function implementations ...
 ```
 
-- See `src/TerminalFormsNative/common.h` for various TV_* macros you can use in your implementation. Don't provide function prototypes for the exported C methods in the .h file, as they will be consumed from C# which doesn't use the header files and just wastes our time.
-- I believe the C++ classes all have default parameterless constructors, but they may *also* have constructors with parameters. Ignore those additional constructors and only create a C binding for the parameterless constructor--this is what `TV_DECLARE_BOILERPLATE_FUNCTIONS`/`TV_BOILERPLATE_FUNCTIONS` provides.
-- When writing get/set functions for a public function, look through `common.h` to find an existing `TV_GET_SET*` macro for your situation. If a suitable macro doesn't exist, write a new generalized one and use it for your class's bindings, rather than writing a one-off get/set pair for the specific class.
+- See `src/TerminalFormsNative/common.h` for various TF_* macros you can use in your implementation. Don't provide function prototypes for the exported C methods in the .h file, as they will be consumed from C# which doesn't use the header files and just wastes our time.
+- The underlying tvision library never throws exceptions. We only have to worry about our own.
+- Member conventions for a type `Foo`:
+    - Static member function: `TfFooStaticBar(etc)`
+    - Instance member function: `TfFooBaz(Foo* self, etc)`
+    - Primitive getter: `TfFooGetBar(Foo* self, int* out)`
+    - Reference getter: `TfFooGetBar(Foo* self, TBar** out)`
+    - Primitive setter: `TfFooSetBar(Foo* self, int value)`
+    - Reference setter: `TfFooSetBar(Foo* self, TBar* value)`
 
 # C# Rules
 - Use `var` instead of explicit type names when possible.
 - Always specify `[MarshalAs(UnmanagedType.I4)]` for `bool` parameters and return types. C# requires it.
 - For string input parameters, prefer `[LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]` or `[MarshalAs(UnmanagedType.LPUTF8Str)]` over explicit `UTF8Encoding`, `Marshal`, or `fixed` use when possible. If you must use `UTF8Encoding` explicitly, then use the shared instance `Global.UTF8Encoding`. Never implement `strlen(byte*)` in C#--you can always avoid this.
 - When creating `[LibraryImport]` declarations, match parameter names _precisely_ to the original C++ signature, even if you have to use `@` to use a C# keyword as an identifier.
-- The native functions all return `enum Error`. Wrap your native calls in `TurboVisionException.Check(Error)` which will throw an exception if the error code is not successful.
+- The native functions all return `enum Error`. Wrap your native calls in `TerminalFormsException.Check(Error)` which will throw an exception if the error code is not successful.
 - Prefer modern `unsafe`/`Span` interop techniques over old fashioned `Marshal`/`IntPtr` techniques when possible.
 - Translate C++ `TSpan` as C# `Span<T>`.
 - Translate C++ `TStringView` and all moral equivalents to strings as C# `String` via copying.
@@ -85,7 +80,7 @@ TV_BOILERPLATE_FUNCTIONS(TFoo)
   - How `NativeMethods` inner classes are structured
   - Test patterns (MSTest framework with `[TestMethod]` and `Assert.AreEqual`)
   - How nullable pointer handling is done (`value != null ? value.Ptr : null`)
-  - What functions are actually generated by C++ macros like `TV_BOILERPLATE_FUNCTIONS`
-- When using C++ macros, examine their definitions in `common.h` to understand what functions they actually generate (e.g., `TV_hash` not `TV_getHashCode`)
+  - What functions are actually generated by C++ macros like `TF_BOILERPLATE_FUNCTIONS`
+- When using C++ macros, examine their definitions in `common.h` to understand what functions they actually generate.
 - `void*` null handling: Never use `?.` or `??` with `void*` - use explicit conditional logic instead
-- Don't write XML doc comments in the C# binding classes.
+- Always write XML doc comments on public members.

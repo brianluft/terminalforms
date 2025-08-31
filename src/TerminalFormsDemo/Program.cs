@@ -1,1 +1,5 @@
-﻿Console.WriteLine("Starting up.");
+﻿using TerminalForms;
+
+using Form form = new();
+form.Show();
+Application.Run();
