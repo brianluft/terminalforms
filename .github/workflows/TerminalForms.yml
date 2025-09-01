@@ -125,7 +125,7 @@ jobs:
     steps:
       - name: Install Alpine deps
         run: |
-          apk add --no-cache build-base git curl bash icu-libs cmake ncurses-dev linux-headers
+          apk add --no-cache build-base git curl bash icu-libs cmake ncurses-dev linux-headers gpm-dev
 
       # We can't use JavaScript-based actions in Alpine on arm64 runners.
       # That excludes both actions/checkout and actions/setup-dotnet.
