@@ -105,6 +105,13 @@ jobs:
           bash scripts/init.sh
           bash scripts/build.sh
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Intermediate_${{ matrix.name }}
+          path: build/dotnet-artifacts/bin/TerminalForms/release_${{ matrix.name }}/*
+          if-no-files-found: error
+
   build-musl:
     strategy:
       matrix:
@@ -156,3 +163,55 @@ jobs:
           cd /repo
           bash scripts/init.sh
           bash scripts/build.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Intermediate_${{ matrix.name }}
+          path: build/dotnet-artifacts/bin/TerminalForms/release_${{ matrix.name }}/*
+          if-no-files-found: error
+
+  finish:
+    runs-on: ubuntu-24.04
+    name: Finish
+    needs: [build, build-musl]
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          
+      - name: Organize artifacts by runtime identifier
+        run: |
+          mkdir -p release
+          
+          # Process each artifact folder
+          for artifact_dir in artifacts/Intermediate_*; do
+            if [ -d "$artifact_dir" ]; then
+              # Extract runtime identifier from folder name (remove Intermediate_ prefix)
+              runtime_id=$(basename "$artifact_dir" | sed 's/^Intermediate_//')
+              echo "Processing $runtime_id"
+              
+              # Create target directory and copy contents
+              mkdir -p "release/$runtime_id"
+              cp -r "$artifact_dir"/* "release/$runtime_id/"
+            fi
+          done
+          
+          # List final structure
+          echo "Final structure:"
+          find release -type f | sort
+          
+      - name: Upload consolidated artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TerminalForms
+          path: release/*
+          if-no-files-found: error
+
+      - name: Delete intermediate artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          failOnError: false
+          name: |
+            Intermediate_*
