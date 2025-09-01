@@ -1,18 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <PackageId>TerminalForms</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>Brian Luft</Authors>
+    <Description>Terminal user interface library.</Description>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- CI passes -p:PackAssetsDir=/abs/path/to/pack-assets -->
+    <PackAssetsDir Condition="'$(PackAssetsDir)' == ''"
+      >$(MSBuildProjectDirectory)\..\..\pack-assets</PackAssetsDir
+    >
   </PropertyGroup>
   <!-- Compute runtime identifier for native library packaging -->
   <PropertyGroup>
     <NativeLibraryOS Condition="$([MSBuild]::IsOSPlatform('Windows'))">win</NativeLibraryOS>
     <NativeLibraryOS Condition="$([MSBuild]::IsOSPlatform('Linux'))">linux</NativeLibraryOS>
     <NativeLibraryOS Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx</NativeLibraryOS>
-    <NativeLibraryArch Condition="'$(PlatformTarget)' == 'ARM64'">arm64</NativeLibraryArch>
-    <NativeLibraryArch Condition="'$(NativeLibraryArch)' == ''">x64</NativeLibraryArch>
-    <RuntimeIdentifier>$(NativeLibraryOS)-$(NativeLibraryArch)</RuntimeIdentifier>
     <!-- Platform-specific native library names -->
     <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'win'"
       >TerminalFormsNative.dll</NativeLibraryName
@@ -42,5 +47,10 @@
       <Pack>true</Pack>
       <Visible>false</Visible>
     </Content>
+  </ItemGroup>
+  <!-- Include staged native assets, preserving runtimes/* paths -->
+  <ItemGroup Condition="Exists('$(PackAssetsDir)')">
+    <None Include="$(PackAssetsDir)\runtimes\**\*" Pack="true" PackagePath="\" />
+    <!-- empty => keep relative paths -->
   </ItemGroup>
 </Project>
