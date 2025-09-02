@@ -1,16 +1,14 @@
 namespace TerminalForms;
 
-// Matches `src\TerminalFormsNative\Error.h`
+// Matches `src\TerminalFormsNative\common.h`
 public enum Error
 {
     Success = 0,
     Error_Unknown,
     Error_NativeInteropFailure,
     Error_OutOfMemory,
-    Error_UnalignedObjectPlacement,
     Error_ArgumentNull,
-    Error_ArgumentOutOfRange,
-    Error_BufferTooSmall,
+    Error_InvalidArgument,
 
     Error_HasMessage = 0x8000,
 }
@@ -26,6 +24,7 @@ public static class ErrorExtensions
                 "There was a problem connecting to the TerminalForms native library (TerminalFormsNative).",
             Error.Error_OutOfMemory => "There is not enough memory to complete the operation.",
             Error.Error_ArgumentNull => "The function argument must not be null.",
+            Error.Error_InvalidArgument => "The function argument is invalid.",
             _ => $"An unknown error occurred ({(int)error}).",
         };
 }

@@ -12,6 +12,12 @@ public abstract unsafe class TerminalFormsObject : IDisposable
         Ptr = ptr;
     }
 
+    protected TerminalFormsObject(MetaObject metaObject, void* ptr)
+    {
+        _metaObject = metaObject;
+        Ptr = ptr;
+    }
+
     public bool IsDisposed { get; private set; }
     internal void* Ptr { get; }
     internal bool IsOwned { get; set; } = true;

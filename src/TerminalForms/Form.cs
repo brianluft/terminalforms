@@ -1,6 +1,6 @@
 namespace TerminalForms;
 
-public unsafe partial class Form() : TerminalFormsObject(_metaObject)
+public unsafe partial class Form() : ContainerControl(_metaObject)
 {
     private static readonly MetaObject _metaObject = new(
         NativeMethods.TfFormNew,

@@ -6,7 +6,7 @@
 
 namespace tf {
 
-Form::Form() : TWindow(TRect(0, 1, 20, 20), "Form", wnNoNumber), TWindowInit(TWindow::initFrame) {}
+Form::Form() : TDialog(TRect(0, 1, 20, 8), "Form"), TWindowInit(TDialog::initFrame) {}
 
 }  // namespace tf
 

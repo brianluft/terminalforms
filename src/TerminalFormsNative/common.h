@@ -28,6 +28,7 @@ enum Error {
     Error_NativeInteropFailure,
     Error_OutOfMemory,
     Error_ArgumentNull,
+    Error_InvalidArgument,
 
     Error_HasMessage = 0x8000,
 };

@@ -1,5 +1,8 @@
 ﻿using TerminalForms;
 
-using Form form = new();
+Form form = new();
+Button button = new();
+form.Controls.Add(button);
+
 form.Show();
 Application.Run();

@@ -2,12 +2,12 @@
 
 #include "common.h"
 
-#define Uses_TWindow
+#define Uses_TDialog
 #include <tvision/tv.h>
 
 namespace tf {
 
-class Form : public TWindow {
+class Form : public TDialog {
    public:
     Form();
 };
