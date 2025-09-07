@@ -116,61 +116,52 @@ jobs:
     strategy:
       matrix:
         include:
-
           - name: linux-musl-x64
             build_dir_suffix: linux-x64
             runner: ubuntu-24.04
             target_arch: x64
-    
+
           - name: linux-musl-arm64
             build_dir_suffix: linux-arm64
             runner: ubuntu-24.04-arm
             target_arch: arm64
 
     runs-on: ${{ matrix.runner }}
-    container: alpine:3.22
     name: ${{ matrix.name }}
 
     steps:
-      - name: Install Alpine deps
-        run: |
-          apk add --no-cache build-base git curl bash icu-libs cmake ncurses-dev linux-headers gpm-dev
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # We can't use JavaScript-based actions in Alpine on arm64 runners.
-      # That excludes both actions/checkout and actions/setup-dotnet.
-      - name: Manual checkout (shallow)
-        run: |
-          git init /repo
-          cd /repo
-          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-          git fetch --no-tags --prune --progress --depth=1 origin "${GITHUB_SHA}"
-          git checkout --progress --force "${GITHUB_SHA}"
-
-      - name: Setup .NET
-        run: |
-          curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
-          bash dotnet-install.sh --channel 9.0
-          echo "$HOME/.dotnet" >> $GITHUB_PATH
-          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
-
-      - name: Build
+      # Build inside Alpine, but from a *host* job (so JS actions work)
+      - name: Build in Alpine (musl) container
         shell: bash
-        env:
-          DOTNET_CLI_TELEMETRY_OPTOUT: 1
-          DOTNET_NOLOGO: 1
-          CONFIGURATION: Release
-          TARGET_ARCH: ${{ matrix.target_arch }}
-          USE_SYSTEM_CMAKE: 1
         run: |
-          cd /repo
-          bash scripts/init.sh
-          bash scripts/build.sh
+          # Run Alpine container matching runner arch (pulls arm64 on arm runner automatically)
+          docker run --rm \
+            -v "$PWD":/repo \
+            -w /repo \
+            alpine:3.22 sh -lc '
+              set -eux
+              apk add --no-cache build-base git curl bash icu-libs cmake ncurses-dev linux-headers gpm-dev
+              curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
+              bash dotnet-install.sh --channel 9.0
+              export PATH=/root/.dotnet:/root/.dotnet/tools:$PATH
+              export USE_SYSTEM_CMAKE=1
+              export DOTNET_CLI_TELEMETRY_OPTOUT=1
+              export DOTNET_NOLOGO=1
+              export CONFIGURATION=Release
+              export TARGET_ARCH=${{ matrix.target_arch }}
+              bash scripts/init.sh
+              bash scripts/build.sh
+            '
 
+      # Artifacts now exist on the *host* filesystem under $GITHUB_WORKSPACE
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Intermediate_${{ matrix.name }}
-          path: /repo/build/dotnet-artifacts/bin/TerminalForms/release_${{ matrix.build_dir_suffix }}/*
+          path: build/dotnet-artifacts/bin/TerminalForms/release_${{ matrix.build_dir_suffix }}/*
           if-no-files-found: error
 
   finish:
