@@ -118,10 +118,12 @@ jobs:
         include:
 
           - name: linux-musl-x64
+            build_dir_suffix: linux-x64
             runner: ubuntu-24.04
             target_arch: x64
     
           - name: linux-musl-arm64
+            build_dir_suffix: linux-arm64
             runner: ubuntu-24.04-arm
             target_arch: arm64
 
@@ -168,7 +170,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Intermediate_${{ matrix.name }}
-          path: build/dotnet-artifacts/bin/TerminalForms/release_${{ matrix.name }}/*
+          path: /repo/build/dotnet-artifacts/bin/TerminalForms/release_${{ matrix.build_dir_suffix }}/*
           if-no-files-found: error
 
   finish:
