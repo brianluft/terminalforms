@@ -7,9 +7,17 @@ public static partial class Application
         Check(NativeMethods.TfApplicationStaticRun());
     }
 
+    public static void EnableDebugScreenshot(string outputFile)
+    {
+        Check(NativeMethods.TfApplicationStaticEnableDebugScreenshot(outputFile));
+    }
+
     private static partial class NativeMethods
     {
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TfApplicationStaticRun();
+
+        [LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
+        public static partial Error TfApplicationStaticEnableDebugScreenshot(string outputFile);
     }
 }

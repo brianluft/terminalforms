@@ -89,6 +89,6 @@ TF_BOILERPLATE_FUNCTIONS(Foo)
 
 # Turbo Vision Documentation
 - `context\tvision-c++-book\*.md` is the Turbo Vision for C++ user's guide. This is "the book". Start here for guidance on the use of Turbo Vision.
-- `context\tvision-pascal-book\*.md` is the Turbo Vision for Pascal user's guide. The details don't exactly match our C++ library, but the high level types and concepts are the same, and this book is more comprehensive than the C++ book.
+- `context\tvision-pascal-book\*.md` is the Turbo Vision for Pascal user's guide. The details don't exactly match our C++ library, but the high level types and concepts are the same, and this book is more comprehensive than the C++ book. CAUTION: Always provide answers in terms of the C++ library. The Pascal book is only for high-level guidance. We do not use Pascal in this project.
 - `build\sources\tvision\include\**\*.h` are the header files. `build\sources\tvision\source\**\*.cpp` are the source files. Go here next to confirm the specific details of the modern Turbo Vision port, as some finer details may have changed since the guides were written.
 - Use your codebase search to locate this information. Never guess about Turbo Vision; we have complete documentation and source, so always look for the ground truth.

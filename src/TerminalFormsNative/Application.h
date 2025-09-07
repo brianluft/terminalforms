@@ -13,6 +13,15 @@ class Application : public TApplication {
 
     Application();
     virtual ~Application();
+
+    void idle() override;
+    void enableDebugScreenshot(const std::string& outputFile);
+
+   private:
+    bool debugScreenshotEnabled_ = false;
+    std::string debugScreenshotOutputFile_;
+
+    void saveDebugScreenshot();
 };
 
 }  // namespace tf

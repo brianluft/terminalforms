@@ -7,4 +7,4 @@ EXE="build/dotnet-artifacts/bin/TerminalFormsDemo/${CONFIGURATION_LOWERCASE}_${R
 
 echo -e "Running: ${GREEN}$EXE${RESET}"
 
-"$EXE"
+"$EXE" "$@"
