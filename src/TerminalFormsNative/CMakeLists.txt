@@ -39,8 +39,11 @@ add_library(TerminalFormsNative SHARED
     Application.cpp
     Button.cpp
     common.cpp
+    Control.cpp
     ControlCollection.cpp
     Form.cpp
+    Point.cpp
+    Rectangle.cpp
 )
 
 # Apply compiler options
