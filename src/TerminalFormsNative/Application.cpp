@@ -38,8 +38,8 @@ void Application::enableDebugScreenshot(const std::string& outputFile) {
     debugScreenshotEnabled_ = true;
     debugScreenshotOutputFile_ = outputFile;
 
-    const int32_t width = 80;
-    const int32_t height = 24;
+    const int32_t width = 40;
+    const int32_t height = 12;
 
     // Override screen dimensions
     TScreen::screenWidth = static_cast<ushort>(width);

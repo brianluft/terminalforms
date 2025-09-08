@@ -18,6 +18,7 @@ EXPORT tf::Error TfControlSetBounds(TView* view, const tf::Rectangle* value) {
         return tf::Error_ArgumentNull;
     }
 
-    view->setBounds(value->toTRect());
+    TRect bounds = value->toTRect();
+    view->locate(bounds);
     return tf::Success;
 }
