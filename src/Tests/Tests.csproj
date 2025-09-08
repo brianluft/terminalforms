@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TerminalForms\TerminalForms.csproj" />
+    <ProjectReference Include="..\TerminalFormsDemo\TerminalFormsDemo.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />

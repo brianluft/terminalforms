@@ -1,32 +1,33 @@
 ﻿using TerminalForms;
+using TerminalFormsDemo;
 
 if (args.Length != 1 && args.Length != 2)
 {
-    Console.Error.WriteLine("Usage: TerminalFormsDemo <test-number> [screenshot-file]");
+    Console.Error.WriteLine("Usage: TerminalFormsDemo \"test-name\" [screenshot-file]");
     return;
 }
 
-var number = int.Parse(args[0]);
+var test = args[0];
 
+// If a screenshot file is provided, then we will take a screenshot and exit as soon as the UI is idle.
 if (args.Length > 1)
 {
     Application.EnableDebugScreenshot(args[1]);
 }
 
-switch (number)
+// Find the requested class by name.
+var assembly = typeof(IDemo).Assembly;
+var className = "TerminalFormsDemo." + test;
+var type = assembly.GetType(className);
+if (type == null)
 {
-    case 1:
-    {
-        Form form = new();
-        Button button1 = new() { Bounds = new(1, 1, 15, 2) };
-        form.Controls.Add(button1);
-
-        Button button2 = new() { Bounds = new(1, 4, 15, 2) };
-        form.Controls.Add(button2);
-
-        form.Show();
-        break;
-    }
+    Console.Error.WriteLine($"Demo implementation not found: {className}");
+    return;
 }
 
+// The implementation sets up the UI but doesn't run it.
+var demo = (IDemo)Activator.CreateInstance(type)!;
+demo.Setup();
+
+// We run it.
 Application.Run();
