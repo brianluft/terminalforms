@@ -9,37 +9,37 @@ jobs:
       matrix:
         include:
 
-          - name: osx-x64
-            runner: macos-13
-            target_arch: x64
+          # - name: osx-x64
+          #   runner: macos-13
+          #   target_arch: x64
 
-          - name: osx-arm64
-            runner: macos-15
-            target_arch: arm64
+          # - name: osx-arm64
+          #   runner: macos-15
+          #   target_arch: arm64
 
-          - name: win-x64
-            runner: windows-2022
-            target_arch: x64
+          # - name: win-x64
+          #   runner: windows-2022
+          #   target_arch: x64
 
-          - name: win-x86
-            runner: windows-2022
-            target_arch: x86
+          # - name: win-x86
+          #   runner: windows-2022
+          #   target_arch: x86
 
-          - name: win-arm64
-            runner: windows-11-arm
-            target_arch: arm64
+          # - name: win-arm64
+          #   runner: windows-11-arm
+          #   target_arch: arm64
 
           - name: linux-x64
             runner: ubuntu-24.04
             target_arch: x64
 
-          - name: linux-arm64
-            runner: ubuntu-24.04-arm
-            target_arch: arm64
+          # - name: linux-arm64
+          #   runner: ubuntu-24.04-arm
+          #   target_arch: arm64
 
-          - name: linux-arm
-            runner: ubuntu-24.04-arm
-            target_arch: arm
+          # - name: linux-arm
+          #   runner: ubuntu-24.04-arm
+          #   target_arch: arm
 
     runs-on: ${{ matrix.runner }}
     name: ${{ matrix.name }}
@@ -121,10 +121,10 @@ jobs:
             runner: ubuntu-24.04
             target_arch: x64
 
-          - name: linux-musl-arm64
-            build_dir_suffix: linux-arm64
-            runner: ubuntu-24.04-arm
-            target_arch: arm64
+          # - name: linux-musl-arm64
+          #   build_dir_suffix: linux-arm64
+          #   runner: ubuntu-24.04-arm
+          #   target_arch: arm64
 
     runs-on: ${{ matrix.runner }}
     name: ${{ matrix.name }}

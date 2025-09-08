@@ -45,6 +45,22 @@ public class DemoTest
         var actualFilePath = Path.Combine(Path.GetTempPath(), "TerminalFormsDemo.txt");
         File.Delete(actualFilePath);
 
+        var logFilePath = Path.Combine(Path.GetTempPath(), "TerminalFormsDemo.log");
+        File.Delete(logFilePath);
+
+        try
+        {
+            TestCore(name, actualFilePath, logFilePath);
+        }
+        finally
+        {
+            File.Delete(actualFilePath);
+            File.Delete(logFilePath);
+        }
+    }
+
+    private static void TestCore(string name, string actualFilePath, string logFilePath)
+    {
         var exeDir = Path.GetDirectoryName(typeof(IDemo).Assembly.Location)!;
         var expectedFilePath = Path.Combine(
             exeDir,
@@ -60,8 +76,11 @@ public class DemoTest
         );
 
         // Run `TerminalFormsDemo` in the same directory as the IDemo assembly.
-        var demoExe = Path.Combine(exeDir, "TerminalFormsDemo");
-        ProcessStartInfo psi = new(demoExe, $"\"{name}\" \"{actualFilePath}\"")
+        var demoDll = Path.Combine(exeDir, "TerminalFormsDemo.dll");
+        ProcessStartInfo psi = new(
+            "dotnet",
+            $"\"{demoDll}\" --test \"{name}\" --screenshot \"{actualFilePath}\" --log \"{logFilePath}\""
+        )
         {
             CreateNoWindow = true,
         };
@@ -71,10 +90,21 @@ public class DemoTest
         if (!process.WaitForExit(5000))
         {
             process.Kill();
-            throw new Exception($"Process {demoExe} timed out after 5 seconds");
+            throw new Exception($"Process {demoDll} timed out after 5 seconds");
         }
 
-        Assert.AreEqual(0, process.ExitCode);
+        if (process.ExitCode != 0)
+        {
+            if (File.Exists(logFilePath))
+            {
+                var log = File.ReadAllText(logFilePath);
+                Assert.Fail($"Exit code {process.ExitCode}. Log output:\n" + log);
+            }
+            else
+            {
+                Assert.Fail($"Exit code {process.ExitCode}. No log output.");
+            }
+        }
 
         // This should have written a screenshot to the file.
         var expectedLines = File.ReadAllLines(expectedFilePath);

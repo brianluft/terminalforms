@@ -37,17 +37,25 @@ build_terminalformsnative() {
     cd "$ROOT_DIR"
 }
 
-build_turbovision() {
-    status "header" "TerminalForms"
+restore() {
+    status "header" "dotnet restore"
     cd "$ROOT_DIR/src"
-    dotnet build TerminalForms/TerminalForms.csproj --runtime "$RID"
+    dotnet restore --runtime "$RID"
+    status "success" "Restored package dependencies"
     cd "$ROOT_DIR"
 }
 
-build_turbovision_demo() {
+build_terminalforms() {
+    status "header" "TerminalForms"
+    cd "$ROOT_DIR/src"
+    dotnet build TerminalForms/TerminalForms.csproj --runtime "$RID" --no-restore
+    cd "$ROOT_DIR"
+}
+
+build_terminalforms_demo() {
     status "header" "TerminalFormsDemo"
     cd "$ROOT_DIR/src"
-    dotnet build TerminalFormsDemo/TerminalFormsDemo.csproj --runtime "$RID"
+    dotnet build TerminalFormsDemo/TerminalFormsDemo.csproj --runtime "$RID" --no-restore
     cd "$ROOT_DIR"
 }
 
@@ -62,12 +70,14 @@ run_tests() {
         echo "Using dotnet: $(which dotnet)"
     fi
 
-    dotnet test Tests/Tests.csproj --runtime "$RID"
+    dotnet build Tests/Tests.csproj --runtime "$RID" --no-restore
+    dotnet test Tests/Tests.csproj --runtime "$RID" --no-build
     cd "$ROOT_DIR"
 }
 
+restore
 build_terminalformsnative
-build_turbovision
-build_turbovision_demo
+build_terminalforms
+build_terminalforms_demo
 run_tests
 status "success" "Build complete."
