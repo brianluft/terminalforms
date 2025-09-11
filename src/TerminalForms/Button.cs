@@ -12,6 +12,16 @@ public unsafe partial class Button() : Control(_metaObject)
         NativeMethods.TfButtonHash
     );
 
+    public string Text
+    {
+        get
+        {
+            Check(NativeMethods.TfButtonGetText(Ptr, out var text));
+            return text;
+        }
+        set { Check(NativeMethods.TfButtonSetText(Ptr, value)); }
+    }
+
     private static partial class NativeMethods
     {
         [LibraryImport(Global.DLL_NAME)]
@@ -29,5 +39,11 @@ public unsafe partial class Button() : Control(_metaObject)
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TfButtonHash(void* self, out int @out);
+
+        [LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
+        public static partial Error TfButtonSetText(void* self, string text);
+
+        [LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
+        public static partial Error TfButtonGetText(void* self, out string @out);
     }
 }
