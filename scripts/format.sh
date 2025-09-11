@@ -33,7 +33,7 @@ find_clang_format
 
 # Format C++ code.
 status "header" "clang-format"
-find src/TerminalFormsNative/ -type f \( -iname \*.h -o -iname \*.cpp \) | xargs "$CLANG_FORMAT" -i
+find src/tfcore/ -type f \( -iname \*.h -o -iname \*.cpp \) | xargs "$CLANG_FORMAT" -i
 
 # Format C# code.
 status "header" "csharpier"

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31)
-project(TerminalFormsNative)
+project(tfcore)
 
 # Set C++ standard to C++14 for tvision compatibility
 set(CMAKE_CXX_STANDARD 17)
@@ -35,7 +35,7 @@ else()
 endif()
 
 # Create the DLL
-add_library(TerminalFormsNative SHARED
+add_library(tfcore SHARED
     Application.cpp
     Button.cpp
     common.cpp
@@ -47,10 +47,10 @@ add_library(TerminalFormsNative SHARED
 )
 
 # Apply compiler options
-target_compile_options(TerminalFormsNative PRIVATE ${COMMON_COMPILE_OPTIONS})
+target_compile_options(tfcore PRIVATE ${COMMON_COMPILE_OPTIONS})
 
 # Add include directories for tvision headers
-target_include_directories(TerminalFormsNative PRIVATE "${CMAKE_SOURCE_DIR}/../../build/prefix/include")
+target_include_directories(tfcore PRIVATE "${CMAKE_SOURCE_DIR}/../../build/prefix/include")
 
 # Link to tvision library (platform-specific). It's either "tvision" or "tvision-debug".
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -60,16 +60,16 @@ else()
 endif()
 
 if(WIN32)
-    target_link_libraries(TerminalFormsNative "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/tvision${TVISION_SUFFIX}.lib")
+    target_link_libraries(tfcore "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/tvision${TVISION_SUFFIX}.lib")
 elseif(APPLE)
-    target_link_libraries(TerminalFormsNative "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision${TVISION_SUFFIX}.a" ncurses)
+    target_link_libraries(tfcore "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision${TVISION_SUFFIX}.a" ncurses)
 else()
-    target_link_libraries(TerminalFormsNative "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision${TVISION_SUFFIX}.a" ncursesw)
+    target_link_libraries(tfcore "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision${TVISION_SUFFIX}.a" ncursesw)
 endif()
 
 # Set output directories
-set_target_properties(TerminalFormsNative PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/../../build/native-artifacts/TerminalFormsNative/bin"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/../../build/native-artifacts/TerminalFormsNative/bin"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/../../build/native-artifacts/TerminalFormsNative/bin"
+set_target_properties(tfcore PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/../../build/native-artifacts/tfcore/bin"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/../../build/native-artifacts/tfcore/bin"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/../../build/native-artifacts/tfcore/bin"
 )

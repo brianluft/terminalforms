@@ -4,19 +4,19 @@ source "$( dirname "${BASH_SOURCE[0]}" )/env.sh"
 cd $ROOT_DIR
 
 build_terminalformsnative() {
-    status "header" "TerminalFormsNative"
+    status "header" "tfcore"
 
     # Create directories
-    mkdir -p "build/native-artifacts/TerminalFormsNative/build"
-    mkdir -p "build/native-artifacts/TerminalFormsNative/bin"
+    mkdir -p "build/native-artifacts/tfcore/build"
+    mkdir -p "build/native-artifacts/tfcore/bin"
 
     # Configure cmake
-    cd "src/TerminalFormsNative"
+    cd "src/tfcore"
     if [ "$OS" == "windows" ]; then
         cmake \
             -G "Visual Studio 17 2022" \
             -A "$WINDOWS_MSVC_TARGET_ARCH" \
-            -B "../../build/native-artifacts/TerminalFormsNative/build" \
+            -B "../../build/native-artifacts/tfcore/build" \
             -S . \
             -DCMAKE_PREFIX_PATH="$ROOT_DIR/build/prefix" \
             -DCMAKE_INSTALL_PREFIX="$ROOT_DIR/build/prefix" \
@@ -24,7 +24,7 @@ build_terminalformsnative() {
     else
         cmake \
             -G "Unix Makefiles" \
-            -B "../../build/native-artifacts/TerminalFormsNative/build" \
+            -B "../../build/native-artifacts/tfcore/build" \
             -S . \
             -DCMAKE_PREFIX_PATH="$ROOT_DIR/build/prefix" \
             -DCMAKE_INSTALL_PREFIX="$ROOT_DIR/build/prefix" \
@@ -32,7 +32,7 @@ build_terminalformsnative() {
     fi
 
     # Build
-    cmake --build "../../build/native-artifacts/TerminalFormsNative/build" --config "$CONFIGURATION"
+    cmake --build "../../build/native-artifacts/tfcore/build" --config "$CONFIGURATION"
 
     cd "$ROOT_DIR"
 }

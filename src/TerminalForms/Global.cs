@@ -4,7 +4,7 @@ namespace TerminalForms;
 
 internal static class Global
 {
-    public const string DLL_NAME = "TerminalFormsNative";
+    public const string DLL_NAME = "tfcore";
 
     /// <summary>
     /// This UTF8 encoding omits the BOM as tvision expects.

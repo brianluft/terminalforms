@@ -1,6 +1,6 @@
 namespace TerminalForms;
 
-// Matches `src\TerminalFormsNative\common.h`
+// Matches `src\tfcore\common.h`
 public enum Error
 {
     Success = 0,
@@ -21,7 +21,7 @@ public static class ErrorExtensions
             Error.Success => "The operation completed successfully.",
             Error.Error_Unknown => "An unknown error occurred.",
             Error.Error_NativeInteropFailure =>
-                "There was a problem connecting to the TerminalForms native library (TerminalFormsNative).",
+                "There was a problem connecting to the TerminalForms native library (tfcore).",
             Error.Error_OutOfMemory => "There is not enough memory to complete the operation.",
             Error.Error_ArgumentNull => "The function argument must not be null.",
             Error.Error_InvalidArgument => "The function argument is invalid.",

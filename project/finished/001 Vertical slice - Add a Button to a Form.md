@@ -9,7 +9,7 @@ We currently have an empty Form showing in our `src\TerminalFormsDemo`. Let's ge
 - [x] Implement `public unsafe readonly struct ControlCollection : IList<Control>`. This manages the child controls of a C++ `TGroup`. The constructor takes a `void* groupPtr` to manage. Internally it is simply `List<Control>` but it hooks the collection mutation methods/properties to make the corresponding change to the C++ `TGroup`. The C# `ControlCollection` and C++ `TGroup` must be kept in sync: every mutation makes the change first in the `List<T>` and then again on the C++ side via native call. This way we can serve reads directly from the C# side, returning the original C# object that was added to the collection rather than some proxy of the C++ object. Because the C++ side never adds or removes controls on its own, we are in full control of the list from the C# side.
     - Read about `TGroup` in the book, and how it relates to `TWindow` and `TButton`.
     - Write `src\TerminalForms\ControlCollection.cs`, inventing `LibraryImport`s in nested `private static class NativeMethods` for any native functions that you will need. Remember: we mirror writes over to the C++ side, but we serve reads directly from the C# side assuming that we are in sync.
-    - Implement those native functions as C++ `EXPORT` functions in `src\TerminalFormsNative\ControlCollection.cpp`. Header file not needed.
+    - Implement those native functions as C++ `EXPORT` functions in `src\tfcore\ControlCollection.cpp`. Header file not needed.
     - *🤖 Changed to `partial class` instead of `struct` to support `LibraryImport`. Created C# implementation with `IList<Control>` interface, maintaining sync between C# `List<Control>` and C++ `TGroup` linked list. Implemented C++ functions for insert, insert-at, and remove-at operations using TGroup's native methods like `insert()`, `insertBefore()`, `remove()`, and `at()`.*
 
 - [x] Implement `ContainerControl`.
@@ -21,9 +21,9 @@ We currently have an empty Form showing in our `src\TerminalFormsDemo`. Let's ge
 
 - [x] Implement `Button`. This C# class inherits from `Control`.
     - Read about `TButton` in the book.
-    - Read `src\TerminalFormsNative\Form.(cpp|h)`.
+    - Read `src\tfcore\Form.(cpp|h)`.
     - Read `src\TerminalForms\Form.cs`.
-    - Write `src\TerminalFormsNative\Button.cpp`. Simply expose construction for now, don't even do the button text property yet.
+    - Write `src\tfcore\Button.cpp`. Simply expose construction for now, don't even do the button text property yet.
     - Write `src\TerminalForms\Button.cs`.
     - Update `src\TerminalFormsDemo` to add a button to our test form's `Controls` collection.
     - *🤖 Created C++ `tf::Button` class inheriting from `TButton`. Created C# `Button` class. Updated demo to create a button and add it to form's Controls collection.*

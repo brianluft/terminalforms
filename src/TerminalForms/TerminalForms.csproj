@@ -19,24 +19,18 @@
     <NativeLibraryOS Condition="$([MSBuild]::IsOSPlatform('Linux'))">linux</NativeLibraryOS>
     <NativeLibraryOS Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx</NativeLibraryOS>
     <!-- Platform-specific native library names -->
-    <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'win'"
-      >TerminalFormsNative.dll</NativeLibraryName
-    >
-    <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'linux'"
-      >libTerminalFormsNative.so</NativeLibraryName
-    >
-    <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'osx'"
-      >libTerminalFormsNative.dylib</NativeLibraryName
-    >
+    <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'win'">tfcore.dll</NativeLibraryName>
+    <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'linux'">libtfcore.so</NativeLibraryName>
+    <NativeLibraryName Condition="'$(NativeLibraryOS)' == 'osx'">libtfcore.dylib</NativeLibraryName>
     <!-- Platform-specific path to the native library build output -->
     <NativeLibraryPath Condition="'$(NativeLibraryOS)' == 'win'"
-      >..\..\build\native-artifacts\TerminalFormsNative\bin\$(Configuration)</NativeLibraryPath
+      >..\..\build\native-artifacts\tfcore\bin\$(Configuration)</NativeLibraryPath
     >
     <NativeLibraryPath Condition="'$(NativeLibraryOS)' == 'linux'"
-      >..\..\build\native-artifacts\TerminalFormsNative\bin</NativeLibraryPath
+      >..\..\build\native-artifacts\tfcore\bin</NativeLibraryPath
     >
     <NativeLibraryPath Condition="'$(NativeLibraryOS)' == 'osx'"
-      >..\..\build\native-artifacts\TerminalFormsNative\bin</NativeLibraryPath
+      >..\..\build\native-artifacts\tfcore\bin</NativeLibraryPath
     >
   </PropertyGroup>
   <!-- Include native library for both project references and NuGet package -->
