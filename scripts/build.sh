@@ -79,5 +79,9 @@ restore
 build_terminalformsnative
 build_terminalforms
 build_terminalforms_demo
-run_tests
+
+if [ -z "${NO_TESTS:-}" ]; then
+    run_tests
+fi
+
 status "success" "Build complete."

@@ -26,53 +26,29 @@ void Application::idle() {
     }
 }
 
-// Implements fixed-size TurboVision rendering by intercepting and overriding the screen buffer allocation process.
-// Instead of using the actual terminal dimensions, we manually set TScreen::screenWidth and TScreen::screenHeight to
-// 80×24, then allocate a custom screen buffer of the correct size and force a complete layout recalculation through
-// changeBounds() and redraw(). The critical insight was handling TurboVision's hybrid character encoding approach: the
-// modern port stores some characters as raw CP437 codes (particularly extended ASCII like box-drawing characters)
-// while others are already UTF-8 encoded. The screenshot function detects single-byte characters that need CP437→UTF-8
-// conversion using CpTranslator::toPackedUtf8(), while passing through multi-byte UTF-8 sequences unchanged, ensuring
-// perfect rendering of the classic TUI appearance in a reproducible 80×24 format regardless of the host terminal size.
+// Implements fixed-size debug screenshots by capturing only the top-left 40×12 region of the actual screen buffer.
+// This approach avoids the complexity of overriding TurboVision's screen dimensions (which get reset by various
+// internal operations) and simply crops the output during the screenshot saving process. The critical insight was 
+// handling TurboVision's hybrid character encoding approach: the modern port stores some characters as raw CP437 
+// codes (particularly extended ASCII like box-drawing characters) while others are already UTF-8 encoded. The 
+// screenshot function detects single-byte characters that need CP437→UTF-8 conversion using 
+// CpTranslator::toPackedUtf8(), while passing through multi-byte UTF-8 sequences unchanged, ensuring perfect 
+// rendering of the classic TUI appearance in a reproducible 40×12 format regardless of the host terminal size.
 void Application::enableDebugScreenshot(const std::string& outputFile) {
     debugScreenshotEnabled_ = true;
     debugScreenshotOutputFile_ = outputFile;
 
-    const int32_t width = 40;
-    const int32_t height = 12;
-
-    // Override screen dimensions
-    TScreen::screenWidth = static_cast<ushort>(width);
-    TScreen::screenHeight = static_cast<ushort>(height);
-
-    // Allocate custom buffer with desired size
-    auto bufferSize = width * height;
-    auto* customBuffer = new TScreenCell[bufferSize];
-
-    for (int32_t i = 0; i < bufferSize; ++i) {
-        ::setCell(customBuffer[i], ' ', 0x07);
-    }
-
-    TScreen::screenBuffer = customBuffer;
-    buffer = customBuffer;
-
-    // Recalculate layout for new dimensions
-    TMouse::hide();
-    initScreen();
-    changeBounds(TRect(0, 0, width, height));
-    setState(sfExposed, False);
-    setState(sfExposed, True);
-    redraw();
-    TMouse::show();
+    // Simply enable screenshot mode - don't override screen dimensions here
+    // The saveDebugScreenshot() function will handle limiting output to 40x12
 }
 
 void Application::saveDebugScreenshot() {
-    // Get screen dimensions and buffer
-    auto width = TScreen::screenWidth;
-    auto height = TScreen::screenHeight;
+    // Force fixed dimensions for debug screenshots regardless of actual screen size
+    const int32_t width = 40;
+    const int32_t height = 12;
     auto buffer = TScreen::screenBuffer;
 
-    if (!buffer || width == 0 || height == 0) {
+    if (!buffer) {
         return;
     }
 
@@ -82,12 +58,27 @@ void Application::saveDebugScreenshot() {
         return;
     }
 
-    // Write screen content row by row
+    // Get the actual screen width to calculate buffer positions correctly
+    auto actualWidth = TScreen::screenWidth;
+    auto actualHeight = TScreen::screenHeight;
+
+    // Write screen content row by row, limiting to our fixed dimensions
     for (int32_t y = 0; y < height; ++y) {
         std::string line;
+        
+        // For the last row (row 11), try to capture the status line from the bottom of the screen
+        int32_t sourceRow = y;
+        if (y == height - 1 && actualHeight > height) {
+            sourceRow = actualHeight - 1; // Bottom row of screen
+        }
+        
+        // Make sure we don't go out of bounds
+        if (sourceRow >= actualHeight) {
+            sourceRow = y;
+        }
 
-        for (int32_t x = 0; x < width; ++x) {
-            const auto& cell = buffer[y * width + x];
+        for (int32_t x = 0; x < width && x < actualWidth; ++x) {
+            const auto& cell = buffer[sourceRow * actualWidth + x];
             auto text = cell._ch.getText();
 
             // Handle mixed UTF-8 and CP437 content

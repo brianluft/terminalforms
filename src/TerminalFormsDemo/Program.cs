@@ -54,6 +54,9 @@ try
         throw new Exception("Test is required.");
     }
 
+    Log("Running health check.");
+    Application.HealthCheck();
+
     Log("Log started.");
 
     // If a screenshot file is provided, then we will take a screenshot and exit as soon as the UI is idle.

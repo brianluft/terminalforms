@@ -52,7 +52,7 @@ target_compile_options(tfcore PRIVATE ${COMMON_COMPILE_OPTIONS})
 # Add include directories for tvision headers
 target_include_directories(tfcore PRIVATE "${CMAKE_SOURCE_DIR}/../../build/prefix/include")
 
-# Link to tvision library (platform-specific). It's either "tvision" or "tvision-debug".
+# Link to tvision library (platform-specific). On Windows, it's either "tvision" or "tvision-debug".
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(TVISION_SUFFIX "-debug")
 else()
@@ -62,9 +62,9 @@ endif()
 if(WIN32)
     target_link_libraries(tfcore "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/tvision${TVISION_SUFFIX}.lib")
 elseif(APPLE)
-    target_link_libraries(tfcore "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision${TVISION_SUFFIX}.a" ncurses)
+    target_link_libraries(tfcore "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision.a" ncurses)
 else()
-    target_link_libraries(tfcore "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision${TVISION_SUFFIX}.a" ncursesw)
+    target_link_libraries(tfcore "${CMAKE_SOURCE_DIR}/../../build/prefix/lib/libtvision.a" ncursesw)
 endif()
 
 # Set output directories

@@ -110,9 +110,7 @@ public class DemoTest
         var expectedLines = File.ReadAllLines(expectedFilePath);
         var actualLines = File.ReadAllLines(actualFilePath);
 
-        Assert.AreEqual(expectedLines.Length, actualLines.Length);
-
-        for (int i = 0; i < expectedLines.Length; i++)
+        for (int i = 0; i < Math.Min(expectedLines.Length, actualLines.Length); i++)
         {
             if (expectedLines[i].TrimEnd() != actualLines[i].TrimEnd())
             {
@@ -133,5 +131,7 @@ public class DemoTest
                 Assert.Fail(sb.ToString());
             }
         }
+
+        Assert.AreEqual(expectedLines.Length, actualLines.Length);
     }
 }

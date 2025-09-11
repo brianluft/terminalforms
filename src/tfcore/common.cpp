@@ -25,3 +25,8 @@ EXPORT tf::Error TfGetLastErrorMessage(const char** out) {
     *out = lastErrorMessage.c_str();
     return tf::Success;
 }
+
+EXPORT tf::Error TfHealthCheck(int32_t* out) {
+    *out = 123;
+    return tf::Success;
+}
