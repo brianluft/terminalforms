@@ -13,7 +13,7 @@ Then our .NET library "TerminalForms" calls into the "tfcore" library using P/In
 
 # C++ Rules
 - Update `CMakeLists.txt` to include any new source file that you create.
-- Always use the `tf` namespace for C++ classes and internal implementation details. Put `EXPORT` (`extern "C"`) functions in the global namespace.
+- Always use the `tf` namespace for C++ classes and internal implementation details. Put `TF_EXPORT` (`extern "C"`) functions in the global namespace.
 - Always use stdint types like `int32_t` (C# int) and `int16_t` (C# short). Our goal is to make it clear what the C# P/Invoke representation is. Never use native types like `int`, `short`, or `bool`.
 - Always use `BOOL` (4-byte) instead of C++ `bool` (1-byte).
 - Always return `tf::Error` for error handling. Never allow exceptions to bubble up past the C interface. Feel free to add new error codes to `src\tfcore\common.h` (`Error` enum) and make the corresponding change in `src\TerminalForms\Error.cs`--these two files must be kept synchronized.
@@ -46,14 +46,14 @@ TF_DEFAULT_CONSTRUCTOR(Foo)
 // The default constructor is always the one without a numeric suffix.
 // Always take class/structs by pointer even if the underlying constructor takes it by value or by reference.
 // Convert machine integers like int into explicit stdint types like int32_t.
-EXPORT tf::Error TfFooNew2(Foo** out, int32_t bar, TWhatever* baz) {
+TF_EXPORT tf::Error TfFooNew2(Foo** out, int32_t bar, TWhatever* baz) {
     return tf::checkedNew(out, bar, *baz);
 }
 
 // For any non-static type:
 TF_BOILERPLATE_FUNCTIONS(Foo)
 
-// ... EXPORT function implementations ...
+// ... TF_EXPORT function implementations ...
 ```
 
 - See `src/tfcore/common.h` for various TF_* macros you can use in your implementation. Don't provide function prototypes for the exported C methods in the .h file, as they will be consumed from C# which doesn't use the header files and just wastes our time.

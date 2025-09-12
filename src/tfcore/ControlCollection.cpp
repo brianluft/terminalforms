@@ -4,7 +4,7 @@
 #define Uses_TView
 #include <tvision/tv.h>
 
-EXPORT tf::Error TfControlCollectionInsert(void* groupPtr, void* controlPtr) {
+TF_EXPORT tf::Error TfControlCollectionInsert(void* groupPtr, void* controlPtr) {
     if (groupPtr == nullptr || controlPtr == nullptr) {
         return tf::Error_ArgumentNull;
     }
@@ -16,7 +16,7 @@ EXPORT tf::Error TfControlCollectionInsert(void* groupPtr, void* controlPtr) {
     return tf::Success;
 }
 
-EXPORT tf::Error TfControlCollectionInsertAt(void* groupPtr, int32_t index, void* controlPtr) {
+TF_EXPORT tf::Error TfControlCollectionInsertAt(void* groupPtr, int32_t index, void* controlPtr) {
     if (groupPtr == nullptr || controlPtr == nullptr) {
         return tf::Error_ArgumentNull;
     }
@@ -46,7 +46,7 @@ EXPORT tf::Error TfControlCollectionInsertAt(void* groupPtr, int32_t index, void
     return tf::Success;
 }
 
-EXPORT tf::Error TfControlCollectionRemoveAt(void* groupPtr, int32_t index) {
+TF_EXPORT tf::Error TfControlCollectionRemoveAt(void* groupPtr, int32_t index) {
     if (groupPtr == nullptr) {
         return tf::Error_ArgumentNull;
     }

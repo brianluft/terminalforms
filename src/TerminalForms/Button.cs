@@ -1,9 +1,11 @@
+using System.Runtime.CompilerServices;
+
 namespace TerminalForms;
 
 /// <summary>
 /// Represents a button control that can be clicked to perform an action.
 /// </summary>
-public unsafe partial class Button() : Control(_metaObject)
+public unsafe partial class Button : Control
 {
     private static readonly MetaObject _metaObject = new(
         NativeMethods.TfButtonNew,
@@ -12,15 +14,55 @@ public unsafe partial class Button() : Control(_metaObject)
         NativeMethods.TfButtonHash
     );
 
+    public Button()
+        : base(_metaObject)
+    {
+        Check(NativeMethods.TfButtonSetClickEventHandler(Ptr, &NativeClickEventHandler, Ptr));
+    }
+
     public string Text
     {
         get
         {
+            ObjectDisposedException.ThrowIf(IsDisposed, this);
             Check(NativeMethods.TfButtonGetText(Ptr, out var text));
             return text;
         }
-        set { Check(NativeMethods.TfButtonSetText(Ptr, value)); }
+        set
+        {
+            ObjectDisposedException.ThrowIf(IsDisposed, this);
+            Check(NativeMethods.TfButtonSetText(Ptr, value));
+        }
     }
+
+    #region Click
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static void NativeClickEventHandler(void* userData)
+    {
+        try
+        {
+            if (!ObjectRegistry.TryGet(userData, out var obj))
+                return;
+
+            var button = (Button)obj!;
+            button.PerformClick();
+        }
+        catch { }
+    }
+
+    public event EventHandler? Click;
+
+    public void PerformClick()
+    {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        OnClick();
+    }
+
+    protected virtual void OnClick()
+    {
+        Click?.Invoke(this, EventArgs.Empty);
+    }
+    #endregion
 
     private static partial class NativeMethods
     {
@@ -45,5 +87,12 @@ public unsafe partial class Button() : Control(_metaObject)
 
         [LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
         public static partial Error TfButtonGetText(void* self, out string @out);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TfButtonSetClickEventHandler(
+            void* self,
+            delegate* unmanaged[Cdecl]<void*, void> function,
+            void* userData
+        );
     }
 }

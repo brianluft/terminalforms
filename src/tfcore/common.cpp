@@ -17,7 +17,7 @@ void setLastErrorMessage(const std::string& message) {
 
 }  // namespace tf
 
-EXPORT tf::Error TfGetLastErrorMessage(const char** out) {
+TF_EXPORT tf::Error TfGetLastErrorMessage(const char** out) {
     if (!out) {
         return tf::Error_ArgumentNull;
     }
@@ -26,7 +26,7 @@ EXPORT tf::Error TfGetLastErrorMessage(const char** out) {
     return tf::Success;
 }
 
-EXPORT tf::Error TfHealthCheck(int32_t* out) {
+TF_EXPORT tf::Error TfHealthCheck(int32_t* out) {
     *out = 123;
     return tf::Success;
 }

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 using TerminalFormsDemo;
 
@@ -23,6 +24,7 @@ public class DemoTest
                     && !t.IsAbstract
                     && !t.IsInterface
                     && t.Name.EndsWith("Demo")
+                    && t.GetCustomAttribute<TestIgnoreAttribute>() == null
                 )
                 .ToList();
 

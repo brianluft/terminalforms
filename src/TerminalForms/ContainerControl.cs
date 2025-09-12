@@ -14,7 +14,7 @@ public abstract unsafe class ContainerControl : Control
     protected ContainerControl(MetaObject metaObject)
         : base(metaObject)
     {
-        _controls = new ControlCollection(Ptr);
+        _controls = new ControlCollection(this);
     }
 
     /// <summary>

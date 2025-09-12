@@ -7,9 +7,8 @@ namespace TerminalForms;
 /// between a C# List&lt;Control&gt; and the underlying C++ TGroup's linked list of views.
 /// </summary>
 /// <param name="groupPtr">Pointer to the C++ TGroup object to manage.</param>
-public unsafe partial class ControlCollection(void* groupPtr) : IList<Control>
+public unsafe partial class ControlCollection(ContainerControl containerControl) : IList<Control>
 {
-    private readonly void* _groupPtr = groupPtr;
     private readonly List<Control> _controls = [];
 
     /// <summary>
@@ -46,13 +45,14 @@ public unsafe partial class ControlCollection(void* groupPtr) : IList<Control>
     /// <param name="control">The control to add.</param>
     public void Add(Control control)
     {
+        ObjectDisposedException.ThrowIf(containerControl.IsDisposed, containerControl);
         ArgumentNullException.ThrowIfNull(control);
 
         // Add to C# list first
         _controls.Add(control);
 
         // Then add to C++ TGroup
-        Check(NativeMethods.TfControlCollectionInsert(_groupPtr, control.Ptr));
+        Check(NativeMethods.TfControlCollectionInsert(containerControl.Ptr, control.Ptr));
 
         // The TGroup has taken ownership of the control
         control.IsOwned = false;
@@ -63,6 +63,7 @@ public unsafe partial class ControlCollection(void* groupPtr) : IList<Control>
     /// </summary>
     public void Clear()
     {
+        ObjectDisposedException.ThrowIf(containerControl.IsDisposed, containerControl);
         for (int i = _controls.Count - 1; i >= 0; i--)
         {
             RemoveAt(i);
@@ -76,6 +77,7 @@ public unsafe partial class ControlCollection(void* groupPtr) : IList<Control>
     /// <returns>true if the control is found; otherwise, false.</returns>
     public bool Contains(Control control)
     {
+        ObjectDisposedException.ThrowIf(containerControl.IsDisposed, containerControl);
         return _controls.Contains(control);
     }
 
@@ -86,6 +88,7 @@ public unsafe partial class ControlCollection(void* groupPtr) : IList<Control>
     /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
     public void CopyTo(Control[] array, int arrayIndex)
     {
+        ObjectDisposedException.ThrowIf(containerControl.IsDisposed, containerControl);
         _controls.CopyTo(array, arrayIndex);
     }
 
@@ -95,6 +98,7 @@ public unsafe partial class ControlCollection(void* groupPtr) : IList<Control>
     /// <returns>An enumerator for the collection.</returns>
     public IEnumerator<Control> GetEnumerator()
     {
+        ObjectDisposedException.ThrowIf(containerControl.IsDisposed, containerControl);
         return _controls.GetEnumerator();
     }
 
@@ -105,6 +109,7 @@ public unsafe partial class ControlCollection(void* groupPtr) : IList<Control>
     /// <returns>The index of the control if found; otherwise, -1.</returns>
     public int IndexOf(Control control)
     {
+        ObjectDisposedException.ThrowIf(containerControl.IsDisposed, containerControl);
         return _controls.IndexOf(control);
     }
 
@@ -115,6 +120,7 @@ public unsafe partial class ControlCollection(void* groupPtr) : IList<Control>
     /// <param name="control">The control to insert.</param>
     public void Insert(int index, Control control)
     {
+        ObjectDisposedException.ThrowIf(containerControl.IsDisposed, containerControl);
         ArgumentNullException.ThrowIfNull(control);
         if (index < 0 || index > _controls.Count)
             throw new ArgumentOutOfRangeException(nameof(index));
@@ -123,7 +129,7 @@ public unsafe partial class ControlCollection(void* groupPtr) : IList<Control>
         _controls.Insert(index, control);
 
         // Then insert into C++ TGroup
-        Check(NativeMethods.TfControlCollectionInsertAt(_groupPtr, index, control.Ptr));
+        Check(NativeMethods.TfControlCollectionInsertAt(containerControl.Ptr, index, control.Ptr));
 
         // The TGroup has taken ownership of the control
         control.IsOwned = false;
@@ -136,6 +142,7 @@ public unsafe partial class ControlCollection(void* groupPtr) : IList<Control>
     /// <returns>true if the control was successfully removed; otherwise, false.</returns>
     public bool Remove(Control control)
     {
+        ObjectDisposedException.ThrowIf(containerControl.IsDisposed, containerControl);
         int index = IndexOf(control);
         if (index >= 0)
         {
@@ -151,11 +158,12 @@ public unsafe partial class ControlCollection(void* groupPtr) : IList<Control>
     /// <param name="index">The zero-based index of the control to remove.</param>
     public void RemoveAt(int index)
     {
+        ObjectDisposedException.ThrowIf(containerControl.IsDisposed, containerControl);
         if (index < 0 || index >= _controls.Count)
             throw new ArgumentOutOfRangeException(nameof(index));
 
         // Remove from C++ side first
-        Check(NativeMethods.TfControlCollectionRemoveAt(_groupPtr, index));
+        Check(NativeMethods.TfControlCollectionRemoveAt(containerControl.Ptr, index));
 
         // Then remove from C# list
         var control = _controls[index];
@@ -171,6 +179,7 @@ public unsafe partial class ControlCollection(void* groupPtr) : IList<Control>
     /// <returns>An enumerator for the collection.</returns>
     IEnumerator IEnumerable.GetEnumerator()
     {
+        ObjectDisposedException.ThrowIf(containerControl.IsDisposed, containerControl);
         return GetEnumerator();
     }
 

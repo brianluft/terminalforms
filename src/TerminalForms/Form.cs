@@ -11,6 +11,7 @@ public unsafe partial class Form() : ContainerControl(_metaObject)
 
     public void Show()
     {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
         Check(NativeMethods.TfFormShow(Ptr));
 
         // TProgram::deskTop takes ownership.

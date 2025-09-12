@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "EventHandler.h"
 
 #define Uses_TButton
 #include <tvision/tv.h>
@@ -10,6 +11,13 @@ namespace tf {
 class Button : public TButton {
    public:
     Button();
+
+    virtual void press() override;
+
+    void setClickEventHandler(EventHandlerFunction function, void* userData);
+
+   private:
+    EventHandler clickEventHandler{};
 };
 
 template <>

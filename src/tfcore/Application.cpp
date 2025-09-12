@@ -28,11 +28,11 @@ void Application::idle() {
 
 // Implements fixed-size debug screenshots by capturing only the top-left 40×12 region of the actual screen buffer.
 // This approach avoids the complexity of overriding TurboVision's screen dimensions (which get reset by various
-// internal operations) and simply crops the output during the screenshot saving process. The critical insight was 
-// handling TurboVision's hybrid character encoding approach: the modern port stores some characters as raw CP437 
-// codes (particularly extended ASCII like box-drawing characters) while others are already UTF-8 encoded. The 
-// screenshot function detects single-byte characters that need CP437→UTF-8 conversion using 
-// CpTranslator::toPackedUtf8(), while passing through multi-byte UTF-8 sequences unchanged, ensuring perfect 
+// internal operations) and simply crops the output during the screenshot saving process. The critical insight was
+// handling TurboVision's hybrid character encoding approach: the modern port stores some characters as raw CP437
+// codes (particularly extended ASCII like box-drawing characters) while others are already UTF-8 encoded. The
+// screenshot function detects single-byte characters that need CP437→UTF-8 conversion using
+// CpTranslator::toPackedUtf8(), while passing through multi-byte UTF-8 sequences unchanged, ensuring perfect
 // rendering of the classic TUI appearance in a reproducible 40×12 format regardless of the host terminal size.
 void Application::enableDebugScreenshot(const std::string& outputFile) {
     debugScreenshotEnabled_ = true;
@@ -65,13 +65,13 @@ void Application::saveDebugScreenshot() {
     // Write screen content row by row, limiting to our fixed dimensions
     for (int32_t y = 0; y < height; ++y) {
         std::string line;
-        
+
         // For the last row (row 11), try to capture the status line from the bottom of the screen
         int32_t sourceRow = y;
         if (y == height - 1 && actualHeight > height) {
-            sourceRow = actualHeight - 1; // Bottom row of screen
+            sourceRow = actualHeight - 1;  // Bottom row of screen
         }
-        
+
         // Make sure we don't go out of bounds
         if (sourceRow >= actualHeight) {
             sourceRow = y;
@@ -119,13 +119,13 @@ void Application::saveDebugScreenshot() {
 
 }  // namespace tf
 
-EXPORT tf::Error TfApplicationStaticRun() {
+TF_EXPORT tf::Error TfApplicationStaticRun() {
     tf::Application::instance.run();
     tf::Application::instance.shutDown();
     return tf::Success;
 }
 
-EXPORT tf::Error TfApplicationStaticEnableDebugScreenshot(const char* outputFile) {
+TF_EXPORT tf::Error TfApplicationStaticEnableDebugScreenshot(const char* outputFile) {
     if (!outputFile) {
         return tf::Error_ArgumentNull;
     }

@@ -4,7 +4,7 @@
 #define Uses_TView
 #include <tvision/tv.h>
 
-EXPORT tf::Error TfControlGetBounds(TView* view, tf::Rectangle* out) {
+TF_EXPORT tf::Error TfControlGetBounds(TView* view, tf::Rectangle* out) {
     if (view == nullptr || out == nullptr) {
         return tf::Error_ArgumentNull;
     }
@@ -13,7 +13,7 @@ EXPORT tf::Error TfControlGetBounds(TView* view, tf::Rectangle* out) {
     return tf::Success;
 }
 
-EXPORT tf::Error TfControlSetBounds(TView* view, const tf::Rectangle* value) {
+TF_EXPORT tf::Error TfControlSetBounds(TView* view, const tf::Rectangle* value) {
     if (view == nullptr || value == nullptr) {
         return tf::Error_ArgumentNull;
     }

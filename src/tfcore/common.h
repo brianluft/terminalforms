@@ -4,9 +4,11 @@
 #include <string>
 
 #ifdef _WIN32
-#define EXPORT extern "C" __declspec(dllexport)
+#define TF_EXPORT extern "C" __declspec(dllexport)
+#define TF_CDECL __cdecl
 #else
-#define EXPORT extern "C"
+#define TF_EXPORT extern "C" __attribute__((visibility("default")))
+#define TF_CDECL
 #endif
 
 #ifndef FALSE
@@ -152,19 +154,19 @@ Error checkedHash(T* self, int32_t* out) {
 }  // namespace tf
 
 // Use this macro if the class has a default parameterless constructor.
-#define TF_DEFAULT_CONSTRUCTOR(type)                 \
-    EXPORT tf::Error Tf##type##New(tf::type** out) { \
-        return tf::checkedNew(out);                  \
+#define TF_DEFAULT_CONSTRUCTOR(type)                    \
+    TF_EXPORT tf::Error Tf##type##New(tf::type** out) { \
+        return tf::checkedNew(out);                     \
     }
 
 // Every non-static class/struct that is exported to C must have these functions.
-#define TF_BOILERPLATE_FUNCTIONS(type)                                              \
-    EXPORT tf::Error Tf##type##Delete(tf::type* self) {                             \
-        return tf::checkedDelete(self);                                             \
-    }                                                                               \
-    EXPORT tf::Error Tf##type##Equals(tf::type* self, tf::type* other, BOOL* out) { \
-        return tf::checkedEquals(self, other, out);                                 \
-    }                                                                               \
-    EXPORT tf::Error Tf##type##Hash(tf::type* self, int32_t* out) {                 \
-        return tf::checkedHash(self, out);                                          \
+#define TF_BOILERPLATE_FUNCTIONS(type)                                                 \
+    TF_EXPORT tf::Error Tf##type##Delete(tf::type* self) {                             \
+        return tf::checkedDelete(self);                                                \
+    }                                                                                  \
+    TF_EXPORT tf::Error Tf##type##Equals(tf::type* self, tf::type* other, BOOL* out) { \
+        return tf::checkedEquals(self, other, out);                                    \
+    }                                                                                  \
+    TF_EXPORT tf::Error Tf##type##Hash(tf::type* self, int32_t* out) {                 \
+        return tf::checkedHash(self, out);                                             \
     }

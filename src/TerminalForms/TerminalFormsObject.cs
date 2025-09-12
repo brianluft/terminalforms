@@ -10,12 +10,8 @@ public abstract unsafe class TerminalFormsObject : IDisposable
 
         Check(_metaObject.NativeNew(out var ptr));
         Ptr = ptr;
-    }
 
-    protected TerminalFormsObject(MetaObject metaObject, void* ptr)
-    {
-        _metaObject = metaObject;
-        Ptr = ptr;
+        ObjectRegistry.Register(this);
     }
 
     public bool IsDisposed { get; private set; }
@@ -53,6 +49,8 @@ public abstract unsafe class TerminalFormsObject : IDisposable
             {
                 _metaObject.NativeDelete(Ptr);
             }
+
+            ObjectRegistry.Unregister(this);
 
             // set large fields to null
             IsDisposed = true;

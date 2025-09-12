@@ -13,7 +13,7 @@ Form::Form() : TDialog(TRect(0, 0, 20, 8), "Form"), TWindowInit(TDialog::initFra
 TF_DEFAULT_CONSTRUCTOR(Form)
 TF_BOILERPLATE_FUNCTIONS(Form)
 
-EXPORT tf::Error TfFormShow(tf::Form* self) {
+TF_EXPORT tf::Error TfFormShow(tf::Form* self) {
     TProgram::deskTop->insert(self);
     return tf::Success;
 }
