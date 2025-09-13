@@ -3,6 +3,22 @@ using System.Runtime.CompilerServices;
 namespace TerminalForms;
 
 /// <summary>
+/// Specifies the alignment of text within a button control.
+/// </summary>
+public enum ButtonTextAlignment
+{
+    /// <summary>
+    /// Text is centered within the button bounds (default behavior).
+    /// </summary>
+    Center = 0,
+
+    /// <summary>
+    /// Text is left-aligned within the button bounds.
+    /// </summary>
+    Left = 1,
+}
+
+/// <summary>
 /// Represents a button control that can be clicked to perform an action.
 /// </summary>
 public unsafe partial class Button : Control
@@ -48,6 +64,84 @@ public unsafe partial class Button : Control
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
             Check(NativeMethods.TfButtonSetText(Ptr, value));
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this button is the default button.
+    /// When set to true, this button will respond to the Enter key and be visually
+    /// distinguished as the primary action.
+    /// </summary>
+    /// <value>true if this button is the default button; otherwise, false.</value>
+    /// <remarks>
+    /// Only one button in a container should be marked as the default button.
+    /// Default buttons are typically used for positive actions like "OK" or "Save".
+    /// Users can activate the default button by pressing Enter regardless of which
+    /// control currently has focus.
+    /// </remarks>
+    public bool IsDefault
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(IsDisposed, this);
+            Check(NativeMethods.TfButtonGetIsDefault(Ptr, out var value));
+            return value;
+        }
+        set
+        {
+            ObjectDisposedException.ThrowIf(IsDisposed, this);
+            Check(NativeMethods.TfButtonSetIsDefault(Ptr, value));
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the alignment of text within the button.
+    /// </summary>
+    /// <value>A <see cref="ButtonTextAlignment"/> value that specifies how the button text is aligned.</value>
+    /// <remarks>
+    /// By default, button text is centered within the button bounds. Setting this property
+    /// to <see cref="ButtonTextAlignment.Left"/> will left-align the text, which can be
+    /// useful for buttons with longer text or when consistent alignment is desired across
+    /// multiple buttons of different widths.
+    /// </remarks>
+    public ButtonTextAlignment TextAlign
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(IsDisposed, this);
+            Check(NativeMethods.TfButtonGetTextAlign(Ptr, out var value));
+            return (ButtonTextAlignment)value;
+        }
+        set
+        {
+            ObjectDisposedException.ThrowIf(IsDisposed, this);
+            Check(NativeMethods.TfButtonSetTextAlign(Ptr, (int)value));
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the button should grab focus when clicked.
+    /// </summary>
+    /// <value>true if the button should grab focus when clicked; otherwise, false.</value>
+    /// <remarks>
+    /// When this property is true, clicking the button will cause it to receive input focus
+    /// in addition to performing its click action. This can be useful for buttons that
+    /// represent state changes where the user might want to see visual feedback that the
+    /// button is now active. Most buttons should leave this as false to maintain focus
+    /// on the previously focused control.
+    /// </remarks>
+    public bool GrabsFocus
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(IsDisposed, this);
+            Check(NativeMethods.TfButtonGetGrabsFocus(Ptr, out var value));
+            return value;
+        }
+        set
+        {
+            ObjectDisposedException.ThrowIf(IsDisposed, this);
+            Check(NativeMethods.TfButtonSetGrabsFocus(Ptr, value));
         }
     }
 
@@ -138,6 +232,36 @@ public unsafe partial class Button : Control
             void* self,
             delegate* unmanaged[Cdecl]<void*, void> function,
             void* userData
+        );
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TfButtonGetIsDefault(
+            void* self,
+            [MarshalAs(UnmanagedType.I4)] out bool @out
+        );
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TfButtonSetIsDefault(
+            void* self,
+            [MarshalAs(UnmanagedType.I4)] bool value
+        );
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TfButtonGetTextAlign(void* self, out int @out);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TfButtonSetTextAlign(void* self, int value);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TfButtonGetGrabsFocus(
+            void* self,
+            [MarshalAs(UnmanagedType.I4)] out bool @out
+        );
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TfButtonSetGrabsFocus(
+            void* self,
+            [MarshalAs(UnmanagedType.I4)] bool value
         );
     }
 }

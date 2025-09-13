@@ -1,7 +1,9 @@
 #include "Button.h"
 
 #define Uses_TRect
+#define Uses_TButton
 #include <tvision/tv.h>
+#include <tvision/dialogs.h>
 
 namespace tf {
 
@@ -14,6 +16,46 @@ void Button::press() {
 
 void Button::setClickEventHandler(EventHandlerFunction function, void* userData) {
     clickEventHandler = EventHandler(function, userData);
+}
+
+BOOL Button::getIsDefault() const {
+    return (flags & bfDefault) != 0;
+}
+
+void Button::setIsDefault(BOOL value) {
+    if (value) {
+        flags |= bfDefault;
+        amDefault = True;
+    } else {
+        flags &= ~bfDefault;
+        amDefault = False;
+    }
+    drawView();
+}
+
+int32_t Button::getTextAlign() const {
+    return (flags & bfLeftJust) != 0 ? 1 : 0;
+}
+
+void Button::setTextAlign(int32_t value) {
+    if (value == 1) {
+        flags |= bfLeftJust;
+    } else {
+        flags &= ~bfLeftJust;
+    }
+    drawView();
+}
+
+BOOL Button::getGrabsFocus() const {
+    return (flags & bfGrabFocus) != 0;
+}
+
+void Button::setGrabsFocus(BOOL value) {
+    if (value) {
+        flags |= bfGrabFocus;
+    } else {
+        flags &= ~bfGrabFocus;
+    }
 }
 
 }  // namespace tf
@@ -48,5 +90,59 @@ TF_EXPORT tf::Error TfButtonSetClickEventHandler(tf::Button* self, tf::EventHand
     }
 
     self->setClickEventHandler(function, userData);
+    return tf::Success;
+}
+
+TF_EXPORT tf::Error TfButtonGetIsDefault(tf::Button* self, BOOL* out) {
+    if (self == nullptr || out == nullptr) {
+        return tf::Error_ArgumentNull;
+    }
+
+    *out = self->getIsDefault();
+    return tf::Success;
+}
+
+TF_EXPORT tf::Error TfButtonSetIsDefault(tf::Button* self, BOOL value) {
+    if (self == nullptr) {
+        return tf::Error_ArgumentNull;
+    }
+
+    self->setIsDefault(value);
+    return tf::Success;
+}
+
+TF_EXPORT tf::Error TfButtonGetTextAlign(tf::Button* self, int32_t* out) {
+    if (self == nullptr || out == nullptr) {
+        return tf::Error_ArgumentNull;
+    }
+
+    *out = self->getTextAlign();
+    return tf::Success;
+}
+
+TF_EXPORT tf::Error TfButtonSetTextAlign(tf::Button* self, int32_t value) {
+    if (self == nullptr) {
+        return tf::Error_ArgumentNull;
+    }
+
+    self->setTextAlign(value);
+    return tf::Success;
+}
+
+TF_EXPORT tf::Error TfButtonGetGrabsFocus(tf::Button* self, BOOL* out) {
+    if (self == nullptr || out == nullptr) {
+        return tf::Error_ArgumentNull;
+    }
+
+    *out = self->getGrabsFocus();
+    return tf::Success;
+}
+
+TF_EXPORT tf::Error TfButtonSetGrabsFocus(tf::Button* self, BOOL value) {
+    if (self == nullptr) {
+        return tf::Error_ArgumentNull;
+    }
+
+    self->setGrabsFocus(value);
     return tf::Success;
 }

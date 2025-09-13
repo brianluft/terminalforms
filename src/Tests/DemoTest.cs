@@ -24,7 +24,7 @@ public class DemoTest
                     && !t.IsAbstract
                     && !t.IsInterface
                     && t.Name.EndsWith("Demo")
-                    && t.GetCustomAttribute<TestIgnoreAttribute>() == null
+                    && t.GetCustomAttribute<TestIncludeAttribute>() is not null
                 )
                 .ToList();
 

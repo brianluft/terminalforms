@@ -16,6 +16,14 @@ class Button : public TButton {
 
     void setClickEventHandler(EventHandlerFunction function, void* userData);
 
+    // Flag management methods
+    BOOL getIsDefault() const;
+    void setIsDefault(BOOL value);
+    int32_t getTextAlign() const;
+    void setTextAlign(int32_t value);
+    BOOL getGrabsFocus() const;
+    void setGrabsFocus(BOOL value);
+
    private:
     EventHandler clickEventHandler{};
 };

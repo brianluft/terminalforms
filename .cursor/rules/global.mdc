@@ -11,6 +11,9 @@ Then our .NET library "TerminalForms" calls into the "tfcore" library using P/In
 - Refer to me as "boss" so I know you've read this.
 - We are establishing a convention for our bindings as we go. Perform a codebase search for other examples of bindings we have done for guidance and precedent. Consistency is key.
 
+# Cross-Language Rules
+- We do not use tvision's command system. Instead, we override the functions that send messages and rig them to invoke C# callbacks instead.
+
 # C++ Rules
 - Update `CMakeLists.txt` to include any new source file that you create.
 - Always use the `tf` namespace for C++ classes and internal implementation details. Put `TF_EXPORT` (`extern "C"`) functions in the global namespace.

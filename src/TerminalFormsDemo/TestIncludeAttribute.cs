@@ -1,4 +1,4 @@
 namespace TerminalFormsDemo;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class TestIgnoreAttribute : Attribute { }
+public class TestIncludeAttribute : Attribute { }

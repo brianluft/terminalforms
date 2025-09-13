@@ -2,6 +2,7 @@ using TerminalForms;
 
 namespace TerminalFormsDemo;
 
+[TestInclude]
 public class ButtonTextDemo : IDemo
 {
     public void Setup()
