@@ -28,7 +28,7 @@ public unsafe partial class Button : Control
     /// <summary>
     /// Gets or sets the text displayed on the button.
     /// The text can include a shortcut key indicator using tilde (~) characters around a letter
-    /// to create an Alt+letter shortcut (e.g., "~OK" creates an Alt+O shortcut).
+    /// to create an Alt+letter shortcut (e.g., "~O~K" creates an Alt+O shortcut).
     /// </summary>
     /// <value>The text to display on the button.</value>
     /// <remarks>

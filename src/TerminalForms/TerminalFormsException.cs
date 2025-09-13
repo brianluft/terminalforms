@@ -23,8 +23,8 @@ public class TerminalFormsException(Error error, string? message = null)
         if (error == Error.Success)
             return;
 
-        var hasMessage = error.HasFlag(Error.Error_HasMessage);
-        error &= ~Error.Error_HasMessage;
+        var hasMessage = error.HasFlag(Error.HasMessage);
+        error &= ~Error.HasMessage;
 
         if (hasMessage)
         {

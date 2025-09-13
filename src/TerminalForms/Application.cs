@@ -2,14 +2,12 @@ namespace TerminalForms;
 
 /// <summary>
 /// Provides static methods for managing the Terminal Forms application lifecycle.
-/// This class wraps the Turbo Vision TApplication framework, which handles the main event loop,
-/// subsystem initialization (memory, video, events, error handling), and application shutdown.
 /// </summary>
 public static partial class Application
 {
     /// <summary>
     /// Performs a basic health check to verify that the native Terminal Forms library (tfcore)
-    /// is properly loaded and functioning. This method may be called before using other
+    /// is properly loaded and functioning. This method may be optionally called before using other
     /// Terminal Forms functionality to ensure the interop layer is working correctly.
     /// </summary>
     /// <exception cref="Exception">Thrown if the health check fails, indicating a problem with the native library.</exception>
@@ -23,8 +21,7 @@ public static partial class Application
     }
 
     /// <summary>
-    /// Starts the main application event loop. This method initializes the Turbo Vision subsystems
-    /// (memory manager, video manager, event manager, system error handler, and history list manager),
+    /// Starts the main application event loop. This method initializes the Terminal Forms subsystems,
     /// then enters the main event processing loop that continues until a quit command is received.
     /// The event loop repeatedly fetches events from the mouse, keyboard, and other sources,
     /// then dispatches them to the appropriate views for handling.

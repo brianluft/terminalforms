@@ -2,8 +2,8 @@ namespace TerminalForms;
 
 /// <summary>
 /// Represents a window form in the Terminal Forms application. Forms are specialized container controls
-/// that wrap Turbo Vision's TWindow functionality, providing bordered rectangular displays that can
-/// contain other controls. Forms can be moved, resized, and managed as part of the application's desktop.
+/// providing bordered rectangular displays that can contain other controls. Forms can be moved, resized, and managed
+/// as part of the application's desktop.
 /// </summary>
 /// <remarks>
 /// Forms inherit all the functionality of container controls, allowing them to host child controls.

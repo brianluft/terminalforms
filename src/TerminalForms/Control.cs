@@ -19,9 +19,9 @@ public abstract unsafe partial class Control : TerminalFormsObject
     /// The X and Y coordinates are relative to the parent container's coordinate system.
     /// </value>
     /// <remarks>
-    /// In Turbo Vision, all views manage rectangular regions of the screen. The bounds define
-    /// the complete area owned by this control, including any borders or decorative elements.
-    /// Changing the bounds will trigger a redraw of the control at its new position and size.
+    /// All views manage rectangular regions of the screen. The bounds define the complete area owned by this control,
+    /// including any borders or decorative elements. Changing the bounds will trigger a redraw of the control at its
+    /// new position and size.
     /// </remarks>
     public Rectangle Bounds
     {

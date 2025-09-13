@@ -4,7 +4,7 @@ namespace TerminalForms;
 /// Maintains a mapping from C++ object pointers to their corresponding C# objects.
 /// This allows callbacks to make the leap from the C++ side to the correct C# object.
 /// </summary>
-public static unsafe class ObjectRegistry
+internal static unsafe class ObjectRegistry
 {
     private static readonly Dictionary<IntPtr, WeakReference<TerminalFormsObject>> _objects = [];
 
