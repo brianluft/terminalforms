@@ -75,6 +75,16 @@ run_tests() {
     cd "$ROOT_DIR"
 }
 
+build_docs() {
+    status "header" "website"
+    cd "$ROOT_DIR/src/website"
+    rm -rf _site api "$ROOT_DIR/build/website"
+    dotnet docfx --warningsAsErrors --logLevel warning docfx.json
+    mv -f _site "$ROOT_DIR/build/website"
+    rm -rf api
+    cd "$ROOT_DIR"
+}
+
 restore
 build_terminalformsnative
 build_terminalforms
@@ -83,5 +93,7 @@ build_terminalforms_demo
 if [ -z "${NO_TESTS:-}" ]; then
     run_tests
 fi
+
+build_docs
 
 status "success" "Build complete."

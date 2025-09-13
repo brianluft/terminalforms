@@ -8,6 +8,20 @@
         "csharpier"
       ],
       "rollForward": false
+    },
+    "docfx": {
+      "version": "2.78.3",
+      "commands": [
+        "docfx"
+      ],
+      "rollForward": false
+    },
+    "dotnet-serve": {
+      "version": "1.10.190",
+      "commands": [
+        "dotnet-serve"
+      ],
+      "rollForward": false
     }
   }
 }

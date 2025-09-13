@@ -11,7 +11,7 @@ public abstract unsafe class ContainerControl : Control
     /// Initializes a new instance of the <see cref="ContainerControl"/> class with the specified meta object.
     /// </summary>
     /// <param name="metaObject">The meta object that defines the native functions for this container control type.</param>
-    protected ContainerControl(MetaObject metaObject)
+    internal ContainerControl(MetaObject metaObject)
         : base(metaObject)
     {
         _controls = new ControlCollection(this);

@@ -1,0 +1,17 @@
+/* Always show the vertical scrollbar even if the page happens to be too short, so the page width doesn't jump around
+on page transitions. */
+html {
+    overflow-y: scroll;
+}
+
+/* Our logo image is oversized for high-DPI displays, so set the correct display size. */
+img#logo {
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+}
+
+/* Hide the external link icon. */
+a.external[href]::after {
+    display: none !important;
+}

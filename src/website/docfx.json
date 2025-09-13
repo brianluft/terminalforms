@@ -1,0 +1,51 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../../",
+          "files": [
+            "build/dotnet-artifacts/bin/TerminalForms/*_*/TerminalForms.dll"
+          ]
+        }
+      ],
+      "dest": "api"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "_site/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      }
+    ],
+    "output": "_site",
+    "template": [
+      "default",
+      "modern",
+      "template"
+    ],
+    "globalMetadata": {
+      "_appFaviconPath": "images/icon.png",
+      "_appLogoPath": "images/icon.png",
+      "_appName": "Terminal Forms",
+      "_appTitle": "Terminal Forms",
+      "_enableSearch": true,
+      "_disableContribution": true,
+      "pdf": false,
+      "lang": "en"
+    }
+  }
+}

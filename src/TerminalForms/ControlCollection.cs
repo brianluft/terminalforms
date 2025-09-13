@@ -6,7 +6,7 @@ namespace TerminalForms;
 /// Manages the child controls of a C++ TGroup. This collection maintains synchronization
 /// between a C# List&lt;Control&gt; and the underlying C++ TGroup's linked list of views.
 /// </summary>
-/// <param name="groupPtr">Pointer to the C++ TGroup object to manage.</param>
+/// <param name="containerControl">The container control that owns this control collection.</param>
 public unsafe partial class ControlCollection(ContainerControl containerControl) : IList<Control>
 {
     private readonly List<Control> _controls = [];

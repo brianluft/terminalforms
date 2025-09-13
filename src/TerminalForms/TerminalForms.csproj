@@ -8,6 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!-- CI passes -p:PackAssetsDir=/abs/path/to/pack-assets -->
     <PackAssetsDir Condition="'$(PackAssetsDir)' == ''"
       >$(MSBuildProjectDirectory)\..\..\pack-assets</PackAssetsDir
