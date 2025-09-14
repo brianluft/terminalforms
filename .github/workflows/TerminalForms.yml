@@ -94,6 +94,11 @@ jobs:
           bash dotnet-install.sh --arch arm --channel 9.0
           echo "TARGET_DOTNET_ROOT=$HOME/.dotnet" >> $GITHUB_ENV
 
+      - name: Disable Tests (mac and linux)
+        if: startsWith(matrix.runner, 'macos') || startsWith(matrix.runner, 'ubuntu')
+        run: |
+          echo "NO_TESTS=1" >> $GITHUB_ENV
+
       - name: Build
         shell: bash
         env:
@@ -103,7 +108,7 @@ jobs:
           TARGET_ARCH: ${{ matrix.target_arch }}
         run: |
           bash scripts/init.sh
-          NO_TESTS=1 bash scripts/build.sh
+          bash scripts/build.sh
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
