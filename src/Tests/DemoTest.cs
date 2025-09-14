@@ -64,28 +64,20 @@ public class DemoTest
     private static void TestCore(string name, string actualFilePath, string logFilePath)
     {
         var exeDir = Path.GetDirectoryName(typeof(IDemo).Assembly.Location)!;
-        var expectedFilePath = Path.Combine(
-            exeDir,
-            "..",
-            "..",
-            "..",
-            "..",
-            "..",
-            "src",
-            "Tests",
-            "screenshots",
-            $"{name}.txt"
-        );
+        var filesDir = Path.Combine(exeDir, "..", "..", "..", "..", "..", "src", "Tests", "files");
+        var eventsFilePath = Path.Combine(filesDir, $"{name}-input.txt");
+        var expectedFilePath = Path.Combine(filesDir, $"{name}-output.txt");
 
         // Run `TerminalFormsDemo` in the same directory as the IDemo assembly.
         var demoDll = Path.Combine(exeDir, "TerminalFormsDemo.dll");
-        ProcessStartInfo psi = new(
-            "dotnet",
-            $"\"{demoDll}\" --test \"{name}\" --screenshot \"{actualFilePath}\" --log \"{logFilePath}\""
-        )
+        var args =
+            $"\"{demoDll}\" --test \"{name}\" --screenshot \"{actualFilePath}\" --log \"{logFilePath}\"";
+        if (File.Exists(eventsFilePath))
         {
-            CreateNoWindow = true,
-        };
+            args += $" --events \"{eventsFilePath}\"";
+        }
+
+        ProcessStartInfo psi = new("dotnet", args) { CreateNoWindow = true };
 
         using var process = Process.Start(psi)!;
 

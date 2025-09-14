@@ -4,6 +4,7 @@ using TerminalFormsDemo;
 string? test = null;
 string? screenshotFile = null;
 string? logFile = null;
+string? eventsFile = null;
 
 void Log(string message)
 {
@@ -18,7 +19,7 @@ try
     if (args.Length % 2 != 0 || args.Length == 0)
     {
         throw new Exception(
-            "Usage: TerminalFormsDemo --test \"name\" [--screenshot <file-path>] [--log <file-path>]"
+            "Usage: TerminalFormsDemo --test \"name\" [--screenshot <file-path>] [--log <file-path>] [--events <file-path>]"
         );
     }
 
@@ -40,14 +41,13 @@ try
             case "--log":
                 logFile = value;
                 break;
+            case "--events":
+                eventsFile = value;
+                break;
             default:
                 throw new Exception($"Invalid flag: {key}");
         }
     }
-
-    Log($"Test: {test}");
-    Log($"Screenshot file: {screenshotFile}");
-    Log($"Log file: {logFile}");
 
     if (test == null)
     {
@@ -57,7 +57,13 @@ try
     Log("Running health check.");
     Application.HealthCheck();
 
-    Log("Log started.");
+    // If an events file is provided, then we will enable debug events.
+    if (eventsFile != null)
+    {
+        Log("Enabling events...");
+        Application.EnableDebugEvents(eventsFile);
+        Log("Events enabled.");
+    }
 
     // If a screenshot file is provided, then we will take a screenshot and exit as soon as the UI is idle.
     if (screenshotFile != null)

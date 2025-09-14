@@ -50,6 +50,15 @@ public static partial class Application
         Check(NativeMethods.TfApplicationStaticEnableDebugScreenshot(outputFile));
     }
 
+    /// <summary>
+    /// Provides a series of keyboard and mouse input events to the application for automated testing.
+    /// </summary>
+    /// <param name="inputFile">The path to a text file containing the events to be provided to the application.</param>
+    public static void EnableDebugEvents(string inputFile)
+    {
+        Check(NativeMethods.TfApplicationStaticEnableDebugEvents(inputFile));
+    }
+
     private static partial class NativeMethods
     {
         [LibraryImport(Global.DLL_NAME)]
@@ -57,6 +66,9 @@ public static partial class Application
 
         [LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
         public static partial Error TfApplicationStaticEnableDebugScreenshot(string outputFile);
+
+        [LibraryImport(Global.DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
+        public static partial Error TfApplicationStaticEnableDebugEvents(string inputFile);
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TfHealthCheck(out int @out);
