@@ -23,13 +23,8 @@ BOOL Button::getIsDefault() const {
 }
 
 void Button::setIsDefault(BOOL value) {
-    if (value) {
-        flags |= bfDefault;
-        amDefault = True;
-    } else {
-        flags &= ~bfDefault;
-        amDefault = False;
-    }
+    flags &= ~bfDefault;
+    makeDefault(value);
     drawView();
 }
 

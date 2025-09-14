@@ -31,13 +31,14 @@ void Application::idle() {
     if (debugEventsEnabled_ && !debugEventsQueue_.empty()) {
         putEvent(debugEventsQueue_.front());
         debugEventsQueue_.pop();
-        return;
+        return;  // This doesn't count towards the extraIdleCount below.
     }
 
-    // Hang around for a couple extra idles for things to settle and then exit.
-    static int extraIdleCount = 0;
-    if (extraIdleCount++ > 5) {
-        exit(0);
+    if (debugScreenshotEnabled_) {
+        static int extraIdleCount = 0;
+        if (extraIdleCount++ > 5) {
+            exit(0);
+        }
     }
 }
 
