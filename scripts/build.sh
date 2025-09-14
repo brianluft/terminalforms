@@ -3,7 +3,7 @@ set -euo pipefail
 source "$( dirname "${BASH_SOURCE[0]}" )/env.sh"
 cd $ROOT_DIR
 
-build_terminalformsnative() {
+build_tfcore() {
     status "header" "tfcore"
 
     # Create directories
@@ -40,27 +40,20 @@ build_terminalformsnative() {
 restore() {
     status "header" "dotnet restore"
     cd "$ROOT_DIR/src"
-    dotnet restore --runtime "$RID"
+    dotnet restore "-p:MyRuntimeIdentifier=$RID"
     status "success" "Restored package dependencies"
     cd "$ROOT_DIR"
 }
 
-build_terminalforms() {
-    status "header" "TerminalForms"
+build_solution() {
+    status "header" "dotnet build"
     cd "$ROOT_DIR/src"
-    dotnet build TerminalForms/TerminalForms.csproj --runtime "$RID" --no-restore
-    cd "$ROOT_DIR"
-}
-
-build_terminalforms_demo() {
-    status "header" "TerminalFormsDemo"
-    cd "$ROOT_DIR/src"
-    dotnet build TerminalFormsDemo/TerminalFormsDemo.csproj --runtime "$RID" --no-restore
+    dotnet build TerminalForms.sln "-p:MyRuntimeIdentifier=$RID" --no-restore
     cd "$ROOT_DIR"
 }
 
 run_tests() {
-    status "header" "Tests"
+    status "header" "dotnet test"
     cd "$ROOT_DIR/src"
 
     # Is TARGET_DOTNET_ROOT set? If so, switch over to it for test running.
@@ -70,12 +63,11 @@ run_tests() {
         echo "Using dotnet: $(which dotnet)"
     fi
 
-    dotnet build Tests/Tests.csproj --runtime "$RID" --no-restore
-    dotnet test Tests/Tests.csproj --runtime "$RID" --no-build
+    dotnet test Tests/Tests.csproj "-p:MyRuntimeIdentifier=$RID" --no-build
     cd "$ROOT_DIR"
 }
 
-build_docs() {
+build_website() {
     status "header" "website"
     cd "$ROOT_DIR/src/website"
     rm -rf _site api "$ROOT_DIR/build/website"
@@ -85,15 +77,12 @@ build_docs() {
     cd "$ROOT_DIR"
 }
 
+build_tfcore
 restore
-build_terminalformsnative
-build_terminalforms
-build_terminalforms_demo
-
+build_solution
 if [ -z "${NO_TESTS:-}" ]; then
     run_tests
 fi
-
-build_docs
+build_website
 
 status "success" "Build complete."

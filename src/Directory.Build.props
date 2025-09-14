@@ -2,4 +2,9 @@
   <PropertyGroup>
     <ArtifactsPath>$(MSBuildThisFileDirectory)\..\build\dotnet-artifacts</ArtifactsPath>
   </PropertyGroup>
+  <!-- "dotnet build" cannot build a solution with a runtime identifier. This is a workaround. -->
+  <!-- https://github.com/dotnet/sdk/issues/14281#issuecomment-876510589 -->
+  <PropertyGroup>
+    <RuntimeIdentifier>$(MyRuntimeIdentifier)</RuntimeIdentifier>
+  </PropertyGroup>
 </Project>
