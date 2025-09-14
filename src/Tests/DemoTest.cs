@@ -15,6 +15,7 @@ public class DemoTest
     {
         get
         {
+            const string namespacePrefix = "TerminalFormsDemo.";
             var interfaceType = typeof(IDemo);
             var assembly = interfaceType.Assembly;
             var demoTypes = assembly
@@ -24,7 +25,7 @@ public class DemoTest
 
             foreach (var demoType in demoTypes)
             {
-                yield return new object[] { demoType.Name };
+                yield return new object[] { demoType.FullName![namespacePrefix.Length..] };
             }
         }
     }
@@ -58,9 +59,24 @@ public class DemoTest
     private static void TestCore(string name, string actualFilePath, string logFilePath)
     {
         var exeDir = Path.GetDirectoryName(typeof(IDemo).Assembly.Location)!;
-        var filesDir = Path.Combine(exeDir, "..", "..", "..", "..", "..", "src", "Tests", "files");
-        var eventsFilePath = Path.Combine(filesDir, $"{name}-input.txt");
-        var expectedFilePath = Path.Combine(filesDir, $"{name}-output.txt");
+        var filesDir = Path.Combine(
+            exeDir,
+            "..",
+            "..",
+            "..",
+            "..",
+            "..",
+            "src",
+            "TerminalFormsDemo"
+        );
+        var eventsFilePath = Path.Combine(
+            filesDir,
+            $"{name.Replace('.', Path.DirectorySeparatorChar)}-input.txt"
+        );
+        var expectedFilePath = Path.Combine(
+            filesDir,
+            $"{name.Replace('.', Path.DirectorySeparatorChar)}-output.txt"
+        );
 
         // Run `TerminalFormsDemo` in the same directory as the IDemo assembly.
         var demoDll = Path.Combine(exeDir, "TerminalFormsDemo.dll");
@@ -105,17 +121,17 @@ public class DemoTest
                 StringBuilder sb = new("Mismatch at line index ");
                 sb.Append(i);
                 sb.AppendLine(".");
-                sb.AppendLine("Expected:");
-                for (var j = 0; j <= i + 1 && j < expectedLines.Length; j++)
+                sb.AppendLine("---Expected---");
+                for (var j = 0; j < expectedLines.Length; j++)
                 {
-                    sb.AppendLine($"Line {j}: \"{expectedLines[j].TrimEnd()}\"");
+                    sb.AppendLine(expectedLines[j]);
                 }
-                sb.AppendLine();
-                sb.AppendLine("Actual:");
-                for (var j = 0; j <= i + 1 && j < actualLines.Length; j++)
+                sb.AppendLine("---Actual---");
+                for (var j = 0; j < actualLines.Length; j++)
                 {
-                    sb.AppendLine($"Line {j}: \"{actualLines[j].TrimEnd()}\"");
+                    sb.AppendLine(actualLines[j]);
                 }
+                sb.AppendLine("------");
                 Assert.Fail(sb.ToString());
             }
         }

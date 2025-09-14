@@ -1,6 +1,6 @@
 using TerminalForms;
 
-namespace TerminalFormsDemo;
+namespace TerminalFormsDemo.Buttons;
 
 public class ButtonTextDemo : IDemo
 {

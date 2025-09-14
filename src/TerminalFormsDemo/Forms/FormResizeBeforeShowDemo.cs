@@ -1,6 +1,6 @@
 using TerminalForms;
 
-namespace TerminalFormsDemo;
+namespace TerminalFormsDemo.Forms;
 
 public class FormResizeBeforeShowDemo : IDemo
 {
