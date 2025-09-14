@@ -38,6 +38,7 @@ endif()
 add_library(tfcore SHARED
     Application.cpp
     Button.cpp
+    CheckBox.cpp
     common.cpp
     Control.cpp
     ControlCollection.cpp

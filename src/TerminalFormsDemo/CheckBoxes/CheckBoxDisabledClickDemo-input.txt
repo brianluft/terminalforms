@@ -1,0 +1,2 @@
+# Space key (should not work on disabled checkbox)
+KEYDOWN code: 7200 ctrl: 0 text: 32
