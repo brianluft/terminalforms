@@ -19,13 +19,7 @@ public class DemoTest
             var assembly = interfaceType.Assembly;
             var demoTypes = assembly
                 .GetTypes()
-                .Where(t =>
-                    interfaceType.IsAssignableFrom(t)
-                    && !t.IsAbstract
-                    && !t.IsInterface
-                    && t.Name.EndsWith("Demo")
-                    && t.GetCustomAttribute<TestIncludeAttribute>() is not null
-                )
+                .Where(t => interfaceType.IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
                 .ToList();
 
             foreach (var demoType in demoTypes)

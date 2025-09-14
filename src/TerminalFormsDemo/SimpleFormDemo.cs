@@ -2,7 +2,6 @@ using TerminalForms;
 
 namespace TerminalFormsDemo;
 
-[TestInclude]
 public class SimpleFormDemo : IDemo
 {
     public void Setup()

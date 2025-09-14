@@ -2,7 +2,6 @@ using TerminalForms;
 
 namespace TerminalFormsDemo;
 
-[TestInclude]
 public class FormResizeBeforeShowDemo : IDemo
 {
     public void Setup()
