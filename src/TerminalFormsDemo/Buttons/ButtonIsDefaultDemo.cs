@@ -2,10 +2,7 @@ using TerminalForms;
 
 namespace TerminalFormsDemo.Buttons;
 
-// TODO: Currently disabled. We need a non-button control implemented that _doesn't_ accept the Enter key when focused.
-// When such a control is focused, pressing Enter should trigger the default button.
-// Right now the only control we have is Button.
-public abstract class ButtonIsDefaultDemo(bool default1, bool default2)
+public abstract class ButtonIsDefaultDemo(bool default1, bool default2) : IDemo
 {
     public void Setup()
     {
@@ -35,10 +32,14 @@ public abstract class ButtonIsDefaultDemo(bool default1, bool default2)
         };
         form.Controls.Add(button2);
 
+        // The checkbox has initial focus, not either the buttons, while not accepting the Enter key itself.
+        CheckBox checkBox = new() { Bounds = new(1, 5, 15, 1), Text = "CheckBox" };
+        form.Controls.Add(checkBox);
+
         form.Show();
     }
 }
 
-public class ButtonIsDefault1Demo() : ButtonIsDefaultDemo(true, false) { }
+public class ButtonIsDefaultDemo1() : ButtonIsDefaultDemo(true, false) { }
 
-public class ButtonIsDefault2Demo() : ButtonIsDefaultDemo(false, true) { }
+public class ButtonIsDefaultDemo2() : ButtonIsDefaultDemo(false, true) { }
