@@ -37,18 +37,10 @@ build_tfcore() {
     cd "$ROOT_DIR"
 }
 
-restore() {
-    status "header" "dotnet restore"
-    cd "$ROOT_DIR/src"
-    dotnet restore "-p:MyRuntimeIdentifier=$RID"
-    status "success" "Restored package dependencies"
-    cd "$ROOT_DIR"
-}
-
 build_solution() {
     status "header" "dotnet build"
     cd "$ROOT_DIR/src"
-    dotnet build TerminalForms.sln "-p:MyRuntimeIdentifier=$RID" --no-restore
+    dotnet build TerminalForms.sln "-p:MyRuntimeIdentifier=$RID"
     cd "$ROOT_DIR"
 }
 
@@ -78,7 +70,6 @@ build_website() {
 }
 
 build_tfcore
-restore
 build_solution
 if [ -z "${NO_TESTS:-}" ]; then
     run_tests
