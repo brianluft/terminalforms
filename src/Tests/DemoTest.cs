@@ -81,10 +81,10 @@ public class DemoTest
         // Run `TerminalFormsDemo` in the same directory as the IDemo assembly.
         var demoDll = Path.Combine(exeDir, "TerminalFormsDemo.dll");
         var args =
-            $"\"{demoDll}\" --test \"{name}\" --screenshot \"{actualFilePath}\" --log \"{logFilePath}\"";
+            $"\"{demoDll}\" --test \"{name}\" --output \"{actualFilePath}\" --log \"{logFilePath}\"";
         if (File.Exists(eventsFilePath))
         {
-            args += $" --events \"{eventsFilePath}\"";
+            args += $" --input \"{eventsFilePath}\"";
         }
 
         ProcessStartInfo psi = new("dotnet", args) { CreateNoWindow = true };

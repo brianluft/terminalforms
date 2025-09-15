@@ -19,7 +19,7 @@ try
     if (args.Length % 2 != 0 || args.Length == 0)
     {
         throw new Exception(
-            "Usage: TerminalFormsDemo --test \"name\" [--screenshot <file-path>] [--log <file-path>] [--events <file-path>]"
+            "Usage: TerminalFormsDemo --test \"name\" [--output <file-path>] [--log <file-path>] [--input <file-path>]"
         );
     }
 
@@ -35,13 +35,13 @@ try
             case "--test":
                 test = value;
                 break;
-            case "--screenshot":
+            case "--output":
                 screenshotFile = value;
                 break;
             case "--log":
                 logFile = value;
                 break;
-            case "--events":
+            case "--input":
                 eventsFile = value;
                 break;
             default:

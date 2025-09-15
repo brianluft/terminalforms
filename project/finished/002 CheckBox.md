@@ -69,7 +69,7 @@ We will implement a CheckBox control. Turbo Vision's `TCheckBoxes` is a cluster 
   - [x] `CheckBoxCheckedDemo-input.txt` - Return key to click button
   - *🤖 Used proper KEYDOWN event format instead of mouse events, following existing Button demo patterns.*
 
-- [x] Create demo output files. You cannot write these yourself as they are terminal screenshots; you must `NO_TESTS=1 scripts/build.sh` then `scripts/run-demo.sh --test FooDemo --screenshot <txt file path>` and it will write the file. I will manually verify correctness.
+- [x] Create demo output files. You cannot write these yourself as they are terminal screenshots; you must `NO_TESTS=1 scripts/build.sh` then `scripts/run-demo.sh --test FooDemo --output <txt file path>` and it will write the file. I will manually verify correctness.
   - [x] `CheckBoxLayoutDemo-output.txt`
   - [x] `CheckBoxClickDemo-output.txt`
   - [x] `CheckBoxTextDemo-output.txt`
