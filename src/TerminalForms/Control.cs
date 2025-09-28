@@ -23,7 +23,7 @@ public abstract unsafe partial class Control : TerminalFormsObject
     /// including any borders or decorative elements. Changing the bounds will trigger a redraw of the control at its
     /// new position and size.
     /// </remarks>
-    public Rectangle Bounds
+    public virtual Rectangle Bounds
     {
         get
         {

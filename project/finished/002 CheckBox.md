@@ -1,4 +1,4 @@
-# CheckBox ✅ COMPLETED
+# CheckBox
 We will implement a CheckBox control. Turbo Vision's `TCheckBoxes` is a cluster of multiple checkboxes. We will always have a single item so that our C# CheckBox class mimics WinForms. Use `Button` as an example.
 
 ## C++ Core Implementation

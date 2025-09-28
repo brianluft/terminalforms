@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "Rectangle.h"
 
 #define Uses_TDialog
 #include <tvision/tv.h>
@@ -10,6 +11,19 @@ namespace tf {
 class Form : public TDialog {
    public:
     Form();
+
+    // Property management methods
+    const char* getText() const;
+    void setText(const char* text);
+    void getBounds(Rectangle* out) const;
+    void setBounds(const Rectangle& bounds);
+    BOOL getControlBox() const;
+    void setControlBox(BOOL value);
+    BOOL getMaximizeBox() const;
+    void setMaximizeBox(BOOL value);
+    BOOL getResizable() const;
+    void setResizable(BOOL value);
+    void close();
 };
 
 template <>
