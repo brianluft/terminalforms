@@ -1,0 +1,2 @@
+# Alt+E to test enabled mnemonic
+KEYDOWN code: 4608 ctrl: 0 text:

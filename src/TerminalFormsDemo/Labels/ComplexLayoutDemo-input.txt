@@ -1,0 +1,2 @@
+# Alt+N to test name field navigation
+KEYDOWN code: 12544 ctrl: 0 text:

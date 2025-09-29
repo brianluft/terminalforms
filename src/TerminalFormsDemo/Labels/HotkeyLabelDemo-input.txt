@@ -1,0 +1,2 @@
+# Alt+F to test first hotkey
+KEYDOWN code: 8448 ctrl: 0 text:
