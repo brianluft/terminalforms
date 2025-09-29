@@ -43,6 +43,7 @@ add_library(tfcore SHARED
     Control.cpp
     ControlCollection.cpp
     Form.cpp
+    Label.cpp
     Point.cpp
     Rectangle.cpp
 )
