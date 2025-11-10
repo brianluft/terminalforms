@@ -81,7 +81,3 @@ This approach gives us all TLabel functionality (parsing, coloring, events) whil
   - Run `scripts/run-demo.sh --test LabelDemo --output <file>`
   - Use `grep` to verify that the expected string appears in the output file, as you cannot directly interpret the ASCII screenshot.
   - *🤖 Successfully generated all output files using correct demo naming pattern (Labels.BasicLabelDemo). All tests now pass with 28 passed, 0 failed.*
-
-### User Documentation
-
-- [ ] Write `src\website\guide\labels.md` and update `src\website\guide\toc.yml`. This will be a short article explaining how to use labels in their various modes. You can paste demo output files into code blocks as screenshots.
