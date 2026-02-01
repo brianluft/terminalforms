@@ -10,11 +10,11 @@ jobs:
         include:
 
           - name: osx-x64
-            runner: macos-13
+            runner: macos-14-large
             target_arch: x64
 
           - name: osx-arm64
-            runner: macos-15
+            runner: macos-14
             target_arch: arm64
 
           - name: win-x64
@@ -30,15 +30,15 @@ jobs:
             target_arch: arm64
 
           - name: linux-x64
-            runner: ubuntu-24.04
+            runner: ubuntu-22.04
             target_arch: x64
 
           - name: linux-arm64
-            runner: ubuntu-24.04-arm
+            runner: ubuntu-22.04-arm
             target_arch: arm64
 
           - name: linux-arm
-            runner: ubuntu-24.04-arm
+            runner: ubuntu-22.04-arm
             target_arch: arm
 
     runs-on: ${{ matrix.runner }}
@@ -84,8 +84,8 @@ jobs:
             ca-certificates:armhf \
             libc6:armhf \
             libgcc-s1:armhf \
-            libicu74:armhf \
-            libssl3t64:armhf \
+            libicu70:armhf \
+            libssl3:armhf \
             libstdc++6:armhf \
             zlib1g:armhf
 
