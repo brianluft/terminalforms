@@ -496,21 +496,23 @@ Final preparation for 1.0 release.
 
 ---
 
-## Stretch Goals (Post-1.0)
+## Optional Side Quests
 
 Features that would be nice but not essential for 1.0.
+
+### Unify Event Semantics Across Controls
+- [x] Update CheckBox to fire `CheckedChanged` when `Checked` property is set programmatically
+- [x] Update Button (if any state properties exist) to fire events on programmatic changes
+  - N/A: Button has no state properties that warrant change events (IsDefault, TextAlign, GrabsFocus are configuration properties, not state)
+- [x] Document the Windows Forms-style event behavior: events fire for BOTH user input and programmatic changes
+  - CheckBox.cs XML docs already document this behavior
+- [x] This ensures consistent behavior across all controls
 
 ### Form.FormClosing Event (Cancellable)
 - [ ] Add `FormClosing` event that fires before `Closed`, with `CancelEventArgs`
 - [ ] Allow event handlers to cancel the close by setting `e.Cancel = true`
 - [ ] Implement via `handleEvent()` override to intercept `cmClose` command before processing
 - [ ] Matches Windows Forms pattern where `FormClosing` precedes `FormClosed`
-
-### Unify Event Semantics Across Controls
-- [ ] Update CheckBox to fire `CheckedChanged` when `Checked` property is set programmatically
-- [ ] Update Button (if any state properties exist) to fire events on programmatic changes
-- [ ] Document the Windows Forms-style event behavior: events fire for BOTH user input and programmatic changes
-- [ ] This ensures consistent behavior across all controls
 
 ### Focus Event Callbacks via C++ setState Override
 - [ ] Create `tf::View` base class that overrides `TView::setState()`

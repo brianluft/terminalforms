@@ -25,12 +25,16 @@ BOOL CheckBox::getChecked() const {
 }
 
 void CheckBox::setChecked(BOOL value) {
+    BOOL oldValue = getChecked();
     if (value) {
         this->value |= 1;
     } else {
         this->value &= ~1;
     }
     drawView();
+    if (oldValue != getChecked()) {
+        stateChangedEventHandler();
+    }
 }
 
 const char* CheckBox::getText() const {
