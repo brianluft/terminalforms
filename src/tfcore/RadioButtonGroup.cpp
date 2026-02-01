@@ -10,7 +10,20 @@
 namespace tf {
 
 RadioButtonGroup::RadioButtonGroup() : TRadioButtons(TRect(2, 2, 22, 4), new TSItem("Option 1", nullptr)) {
-    // Default constructor creates a group with one item
+    // TCluster constructor creates TStringCollection with delta=0, which cannot grow.
+    // We need to replace it with a growable collection.
+    auto* oldStrings = strings;
+    auto* newStrings = new TStringCollection(10, 10);  // Initial capacity 10, grow by 10
+
+    // Copy items from old to new collection
+    for (ccIndex i = 0; i < oldStrings->getCount(); i++) {
+        newStrings->atInsert(i, newStr(static_cast<const char*>(oldStrings->at(i))));
+    }
+
+    // Replace and cleanup
+    strings = newStrings;
+    destroy(static_cast<TCollection*>(oldStrings));
+
     // value starts at 0 (first item selected)
 }
 
