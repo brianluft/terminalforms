@@ -64,15 +64,15 @@ Essential controls for user text and option input.
 - [x] **BUG: Demo objects with instance fields/methods in event handlers may be GC'd.** ~~If a demo class uses instance fields (e.g., `private TextBox _display`) and instance methods in lambdas (e.g., `btn.Click += (_, _) => OnDigitClick()`), the demo object can be garbage collected during `Application.Run()` since nothing holds a reference to it after `Setup()` returns. This causes crashes when event handlers try to access `this`.~~ **FIXED:** Added `Application.OpenForms` collection that keeps strong references to shown forms. Forms are added to `OpenForms` when `Show()` is called and removed when closed (via the new `Form.Closed` event). This creates a strong reference chain (OpenForms -> Form -> Controls -> Button -> Click delegate -> user object) that prevents GC of objects referenced by event handlers. See `FormInstanceFieldDemo` for a test that uses instance fields in event handlers.
 
 ### RadioButtonGroup (wraps TRadioButtons)
-- [ ] C++ binding for TRadioButtons cluster
-- [ ] C# `RadioButtonGroup` class. Diverges from Windows Forms convention and matches Turbo Vision convention by having one control for the whole group.
-- [ ] Default constructor and `RadioButtonGroup(params string[])` constructor
-- [ ] `Items` collection property
-- [ ] `SelectedIndex` property
-- [ ] `SelectedItem` property
-- [ ] `SelectedIndexChanged` event
-- [ ] Automatic mutual exclusion within container handled by Turbo Vision
-- [ ] Demo tests
+- [x] C++ binding for TRadioButtons cluster
+- [x] C# `RadioButtonGroup` class. Diverges from Windows Forms convention and matches Turbo Vision convention by having one control for the whole group.
+- [x] Default constructor and `RadioButtonGroup(params string[])` constructor
+- [x] `Items` collection property (mutable `IList<string>` with full Add/Remove/Insert/Clear support)
+- [x] `SelectedIndex` property (throws ArgumentOutOfRangeException on invalid values)
+- [x] `SelectedItem` property
+- [x] `SelectedIndexChanged` event (fires on both user interaction and programmatic changes)
+- [x] Automatic mutual exclusion within container handled by Turbo Vision
+- [x] Demo tests (5 demos covering basic usage, selection, events, mutation, and programmatic changes)
 
 ---
 

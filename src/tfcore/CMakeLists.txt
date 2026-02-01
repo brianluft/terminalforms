@@ -45,6 +45,7 @@ add_library(tfcore SHARED
     Form.cpp
     Label.cpp
     Point.cpp
+    RadioButtonGroup.cpp
     Rectangle.cpp
     TextBox.cpp
 )
