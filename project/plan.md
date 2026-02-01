@@ -81,14 +81,15 @@ Essential controls for user text and option input.
 Controls for selecting from lists of items.
 
 ### ListBox (wraps TListBox)
-- [ ] C++ binding for TListBox
-- [ ] C# `ListBox` class. Single selection only.
-- [ ] `Items` collection property
-- [ ] `SelectedIndex` property
-- [ ] `SelectedItem` property
-- [ ] `SelectedIndexChanged` event
-- [ ] Methods: clear selection, set selection. Double check Window Forms naming convention.
-- [ ] Demo tests
+- [x] C++ binding for TListBox
+- [x] C# `ListBox` class. Single selection only.
+- [x] `Items` collection property
+- [x] `SelectedIndex` property (supports -1 for no selection)
+- [x] `SelectedItem` property
+- [x] `SelectedIndexChanged` event
+- [x] `ItemActivated` event (double-click/Enter/Space)
+- [x] Methods: `ClearSelection()` (Windows Forms doesn't have this, but useful for our -1 support)
+- [x] Demo tests (5 demos: Basic, Event, Mutable, Selection, Empty)
 
 ### ComboBox (TInputLine + THistory)
 - [ ] C++ binding for THistory
