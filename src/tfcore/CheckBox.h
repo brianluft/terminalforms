@@ -20,8 +20,6 @@ class CheckBox : public TCheckBoxes {
     // Property management methods
     BOOL getChecked() const;
     void setChecked(BOOL value);
-    BOOL getEnabled() const;
-    void setEnabled(BOOL value);
     const char* getText() const;
     void setText(const char* text);
 

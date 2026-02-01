@@ -9,31 +9,32 @@ Update documentation as we go:
 
 ---
 
-## Phase 1: Core Control Properties
+## Phase 1: Core Control Properties ✓
 
 Complete the Control base class with essential properties that all controls need.
 
 ### Control Base Properties
-- [ ] `Visible` property (maps to `sfVisible` state flag)
-- [ ] `Enabled` property (maps to `sfDisabled` state flag, inverted)
-- [ ] `Focused` property (read-only, maps to `sfFocused` state flag)
-- [ ] `CanFocus` property (maps to `ofSelectable` option flag)
-- [ ] `TabIndex` property (Z-order position for tab navigation)
-- [ ] `TabStop` property (whether control participates in tab navigation)
-- [ ] `Parent` property (read-only, returns owning ContainerControl)
-- [ ] `Name` property (string identifier for programmatic access)
-- [ ] `Tag` property (user-defined object data)
+- [x] `Visible` property (maps to `sfVisible` state flag)
+- [x] `Enabled` property (maps to `sfDisabled` state flag, inverted)
+- [x] `Focused` property (read-only, maps to `sfFocused` state flag)
+- [x] `CanFocus` property (maps to `ofSelectable` option flag)
+- [x] `TabIndex` property (Z-order position for tab navigation, get-only)
+- [x] ~~`TabStop` property~~ (removed - identical to CanFocus in Turbo Vision)
+- [x] `Parent` property (read-only, returns owning ContainerControl)
+- [x] `Name` property (string identifier for programmatic access)
+- [x] `Tag` property (user-defined object data)
+- [x] `Focus()` method (programmatically set focus)
 
 ### Control Events
-- [ ] `Enter` event (fires when control gains focus)
-- [ ] `Leave` event (fires when control loses focus)
-- [ ] `EnabledChanged` event
-- [ ] `VisibleChanged` event
+- [x] `Enter` event (fires when control gains focus - infrastructure ready)
+- [x] `Leave` event (fires when control loses focus - infrastructure ready)
+- [x] `EnabledChanged` event
+- [x] `VisibleChanged` event
 
 ### ContainerControl Features
-- [ ] `ActiveControl` property (currently focused child)
-- [ ] `SelectNextControl()` method (programmatic tab navigation)
-- [ ] Controls collection indexer by Name
+- [x] `ActiveControl` property (currently focused child)
+- [x] `SelectNextControl()` method (programmatic tab navigation)
+- [x] Controls collection indexer by Name
 
 ---
 
@@ -490,6 +491,13 @@ Final preparation for 1.0 release.
 ## Stretch Goals (Post-1.0)
 
 Features that would be nice but not essential for 1.0.
+
+### Focus Event Callbacks via C++ setState Override
+- [ ] Create `tf::View` base class that overrides `TView::setState()`
+- [ ] Centralized detection of sfFocused changes for Enter/Leave events
+- [ ] Centralized detection of sfVisible/sfDisabled changes
+- [ ] Would enable callback-based events instead of polling-based detection
+- [ ] Foundation for future keyboard/mouse events via `handleEvent()` override
 
 ### Data Binding
 - [ ] `IBindableComponent` interface

@@ -99,32 +99,6 @@ public unsafe partial class CheckBox : Control
         }
     }
 
-    /// <summary>
-    /// Gets or sets a value indicating whether the check box is enabled and can respond to user interaction.
-    /// When false, the check box appears dimmed and does not respond to mouse clicks or keyboard input.
-    /// </summary>
-    /// <value>true if the check box is enabled; otherwise, false.</value>
-    /// <remarks>
-    /// Disabled check boxes are useful when certain options should not be available based on
-    /// application state or user permissions. The control maintains its checked state when
-    /// disabled but will not respond to user interaction until re-enabled. This provides
-    /// visual feedback about feature availability without losing the current selection.
-    /// </remarks>
-    public bool Enabled
-    {
-        get
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            Check(NativeMethods.TfCheckBoxGetEnabled(Ptr, out var value));
-            return value;
-        }
-        set
-        {
-            ObjectDisposedException.ThrowIf(IsDisposed, this);
-            Check(NativeMethods.TfCheckBoxSetEnabled(Ptr, value));
-        }
-    }
-
     #region CheckedChanged
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static void NativeStateChangedEventHandler(void* userData)
@@ -202,18 +176,6 @@ public unsafe partial class CheckBox : Control
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TfCheckBoxGetChecked(
-            void* self,
-            [MarshalAs(UnmanagedType.I4)] out bool @out
-        );
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TfCheckBoxSetEnabled(
-            void* self,
-            [MarshalAs(UnmanagedType.I4)] bool value
-        );
-
-        [LibraryImport(Global.DLL_NAME)]
-        public static partial Error TfCheckBoxGetEnabled(
             void* self,
             [MarshalAs(UnmanagedType.I4)] out bool @out
         );

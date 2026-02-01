@@ -39,6 +39,35 @@ public unsafe partial class ControlCollection(ContainerControl containerControl)
     }
 
     /// <summary>
+    /// Gets the first control with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the control to find.</param>
+    /// <returns>
+    /// The first <see cref="Control"/> with the specified name, or null if no control
+    /// with that name exists in the collection.
+    /// </returns>
+    /// <remarks>
+    /// Control names do not need to be unique within a collection. If multiple controls
+    /// have the same name, this indexer returns the first one found in the collection.
+    /// The search is case-sensitive.
+    /// </remarks>
+    public Control? this[string name]
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(containerControl.IsDisposed, containerControl);
+            ArgumentNullException.ThrowIfNull(name);
+
+            foreach (var control in _controls)
+            {
+                if (control.Name == name)
+                    return control;
+            }
+            return null;
+        }
+    }
+
+    /// <summary>
     /// Adds a control to the end of the collection.
     /// </summary>
     /// <param name="control">The control to add.</param>

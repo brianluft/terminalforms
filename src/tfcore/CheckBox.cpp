@@ -33,19 +33,6 @@ void CheckBox::setChecked(BOOL value) {
     drawView();
 }
 
-BOOL CheckBox::getEnabled() const {
-    return (state & sfDisabled) == 0;
-}
-
-void CheckBox::setEnabled(BOOL value) {
-    if (value) {
-        state &= ~sfDisabled;
-    } else {
-        state |= sfDisabled;
-    }
-    drawView();
-}
-
 const char* CheckBox::getText() const {
     if (strings && strings->getCount() > 0) {
         return static_cast<const char*>(strings->at(0));
@@ -106,24 +93,6 @@ TF_EXPORT tf::Error TfCheckBoxGetChecked(tf::CheckBox* self, BOOL* out) {
     }
 
     *out = self->getChecked();
-    return tf::Success;
-}
-
-TF_EXPORT tf::Error TfCheckBoxSetEnabled(tf::CheckBox* self, BOOL value) {
-    if (self == nullptr) {
-        return tf::Error_ArgumentNull;
-    }
-
-    self->setEnabled(value);
-    return tf::Success;
-}
-
-TF_EXPORT tf::Error TfCheckBoxGetEnabled(tf::CheckBox* self, BOOL* out) {
-    if (self == nullptr || out == nullptr) {
-        return tf::Error_ArgumentNull;
-    }
-
-    *out = self->getEnabled();
     return tf::Success;
 }
 
