@@ -63,23 +63,15 @@ Essential controls for user text and option input.
 - [x] **BUG: Reading control.Text in Button.Click crashes after multiple clicks.** ~~Repro: Create a Button and TextBox/Label. In Button.Click handler, read from `control.Text` (e.g., `label.Text += "X"` or `var x = textBox.Text`). Click the button 3 times - crashes with "Aborted (core dumped)". Writing to Text without reading works fine.~~ **FIXED:** Root cause was string getter functions returning internal pointers that the .NET marshaller would free, corrupting control state. Fix: Use `TF_STRDUP` to allocate copies in C++ that the marshaller can safely free. See `ButtonTextReadDemo` for a test that verifies the fix.
 - [x] **BUG: Demo objects with instance fields/methods in event handlers may be GC'd.** ~~If a demo class uses instance fields (e.g., `private TextBox _display`) and instance methods in lambdas (e.g., `btn.Click += (_, _) => OnDigitClick()`), the demo object can be garbage collected during `Application.Run()` since nothing holds a reference to it after `Setup()` returns. This causes crashes when event handlers try to access `this`.~~ **FIXED:** Added `Application.OpenForms` collection that keeps strong references to shown forms. Forms are added to `OpenForms` when `Show()` is called and removed when closed (via the new `Form.Closed` event). This creates a strong reference chain (OpenForms -> Form -> Controls -> Button -> Click delegate -> user object) that prevents GC of objects referenced by event handlers. See `FormInstanceFieldDemo` for a test that uses instance fields in event handlers.
 
-### RadioButton (wraps TRadioButtons)
+### RadioButtonGroup (wraps TRadioButtons)
 - [ ] C++ binding for TRadioButtons cluster
-- [ ] C# `RadioButton` class
-- [ ] `Text` property
-- [ ] `Checked` property (only one in group can be true)
-- [ ] `CheckedChanged` event
-- [ ] Automatic mutual exclusion within container
-- [ ] Demo tests
-
-### NumericUpDown (TInputLine + validation)
-- [ ] C# `NumericUpDown` class
-- [ ] `Value` property (decimal)
-- [ ] `Minimum`, `Maximum` properties
-- [ ] `Increment` property
-- [ ] `DecimalPlaces` property
-- [ ] `ValueChanged` event
-- [ ] Up/Down arrow key support
+- [ ] C# `RadioButtonGroup` class. Diverges from Windows Forms convention and matches Turbo Vision convention by having one control for the whole group.
+- [ ] Default constructor and `RadioButtonGroup(params string[])` constructor
+- [ ] `Items` collection property
+- [ ] `SelectedIndex` property
+- [ ] `SelectedItem` property
+- [ ] `SelectedIndexChanged` event
+- [ ] Automatic mutual exclusion within container handled by Turbo Vision
 - [ ] Demo tests
 
 ---
@@ -90,14 +82,12 @@ Controls for selecting from lists of items.
 
 ### ListBox (wraps TListBox)
 - [ ] C++ binding for TListBox
-- [ ] C# `ListBox` class
-- [ ] `Items` collection property (ObjectCollection)
+- [ ] C# `ListBox` class. Single selection only.
+- [ ] `Items` collection property
 - [ ] `SelectedIndex` property
 - [ ] `SelectedItem` property
 - [ ] `SelectedIndexChanged` event
-- [ ] `SelectionMode` property (One, MultiSimple, MultiExtended)
-- [ ] Multi-selection support: `SelectedIndices`, `SelectedItems`
-- [ ] Methods: `ClearSelected()`, `SetSelected()`
+- [ ] Methods: clear selection, set selection. Double check Window Forms naming convention.
 - [ ] Demo tests
 
 ### ComboBox (TInputLine + THistory)
@@ -513,6 +503,16 @@ Features that would be nice but not essential for 1.0.
 - [ ] Allow event handlers to cancel the close by setting `e.Cancel = true`
 - [ ] Implement via `handleEvent()` override to intercept `cmClose` command before processing
 - [ ] Matches Windows Forms pattern where `FormClosing` precedes `FormClosed`
+
+### NumericUpDown (TInputLine + validation)
+- [ ] C# `NumericUpDown` class
+- [ ] `Value` property (decimal)
+- [ ] `Minimum`, `Maximum` properties
+- [ ] `Increment` property
+- [ ] `DecimalPlaces` property
+- [ ] `ValueChanged` event
+- [ ] Up/Down arrow key support
+- [ ] Demo tests
 
 ### Focus Event Callbacks via C++ setState Override
 - [ ] Create `tf::View` base class that overrides `TView::setState()`
