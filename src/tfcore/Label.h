@@ -15,6 +15,7 @@ class Label : public TLabel {
     virtual void handleEvent(TEvent& event) override;
 
     // Text property methods
+    using TStaticText::getText;  // Bring base class overload into scope
     const char* getText() const;
     void setText(const char* text);
 
