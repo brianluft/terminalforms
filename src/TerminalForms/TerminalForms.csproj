@@ -4,6 +4,7 @@
     <Version>0.0.1</Version>
     <Authors>Brian Luft</Authors>
     <Description>Terminal user interface library.</Description>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -47,5 +48,21 @@
   <ItemGroup Condition="Exists('$(PackAssetsDir)')">
     <None Include="$(PackAssetsDir)\runtimes\**\*" Pack="true" PackagePath="\" />
     <!-- empty => keep relative paths -->
+  </ItemGroup>
+  <!-- Include license files in package -->
+  <ItemGroup>
+    <None
+      Include="$(MSBuildThisFileDirectory)..\..\LICENSE"
+      Pack="true"
+      PackagePath="LICENSE.txt"
+    />
+    <Content
+      Include="$(MSBuildThisFileDirectory)..\..\THIRD-PARTY-NOTICES"
+      Pack="true"
+      PackagePath="contentFiles\any\any\TerminalForms.THIRD-PARTY-NOTICES.txt"
+    >
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

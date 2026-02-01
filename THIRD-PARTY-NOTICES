@@ -1,15 +1,9 @@
-Terminal Forms uses third-party libraries or other resources that may be
+Terminal Forms includes third-party libraries and other resources that are
 distributed under licenses different than the Terminal Forms software.
-
-In the event that we accidentally failed to list a required notice, please
-bring it to our attention by opening an issue.
-
-The attached notices are provided for information only.
 
 ===============================================================================
 
-# tvision
-https://github.com/magiblot/tvision
+# Turbo Vision
 
 Borland International made the Turbo Vision source code public, accompanied
 by the following disclaimer:
@@ -72,10 +66,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-===============================================================================
+Below are the copyright notices of third-party components included in this
+project.
 
-# Fast utoa()
-https://github.com/miloyip/itoa-benchmark
+## Fast utoa()
+## https://github.com/miloyip/itoa-benchmark
 
 Copyright (C) 2014 Milo Yip
 
@@ -97,10 +92,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-===============================================================================
-
-# wcwidth() for Unicode 5.0
-https://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
+## wcwidth() for Unicode 5.0
+## https://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
 
 Markus Kuhn -- 2007-05-26 (Unicode 5.0)
 
@@ -108,10 +101,8 @@ Permission to use, copy, modify, and distribute this software
 for any purpose and without fee is hereby granted. The author
 disclaims all warranties with regard to this software.
 
-===============================================================================
-
-# Flexible and Economical UTF-8 Decoder
-http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
+## Flexible and Economical UTF-8 Decoder
+## http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
 
 Copyright (c) 2008-2010 Bjoern Hoehrmann <bjoern@hoehrmann.de>
 See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
@@ -136,7 +127,7 @@ THE SOFTWARE.
 
 ===============================================================================
 
-# DocFX Default Template
+# DocFX
 https://github.com/dotnet/docfx
 
 Copyright (c) .NET Foundation and Contributors
