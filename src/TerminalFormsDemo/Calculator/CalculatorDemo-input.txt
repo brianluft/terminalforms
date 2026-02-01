@@ -1,0 +1,2 @@
+# Calculator Demo: Initial state test
+# No input - just verify the calculator layout displays correctly

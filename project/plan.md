@@ -55,6 +55,13 @@ Essential controls for user text and option input.
 - [x] Methods: `Select()`, `SelectAll()`, `Clear()`
 - [x] Demo tests (expected output pending terminal environment)
 
+### Interactive Demo: Calculator App
+- [x] Create a full-featured demo: a four-function calculator. A form, textbox for the display, buttons, label for error reporting. Validation on the textbox if the user enters non-numeric input. Test it interactively with tmux and run-demo.sh.
+
+### Bugs Found During Calculator Development
+- [ ] **BUG: Reading control.Text in Button.Click crashes after multiple clicks.** Repro: Create a Button and TextBox/Label. In Button.Click handler, read from `control.Text` (e.g., `label.Text += "X"` or `var x = textBox.Text`). Click the button 3 times - crashes with "Aborted (core dumped)". Writing to Text without reading works fine. **Workaround in Calculator:** Track display state in a local `string displayText` variable, never read from `display.Text`. **To fix Calculator when resolved:** Remove the `displayText` local variable and `SetDisplay()` helper; read/write directly to `display.Text` like other demos do.
+- [ ] **BUG: Demo objects with instance fields/methods in event handlers may be GC'd.** If a demo class uses instance fields (e.g., `private TextBox _display`) and instance methods in lambdas (e.g., `btn.Click += (_, _) => OnDigitClick()`), the demo object can be garbage collected during `Application.Run()` since nothing holds a reference to it after `Setup()` returns. This causes crashes when event handlers try to access `this`. **Workaround in Calculator:** Use only local variables inside `Setup()` (following TextBoxTextChangedDemo pattern). **To fix when resolved:** Either keep demo instances alive in Program.cs, or document that demos must use local variables only.
+
 ### RadioButton (wraps TRadioButtons)
 - [ ] C++ binding for TRadioButtons cluster
 - [ ] C# `RadioButton` class
