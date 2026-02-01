@@ -99,3 +99,7 @@ TF_BOILERPLATE_FUNCTIONS(Foo)
 
 # Terminal Forms Documentation
 - `project\docs\*.md` is our internal project documentation. Review this to ensure consistent design patterns. Keep it up to date.
+    - `architecture.md`
+    - `binding-patterns.md`
+    - `memory-management.md`
+    - `type-mapping.md`

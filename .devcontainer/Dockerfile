@@ -15,9 +15,10 @@ RUN <<EOF
     update-alternatives \
         --install /usr/bin/clang-format clang-format \
         /usr/bin/clang-format-20 100
-
-    curl -fsSL https://claude.ai/install.sh | bash
 EOF
+
+USER vscode
+RUN curl -fsSL https://claude.ai/install.sh | bash
 
 # devcontainer.json will mount the host's ~/.claude to the container's /.claude
 ENV CLAUDE_CONFIG_DIR=/.claude
