@@ -43,17 +43,17 @@ Complete the Control base class with essential properties that all controls need
 Essential controls for user text and option input.
 
 ### TextBox (wraps TInputLine)
-- [ ] C++ binding for TInputLine
-- [ ] C# `TextBox` class
-- [ ] `Text` property (get/set current text)
-- [ ] `MaxLength` property (character limit)
-- [ ] `ReadOnly` property
-- [ ] `PasswordChar` property (mask input)
-- [ ] `TextChanged` event
-- [ ] `KeyDown`, `KeyUp`, `KeyPress` events
-- [ ] Selection support: `SelectionStart`, `SelectionLength`, `SelectedText`
-- [ ] Methods: `Select()`, `SelectAll()`, `Clear()`
-- [ ] Demo tests
+- [x] C++ binding for TInputLine
+- [x] C# `TextBox` class
+- [x] `Text` property (get/set current text)
+- [x] `MaxLength` property (character limit)
+- [ ] `ReadOnly` property (deferred)
+- [ ] `PasswordChar` property (mask input - deferred)
+- [x] `TextChanged` event
+- [ ] `KeyDown`, `KeyUp`, `KeyPress` events (moved to Phase 13)
+- [x] Selection support: `SelectionStart`, `SelectionLength`, `SelectedText`
+- [x] Methods: `Select()`, `SelectAll()`, `Clear()`
+- [x] Demo tests (expected output pending terminal environment)
 
 ### RadioButton (wraps TRadioButtons)
 - [ ] C++ binding for TRadioButtons cluster
@@ -491,6 +491,12 @@ Final preparation for 1.0 release.
 ## Stretch Goals (Post-1.0)
 
 Features that would be nice but not essential for 1.0.
+
+### Unify Event Semantics Across Controls
+- [ ] Update CheckBox to fire `CheckedChanged` when `Checked` property is set programmatically
+- [ ] Update Button (if any state properties exist) to fire events on programmatic changes
+- [ ] Document the Windows Forms-style event behavior: events fire for BOTH user input and programmatic changes
+- [ ] This ensures consistent behavior across all controls
 
 ### Focus Event Callbacks via C++ setState Override
 - [ ] Create `tf::View` base class that overrides `TView::setState()`

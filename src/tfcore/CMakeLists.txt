@@ -46,6 +46,7 @@ add_library(tfcore SHARED
     Label.cpp
     Point.cpp
     Rectangle.cpp
+    TextBox.cpp
 )
 
 # Apply compiler options
