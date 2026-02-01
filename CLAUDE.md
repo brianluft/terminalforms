@@ -1,6 +1,3 @@
----
-alwaysApply: true
----
 This is Terminal Forms, a C# wrapper for the Turbo Vision TUI library.
 Our C++ library "tfcore" provides a C-compatible wrapper (`extern "C"`) around tvision, which is a C++ library.
 Then our .NET library "TerminalForms" calls into the "tfcore" library using P/Invoke.
@@ -103,3 +100,6 @@ TF_BOILERPLATE_FUNCTIONS(Foo)
     - `binding-patterns.md`
     - `memory-management.md`
     - `type-mapping.md`
+
+# Interactive Testing
+This environment has `tmux` which the AI assistant can use to send keystrokes and take text screenshots of a running process under test.
