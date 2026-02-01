@@ -1,0 +1,6 @@
+# Return key - click button 5 times to verify fix
+KEYDOWN code: 7181 ctrl: 0 text: 13
+KEYDOWN code: 7181 ctrl: 0 text: 13
+KEYDOWN code: 7181 ctrl: 0 text: 13
+KEYDOWN code: 7181 ctrl: 0 text: 13
+KEYDOWN code: 7181 ctrl: 0 text: 13

@@ -75,7 +75,11 @@ TF_EXPORT tf::Error TfButtonGetText(tf::Button* self, const char** out) {
         return tf::Error_ArgumentNull;
     }
 
-    *out = self->title;
+    const char* text = self->title ? self->title : "";
+    *out = TF_STRDUP(text);
+    if (*out == nullptr) {
+        return tf::Error_OutOfMemory;
+    }
     return tf::Success;
 }
 

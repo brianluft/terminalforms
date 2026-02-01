@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cstring>
 #include <string>
 
 #ifdef _WIN32
@@ -57,6 +58,15 @@ void combineHash(const T& v, std::size_t* seed) noexcept {
     x ^= std::hash<T>{}(v) + 0x9e3779b9 + (x << 6) + (x >> 2);
     *seed = x;
 }
+
+// Use TF_STRDUP when returning strings to C# via StringMarshalling.Utf8 with `out string`.
+// The .NET marshaller will free the memory after copying to a managed string.
+// This allocates with malloc(), which the marshaller expects.
+#ifdef _WIN32
+#define TF_STRDUP _strdup
+#else
+#define TF_STRDUP strdup
+#endif
 
 // This templated function instantiates a new object of type `T`.
 // It catches any exception and converts to `Error`.

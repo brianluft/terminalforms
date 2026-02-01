@@ -103,7 +103,10 @@ TF_EXPORT tf::Error TfFormGetText(tf::Form* self, const char** out) {
         return tf::Error_ArgumentNull;
     }
 
-    *out = self->getText();
+    *out = TF_STRDUP(self->getText());
+    if (*out == nullptr) {
+        return tf::Error_OutOfMemory;
+    }
     return tf::Success;
 }
 

@@ -22,7 +22,10 @@ TF_EXPORT tf::Error TfGetLastErrorMessage(const char** out) {
         return tf::Error_ArgumentNull;
     }
 
-    *out = lastErrorMessage.c_str();
+    *out = TF_STRDUP(lastErrorMessage.c_str());
+    if (*out == nullptr) {
+        return tf::Error_OutOfMemory;
+    }
     return tf::Success;
 }
 

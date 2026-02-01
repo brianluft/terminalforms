@@ -172,7 +172,10 @@ TF_EXPORT tf::Error TfTextBoxGetText(tf::TextBox* self, const char** out) {
     if (self == nullptr || out == nullptr) {
         return tf::Error_ArgumentNull;
     }
-    *out = self->getText();
+    *out = TF_STRDUP(self->getText());
+    if (*out == nullptr) {
+        return tf::Error_OutOfMemory;
+    }
     return tf::Success;
 }
 

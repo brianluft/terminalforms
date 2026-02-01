@@ -150,6 +150,28 @@ TF_EXPORT tf::Error TfFooSetBoolProperty(tf::Foo* self, BOOL value) {
     return tf::Success;
 }
 
+// String property getters - IMPORTANT: Use TF_STRDUP to allocate a copy!
+// The .NET marshaller frees the returned pointer after copying to a managed string.
+// Returning internal pointers directly causes memory corruption.
+TF_EXPORT tf::Error TfFooGetText(tf::Foo* self, const char** out) {
+    if (self == nullptr || out == nullptr) {
+        return tf::Error_ArgumentNull;
+    }
+    *out = TF_STRDUP(self->getText());
+    if (*out == nullptr) {
+        return tf::Error_OutOfMemory;
+    }
+    return tf::Success;
+}
+
+TF_EXPORT tf::Error TfFooSetText(tf::Foo* self, const char* text) {
+    if (self == nullptr || text == nullptr) {
+        return tf::Error_ArgumentNull;
+    }
+    self->setText(text);
+    return tf::Success;
+}
+
 // Event handler setup
 TF_EXPORT tf::Error TfFooSetEventHandler(tf::Foo* self, tf::EventHandlerFunction function, void* userData) {
     if (self == nullptr || function == nullptr) {
