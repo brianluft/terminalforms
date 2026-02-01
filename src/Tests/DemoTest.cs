@@ -87,7 +87,16 @@ public class DemoTest
             args += $" --input \"{eventsFilePath}\"";
         }
 
-        ProcessStartInfo psi = new("dotnet", args) { CreateNoWindow = true };
+        ProcessStartInfo psi = new("dotnet", args)
+        {
+            CreateNoWindow = true,
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        };
+
+        // Tell tvision to use stdin/stdout instead of /dev/tty so our redirects work.
+        psi.Environment["TVISION_USE_STDIO"] = "1";
 
         using var process = Process.Start(psi)!;
 

@@ -55,7 +55,7 @@ run_tests() {
         echo "Using dotnet: $(which dotnet)"
     fi
 
-    dotnet test Tests/Tests.csproj "-p:MyRuntimeIdentifier=$RID" --no-build
+    dotnet test Tests/Tests.csproj "-p:MyRuntimeIdentifier=$RID" --no-build --logger "console;verbosity=detailed"
     cd "$ROOT_DIR"
 }
 
