@@ -1,0 +1,11 @@
+# Click button 3 times using Enter key to verify instance fields remain accessible
+# This tests the fix for the GC bug - if the demo object was collected, this would crash
+
+# First click
+KEYDOWN code: 7181 ctrl: 0 text: 13
+
+# Second click
+KEYDOWN code: 7181 ctrl: 0 text: 13
+
+# Third click
+KEYDOWN code: 7181 ctrl: 0 text: 13

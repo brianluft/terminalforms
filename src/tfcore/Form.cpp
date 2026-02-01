@@ -76,7 +76,17 @@ void Form::setResizable(BOOL value) {
 }
 
 void Form::close() {
+    // Guard against multiple close calls - only fire the event once.
+    // Copy handler to local and clear member before calling to prevent re-entry.
+    EventHandler handler = closedEventHandler;
+    closedEventHandler = EventHandler();
+
     TProgram::deskTop->remove(this);
+    handler();  // Safe no-op if already cleared
+}
+
+void Form::setClosedEventHandler(EventHandlerFunction function, void* userData) {
+    closedEventHandler = EventHandler(function, userData);
 }
 
 }  // namespace tf
@@ -188,5 +198,14 @@ TF_EXPORT tf::Error TfFormClose(tf::Form* self) {
     }
 
     self->close();
+    return tf::Success;
+}
+
+TF_EXPORT tf::Error TfFormSetClosedEventHandler(tf::Form* self, tf::EventHandlerFunction function, void* userData) {
+    if (self == nullptr || function == nullptr) {
+        return tf::Error_ArgumentNull;
+    }
+
+    self->setClosedEventHandler(function, userData);
     return tf::Success;
 }

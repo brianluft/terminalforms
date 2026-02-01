@@ -57,10 +57,11 @@ Essential controls for user text and option input.
 
 ### Interactive Demo: Calculator App
 - [x] Create a full-featured demo: a four-function calculator. A form, textbox for the display, buttons, label for error reporting. Validation on the textbox if the user enters non-numeric input. Test it interactively with tmux and run-demo.sh.
+- [x] Refactor Calculator to use instance fields (now safe after OpenForms fix)
 
 ### Bugs Found During Calculator Development
 - [x] **BUG: Reading control.Text in Button.Click crashes after multiple clicks.** ~~Repro: Create a Button and TextBox/Label. In Button.Click handler, read from `control.Text` (e.g., `label.Text += "X"` or `var x = textBox.Text`). Click the button 3 times - crashes with "Aborted (core dumped)". Writing to Text without reading works fine.~~ **FIXED:** Root cause was string getter functions returning internal pointers that the .NET marshaller would free, corrupting control state. Fix: Use `TF_STRDUP` to allocate copies in C++ that the marshaller can safely free. See `ButtonTextReadDemo` for a test that verifies the fix.
-- [ ] **BUG: Demo objects with instance fields/methods in event handlers may be GC'd.** If a demo class uses instance fields (e.g., `private TextBox _display`) and instance methods in lambdas (e.g., `btn.Click += (_, _) => OnDigitClick()`), the demo object can be garbage collected during `Application.Run()` since nothing holds a reference to it after `Setup()` returns. This causes crashes when event handlers try to access `this`. **Workaround in Calculator:** Use only local variables inside `Setup()` (following TextBoxTextChangedDemo pattern). **To fix when resolved:** Either keep demo instances alive in Program.cs, or document that demos must use local variables only.
+- [x] **BUG: Demo objects with instance fields/methods in event handlers may be GC'd.** ~~If a demo class uses instance fields (e.g., `private TextBox _display`) and instance methods in lambdas (e.g., `btn.Click += (_, _) => OnDigitClick()`), the demo object can be garbage collected during `Application.Run()` since nothing holds a reference to it after `Setup()` returns. This causes crashes when event handlers try to access `this`.~~ **FIXED:** Added `Application.OpenForms` collection that keeps strong references to shown forms. Forms are added to `OpenForms` when `Show()` is called and removed when closed (via the new `Form.Closed` event). This creates a strong reference chain (OpenForms -> Form -> Controls -> Button -> Click delegate -> user object) that prevents GC of objects referenced by event handlers. See `FormInstanceFieldDemo` for a test that uses instance fields in event handlers.
 
 ### RadioButton (wraps TRadioButtons)
 - [ ] C++ binding for TRadioButtons cluster
@@ -498,6 +499,12 @@ Final preparation for 1.0 release.
 ## Stretch Goals (Post-1.0)
 
 Features that would be nice but not essential for 1.0.
+
+### Form.FormClosing Event (Cancellable)
+- [ ] Add `FormClosing` event that fires before `Closed`, with `CancelEventArgs`
+- [ ] Allow event handlers to cancel the close by setting `e.Cancel = true`
+- [ ] Implement via `handleEvent()` override to intercept `cmClose` command before processing
+- [ ] Matches Windows Forms pattern where `FormClosing` precedes `FormClosed`
 
 ### Unify Event Semantics Across Controls
 - [ ] Update CheckBox to fire `CheckedChanged` when `Checked` property is set programmatically

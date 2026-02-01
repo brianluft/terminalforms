@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace TerminalForms;
 
 /// <summary>
@@ -10,7 +12,7 @@ namespace TerminalForms;
 /// They also provide window-specific features like frames, titles, and desktop integration.
 /// Use <see cref="Show"/> to make the form visible on the desktop.
 /// </remarks>
-public unsafe partial class Form() : ContainerControl(_metaObject)
+public unsafe partial class Form : ContainerControl
 {
     private static readonly MetaObject _metaObject = new(
         NativeMethods.TfFormNew,
@@ -18,6 +20,16 @@ public unsafe partial class Form() : ContainerControl(_metaObject)
         NativeMethods.TfFormEquals,
         NativeMethods.TfFormHash
     );
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Form"/> class.
+    /// Creates a new form that can contain child controls and be displayed on the application desktop.
+    /// </summary>
+    public Form()
+        : base(_metaObject)
+    {
+        Check(NativeMethods.TfFormSetClosedEventHandler(Ptr, &NativeClosedEventHandler, Ptr));
+    }
 
     /// <summary>
     /// Gets or sets the text displayed in the form's title bar.
@@ -154,6 +166,8 @@ public unsafe partial class Form() : ContainerControl(_metaObject)
     /// becomes visible to the user. The desktop handles window management tasks such as activation,
     /// deactivation, and cleanup. The form's ownership is transferred to the desktop, meaning
     /// the desktop will handle disposing of the form when appropriate.
+    /// The form is also added to <see cref="Application.OpenForms"/> to prevent garbage collection
+    /// while it is visible.
     /// </remarks>
     public void Show()
     {
@@ -162,6 +176,9 @@ public unsafe partial class Form() : ContainerControl(_metaObject)
 
         // TProgram::deskTop takes ownership.
         IsOwned = false;
+
+        // Keep a strong reference to prevent garbage collection while the form is open.
+        Application.RegisterOpenForm(this);
     }
 
     /// <summary>
@@ -172,12 +189,63 @@ public unsafe partial class Form() : ContainerControl(_metaObject)
     /// This method programmatically closes the form, performing the same action as if the user
     /// clicked the close button (when <see cref="ControlBox"/> is enabled). After calling this method,
     /// the form should not be used further as it may be disposed by the desktop management system.
+    /// The <see cref="Closed"/> event is raised after the form is removed from the desktop.
     /// </remarks>
     public void Close()
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
         Check(NativeMethods.TfFormClose(Ptr));
     }
+
+    #region Closed Event
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static void NativeClosedEventHandler(void* userData)
+    {
+        try
+        {
+            if (!ObjectRegistry.TryGet(userData, out var obj))
+                return;
+
+            var form = (Form)obj!;
+
+            // Skip if form is already disposed (defensive check)
+            if (form.IsDisposed)
+                return;
+
+            // Remove from OpenForms to allow garbage collection.
+            Application.UnregisterOpenForm(form);
+
+            form.OnClosed();
+        }
+        catch { }
+    }
+
+    /// <summary>
+    /// Occurs when the form has been closed, either by user action (clicking the close button)
+    /// or by calling the <see cref="Close"/> method programmatically.
+    /// </summary>
+    /// <remarks>
+    /// This event is raised after the form has been removed from the desktop and is no longer visible.
+    /// Use this event to perform cleanup operations or to respond to the form being closed.
+    /// After this event fires, the form is removed from <see cref="Application.OpenForms"/> and
+    /// may be garbage collected if no other references exist.
+    /// </remarks>
+    public event EventHandler? Closed;
+
+    /// <summary>
+    /// Raises the <see cref="Closed"/> event. This method is called when the form is closed,
+    /// regardless of whether the close was initiated by user interaction or programmatic invocation.
+    /// </summary>
+    /// <remarks>
+    /// When overriding this method in derived classes, be sure to call the base implementation
+    /// to ensure that registered event handlers are properly invoked. This method follows
+    /// the standard .NET event pattern for controls.
+    /// </remarks>
+    protected virtual void OnClosed()
+    {
+        Closed?.Invoke(this, EventArgs.Empty);
+    }
+    #endregion
 
     private static partial class NativeMethods
     {
@@ -250,5 +318,12 @@ public unsafe partial class Form() : ContainerControl(_metaObject)
 
         [LibraryImport(Global.DLL_NAME)]
         public static partial Error TfFormClose(void* self);
+
+        [LibraryImport(Global.DLL_NAME)]
+        public static partial Error TfFormSetClosedEventHandler(
+            void* self,
+            delegate* unmanaged[Cdecl]<void*, void> function,
+            void* userData
+        );
     }
 }

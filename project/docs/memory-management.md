@@ -386,6 +386,62 @@ Task.Run(() => button.Dispose());
 
 The native cleanup is thread-safe, but UI operations are not.
 
+## Application.OpenForms Pattern
+
+The `Application.OpenForms` collection keeps strong references to all shown forms, preventing garbage collection while they are visible. This is critical for ensuring event handlers can safely access their captured state.
+
+### How It Works
+
+```csharp
+// When Form.Show() is called:
+public void Show()
+{
+    Check(NativeMethods.TfFormShow(Ptr));
+    IsOwned = false;  // Desktop owns native object
+
+    Application.RegisterOpenForm(this);  // Strong reference prevents GC
+}
+```
+
+```csharp
+// When form is closed (user clicks X or Close() called):
+// C++ fires the closed event handler, which calls:
+Application.UnregisterOpenForm(this);  // Allow GC
+```
+
+### Reference Chain
+
+When a form is shown, the following reference chain keeps all related objects alive:
+
+```
+Application.OpenForms (static)
+    └── Form
+        └── Controls (ControlCollection)
+            └── Button
+                └── Click (EventHandler delegate)
+                    └── Target (user's object with instance fields)
+```
+
+This ensures that:
+- Forms are not garbage collected while visible
+- Child controls are kept alive by their parent's Controls collection
+- Event handler targets (objects with instance methods/fields) are kept alive by the delegate
+
+### The Form.Closed Event
+
+Forms fire the `Closed` event after being removed from the desktop:
+
+```csharp
+form.Closed += (sender, e) =>
+{
+    // Form has been closed
+    // After this event, form may be garbage collected
+    Console.WriteLine("Form closed");
+};
+```
+
+This event fires for both programmatic closes (`form.Close()`) and user-initiated closes (clicking the X button).
+
 ## Debugging Memory Issues
 
 ### Common Patterns to Watch For

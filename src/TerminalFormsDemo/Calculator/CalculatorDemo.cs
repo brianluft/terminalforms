@@ -5,38 +5,35 @@ namespace TerminalFormsDemo.Calculator;
 /// <summary>
 /// Interactive calculator demo showcasing Form, TextBox, Button, and Label controls.
 /// Demonstrates event handling, user input validation, and multi-control interaction.
+/// Uses instance fields and methods - safe because Application.OpenForms keeps the form alive.
 /// </summary>
 public class CalculatorDemo : IDemo
 {
+    // Controls
+    private Form _form = null!;
+    private TextBox _display = null!;
+    private Label _errorLabel = null!;
+
+    // Calculator state
+    private decimal _accumulator;
+    private char _pendingOperation;
+    private bool _startNewNumber = true;
+
     public void Setup()
     {
-        // Calculator state - local variables captured by lambdas
-        // IMPORTANT: Track displayText ourselves - reading from control.Text in click handlers crashes!
-        string displayText = "0";
-        decimal accumulator = 0;
-        char pendingOperation = '\0';
-        bool startNewNumber = true;
-
         // Form sized to fit calculator layout
-        var form = new Form { Text = "Calc", Bounds = new Rectangle(0, 0, 26, 11) };
+        _form = new Form { Text = "Calc", Bounds = new Rectangle(0, 0, 26, 11) };
 
         // Display textbox at top
-        var display = new TextBox { Bounds = new Rectangle(1, 1, 22, 1), Text = "0" };
+        _display = new TextBox { Bounds = new Rectangle(1, 1, 22, 1), Text = "0" };
 
         // Error label at bottom
-        var errorLabel = new Label
+        _errorLabel = new Label
         {
             Bounds = new Rectangle(1, 10, 22, 1),
             Text = "",
             UseMnemonic = false,
         };
-
-        // Helper to update display
-        void SetDisplay(string text)
-        {
-            displayText = text;
-            display.Text = text;
-        }
 
         // Buttons: 5 wide, 2 tall each
         // Row 1 (y=2): 7, 8, 9, +
@@ -63,241 +60,110 @@ public class CalculatorDemo : IDemo
         var btnClr = new Button { Bounds = new Rectangle(13, 8, 5, 2), Text = "~C~" };
         var btnDiv = new Button { Bounds = new Rectangle(19, 8, 5, 2), Text = "/" };
 
-        // Digit button click handlers - use local displayText, not display.Text
-        btn0.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (startNewNumber)
-            {
-                SetDisplay("0");
-                startNewNumber = false;
-            }
-            else
-            {
-                SetDisplay(displayText + "0");
-            }
-        };
-        btn1.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (startNewNumber)
-            {
-                SetDisplay("1");
-                startNewNumber = false;
-            }
-            else
-            {
-                SetDisplay(displayText + "1");
-            }
-        };
-        btn2.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (startNewNumber)
-            {
-                SetDisplay("2");
-                startNewNumber = false;
-            }
-            else
-            {
-                SetDisplay(displayText + "2");
-            }
-        };
-        btn3.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (startNewNumber)
-            {
-                SetDisplay("3");
-                startNewNumber = false;
-            }
-            else
-            {
-                SetDisplay(displayText + "3");
-            }
-        };
-        btn4.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (startNewNumber)
-            {
-                SetDisplay("4");
-                startNewNumber = false;
-            }
-            else
-            {
-                SetDisplay(displayText + "4");
-            }
-        };
-        btn5.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (startNewNumber)
-            {
-                SetDisplay("5");
-                startNewNumber = false;
-            }
-            else
-            {
-                SetDisplay(displayText + "5");
-            }
-        };
-        btn6.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (startNewNumber)
-            {
-                SetDisplay("6");
-                startNewNumber = false;
-            }
-            else
-            {
-                SetDisplay(displayText + "6");
-            }
-        };
-        btn7.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (startNewNumber)
-            {
-                SetDisplay("7");
-                startNewNumber = false;
-            }
-            else
-            {
-                SetDisplay(displayText + "7");
-            }
-        };
-        btn8.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (startNewNumber)
-            {
-                SetDisplay("8");
-                startNewNumber = false;
-            }
-            else
-            {
-                SetDisplay(displayText + "8");
-            }
-        };
-        btn9.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (startNewNumber)
-            {
-                SetDisplay("9");
-                startNewNumber = false;
-            }
-            else
-            {
-                SetDisplay(displayText + "9");
-            }
-        };
+        // Wire up event handlers using instance methods
+        btn0.Click += (_, _) => OnDigitClick("0");
+        btn1.Click += (_, _) => OnDigitClick("1");
+        btn2.Click += (_, _) => OnDigitClick("2");
+        btn3.Click += (_, _) => OnDigitClick("3");
+        btn4.Click += (_, _) => OnDigitClick("4");
+        btn5.Click += (_, _) => OnDigitClick("5");
+        btn6.Click += (_, _) => OnDigitClick("6");
+        btn7.Click += (_, _) => OnDigitClick("7");
+        btn8.Click += (_, _) => OnDigitClick("8");
+        btn9.Click += (_, _) => OnDigitClick("9");
 
-        // Operator button click handlers - use displayText for parsing
-        btnAdd.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (decimal.TryParse(displayText, out var value))
-            {
-                accumulator = value;
-                pendingOperation = '+';
-                startNewNumber = true;
-            }
-        };
-        btnSub.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (decimal.TryParse(displayText, out var value))
-            {
-                accumulator = value;
-                pendingOperation = '-';
-                startNewNumber = true;
-            }
-        };
-        btnMul.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (decimal.TryParse(displayText, out var value))
-            {
-                accumulator = value;
-                pendingOperation = '*';
-                startNewNumber = true;
-            }
-        };
-        btnDiv.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (decimal.TryParse(displayText, out var value))
-            {
-                accumulator = value;
-                pendingOperation = '/';
-                startNewNumber = true;
-            }
-        };
+        btnAdd.Click += (_, _) => OnOperatorClick('+');
+        btnSub.Click += (_, _) => OnOperatorClick('-');
+        btnMul.Click += (_, _) => OnOperatorClick('*');
+        btnDiv.Click += (_, _) => OnOperatorClick('/');
 
-        // Equals button - use displayText for parsing
-        btnEq.Click += (sender, e) =>
-        {
-            errorLabel.Text = "";
-            if (pendingOperation != '\0' && decimal.TryParse(displayText, out var operand))
-            {
-                try
-                {
-                    accumulator = pendingOperation switch
-                    {
-                        '+' => accumulator + operand,
-                        '-' => accumulator - operand,
-                        '*' => accumulator * operand,
-                        '/' => operand == 0
-                            ? throw new DivideByZeroException()
-                            : accumulator / operand,
-                        _ => accumulator,
-                    };
-                    SetDisplay(accumulator.ToString("G"));
-                }
-                catch (DivideByZeroException)
-                {
-                    errorLabel.Text = "Divide by zero";
-                    SetDisplay("0");
-                    accumulator = 0;
-                }
-                pendingOperation = '\0';
-                startNewNumber = true;
-            }
-        };
-
-        // Clear button
-        btnClr.Click += (sender, e) =>
-        {
-            accumulator = 0;
-            pendingOperation = '\0';
-            startNewNumber = true;
-            SetDisplay("0");
-            errorLabel.Text = "";
-        };
+        btnEq.Click += OnEqualsClick;
+        btnClr.Click += OnClearClick;
 
         // Add controls to form
-        form.Controls.Add(display);
-        form.Controls.Add(btn7);
-        form.Controls.Add(btn8);
-        form.Controls.Add(btn9);
-        form.Controls.Add(btnAdd);
-        form.Controls.Add(btn4);
-        form.Controls.Add(btn5);
-        form.Controls.Add(btn6);
-        form.Controls.Add(btnSub);
-        form.Controls.Add(btn1);
-        form.Controls.Add(btn2);
-        form.Controls.Add(btn3);
-        form.Controls.Add(btnMul);
-        form.Controls.Add(btn0);
-        form.Controls.Add(btnEq);
-        form.Controls.Add(btnClr);
-        form.Controls.Add(btnDiv);
-        form.Controls.Add(errorLabel);
+        _form.Controls.Add(_display);
+        _form.Controls.Add(btn7);
+        _form.Controls.Add(btn8);
+        _form.Controls.Add(btn9);
+        _form.Controls.Add(btnAdd);
+        _form.Controls.Add(btn4);
+        _form.Controls.Add(btn5);
+        _form.Controls.Add(btn6);
+        _form.Controls.Add(btnSub);
+        _form.Controls.Add(btn1);
+        _form.Controls.Add(btn2);
+        _form.Controls.Add(btn3);
+        _form.Controls.Add(btnMul);
+        _form.Controls.Add(btn0);
+        _form.Controls.Add(btnEq);
+        _form.Controls.Add(btnClr);
+        _form.Controls.Add(btnDiv);
+        _form.Controls.Add(_errorLabel);
 
-        form.Show();
+        _form.Show();
+    }
+
+    private void OnDigitClick(string digit)
+    {
+        _errorLabel.Text = "";
+        if (_startNewNumber)
+        {
+            _display.Text = digit;
+            _startNewNumber = false;
+        }
+        else
+        {
+            _display.Text += digit;
+        }
+    }
+
+    private void OnOperatorClick(char op)
+    {
+        _errorLabel.Text = "";
+        if (decimal.TryParse(_display.Text, out var value))
+        {
+            _accumulator = value;
+            _pendingOperation = op;
+            _startNewNumber = true;
+        }
+    }
+
+    private void OnEqualsClick(object? sender, EventArgs e)
+    {
+        _errorLabel.Text = "";
+        if (_pendingOperation != '\0' && decimal.TryParse(_display.Text, out var operand))
+        {
+            try
+            {
+                _accumulator = _pendingOperation switch
+                {
+                    '+' => _accumulator + operand,
+                    '-' => _accumulator - operand,
+                    '*' => _accumulator * operand,
+                    '/' => operand == 0
+                        ? throw new DivideByZeroException()
+                        : _accumulator / operand,
+                    _ => _accumulator,
+                };
+                _display.Text = _accumulator.ToString("G");
+            }
+            catch (DivideByZeroException)
+            {
+                _errorLabel.Text = "Divide by zero";
+                _display.Text = "0";
+                _accumulator = 0;
+            }
+            _pendingOperation = '\0';
+            _startNewNumber = true;
+        }
+    }
+
+    private void OnClearClick(object? sender, EventArgs e)
+    {
+        _accumulator = 0;
+        _pendingOperation = '\0';
+        _startNewNumber = true;
+        _display.Text = "0";
+        _errorLabel.Text = "";
     }
 }

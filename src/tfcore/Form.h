@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "EventHandler.h"
 #include "Rectangle.h"
 
 #define Uses_TDialog
@@ -24,6 +25,12 @@ class Form : public TDialog {
     BOOL getResizable() const;
     void setResizable(BOOL value);
     void close();
+
+    // Event handlers
+    void setClosedEventHandler(EventHandlerFunction function, void* userData);
+
+   private:
+    EventHandler closedEventHandler{};
 };
 
 template <>

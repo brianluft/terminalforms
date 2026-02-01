@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+
 namespace TerminalForms;
 
 /// <summary>
@@ -5,6 +7,40 @@ namespace TerminalForms;
 /// </summary>
 public static partial class Application
 {
+    private static readonly List<Form> _openForms = [];
+    private static ReadOnlyCollection<Form>? _openFormsReadOnly;
+
+    /// <summary>
+    /// Gets a collection of open forms owned by the application.
+    /// </summary>
+    /// <value>A <see cref="ReadOnlyCollection{T}"/> containing all currently open forms.</value>
+    /// <remarks>
+    /// <para>
+    /// Forms are automatically added to this collection when <see cref="Form.Show"/> is called
+    /// and removed when the form is closed. This collection maintains strong references to
+    /// open forms, preventing them from being garbage collected while they are visible.
+    /// </para>
+    /// <para>
+    /// This property is similar to <c>System.Windows.Forms.Application.OpenForms</c> and
+    /// provides a way to enumerate and access all currently displayed forms in the application.
+    /// </para>
+    /// </remarks>
+    public static ReadOnlyCollection<Form> OpenForms =>
+        _openFormsReadOnly ??= _openForms.AsReadOnly();
+
+    internal static void RegisterOpenForm(Form form)
+    {
+        if (!_openForms.Contains(form))
+        {
+            _openForms.Add(form);
+        }
+    }
+
+    internal static void UnregisterOpenForm(Form form)
+    {
+        _openForms.Remove(form);
+    }
+
     /// <summary>
     /// Performs a basic health check to verify that the native Terminal Forms library (tfcore)
     /// is properly loaded and functioning. This method may be optionally called before using other
