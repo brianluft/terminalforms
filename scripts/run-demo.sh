@@ -7,4 +7,11 @@ EXE="build/dotnet-artifacts/bin/TerminalFormsDemo/${CONFIGURATION_LOWERCASE}_${R
 
 echo -e "Running: ${GREEN}$EXE${RESET}"
 
-"$EXE" "$@"
+# On Linux, when generating expected output (--output flag), use PtyRunner
+# to ensure correct 40x12 terminal size. This is needed because tvision
+# requires a real terminal to initialize the screen buffer.
+if [[ "$OSTYPE" == "linux"* ]] && [[ "$*" == *"--output"* ]]; then
+    dotnet run --project "$ROOT_DIR/src/PtyRunner" -- "$EXE" "$@"
+else
+    "$EXE" "$@"
+fi

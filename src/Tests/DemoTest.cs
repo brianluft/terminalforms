@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using TerminalFormsDemo;
 
@@ -80,42 +81,54 @@ public class DemoTest
 
         // Run `TerminalFormsDemo` in the same directory as the IDemo assembly.
         var demoDll = Path.Combine(exeDir, "TerminalFormsDemo.dll");
-        var args =
+        var demoArgs =
             $"\"{demoDll}\" --test \"{name}\" --output \"{actualFilePath}\" --log \"{logFilePath}\"";
         if (File.Exists(eventsFilePath))
         {
-            args += $" --input \"{eventsFilePath}\"";
+            demoArgs += $" --input \"{eventsFilePath}\"";
         }
 
-        ProcessStartInfo psi = new("dotnet", args)
+        int exitCode;
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            CreateNoWindow = true,
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-        };
-
-        // Tell tvision to use stdin/stdout instead of /dev/tty so our redirects work.
-        psi.Environment["TVISION_USE_STDIO"] = "1";
-
-        using var process = Process.Start(psi)!;
-
-        if (!process.WaitForExit(5000))
+            // On Linux, we need to run the demo in a PTY with proper terminal size
+            // because tvision requires a real terminal to initialize the screen buffer.
+            // Terminal size must match Application.cpp debug screenshot dimensions (40x12).
+            exitCode = PtyProcess.Run("dotnet", demoArgs, rows: 12, cols: 40, timeoutMs: 10000);
+        }
+        else
         {
-            process.Kill();
-            throw new Exception($"Process {demoDll} timed out after 5 seconds");
+            // On Windows, just run dotnet directly with redirected I/O.
+            var psi = new ProcessStartInfo("dotnet", demoArgs)
+            {
+                CreateNoWindow = true,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+            };
+
+            using var process = Process.Start(psi)!;
+
+            if (!process.WaitForExit(10000))
+            {
+                process.Kill();
+                throw new Exception($"Process {demoDll} timed out after 10 seconds");
+            }
+
+            exitCode = process.ExitCode;
         }
 
-        if (process.ExitCode != 0)
+        if (exitCode != 0)
         {
             if (File.Exists(logFilePath))
             {
                 var log = File.ReadAllText(logFilePath);
-                Assert.Fail($"Exit code {process.ExitCode}. Log output:\n" + log);
+                Assert.Fail($"Exit code {exitCode}. Log output:\n" + log);
             }
             else
             {
-                Assert.Fail($"Exit code {process.ExitCode}. No log output.");
+                Assert.Fail($"Exit code {exitCode}. No log output.");
             }
         }
 
