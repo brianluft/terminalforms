@@ -50,7 +50,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 8.0.x
 
       - name: Install bash and coreutils (mac)
         if: startsWith(matrix.runner, 'macos')
@@ -66,7 +66,7 @@ jobs:
         run: |
           $dir = "$env:USERPROFILE\dotnet-x86"
           iwr https://dot.net/v1/dotnet-install.ps1 -OutFile dotnet-install.ps1
-          ./dotnet-install.ps1 -Architecture x86 -Runtime dotnet -Channel 9.0 -Quality GA -InstallDir $dir
+          ./dotnet-install.ps1 -Architecture x86 -Runtime dotnet -Channel 8.0 -Quality GA -InstallDir $dir
           echo "TARGET_DOTNET_ROOT=$dir" >> $env:GITHUB_ENV
 
       - name: Install ARM .NET and system packages (linux-arm)
@@ -91,7 +91,7 @@ jobs:
 
           # Install ARM .NET
           curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
-          bash dotnet-install.sh --arch arm --channel 9.0
+          bash dotnet-install.sh --arch arm --channel 8.0
           echo "TARGET_DOTNET_ROOT=$HOME/.dotnet" >> $GITHUB_ENV
 
       - name: Disable Tests (mac and linux)
@@ -150,7 +150,7 @@ jobs:
               set -eux
               apk add --no-cache build-base git curl bash icu-libs cmake ncurses-dev linux-headers gpm-dev
               curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
-              bash dotnet-install.sh --channel 9.0
+              bash dotnet-install.sh --channel 8.0
               export PATH=/root/.dotnet:/root/.dotnet/tools:$PATH
               export USE_SYSTEM_CMAKE=1
               export DOTNET_CLI_TELEMETRY_OPTOUT=1
